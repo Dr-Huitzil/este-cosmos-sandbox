@@ -1,0 +1,183 @@
+/* ─── Analytics Top Row ────────────────────────────────────────────────────── */
+
+/* On mobile: stacks the heading and the range select dropdown vertically */
+.analyticsTopRow {
+  display: flex;
+  flex-direction: column; /* vertical stack on small screens */
+  gap: 1.5rem;            /* 24 px spacing between the title and the select */
+}
+
+/* On tablet+ (≥768 px): switches to a horizontal row, aligning items to the bottom baseline */
+@media (min-width: 768px) {
+  .analyticsTopRow {
+    flex-direction: row;       /* title left, controls right */
+    align-items: flex-end;     /* bottom-aligns the select with the last line of the heading */
+    justify-content: space-between; /* pushes the two ends apart */
+  }
+}
+
+/* Outer wrapper that stacks every analytics section (line chart, bottom row) with space between */
+.analyticsGrid {
+  display: flex;
+  flex-direction: column; /* sections sit on top of each other */
+  gap: 3rem;              /* 48 px breathing room between chart and pie/bounty row */
+}
+
+/* ─── Line Chart Card ──────────────────────────────────────────────────────── */
+
+/* Padding wrapper for the recharts line chart */
+.chartCard {
+  padding: 2rem; /* 32 px of inner space around the chart */
+}
+
+/* Bold display title above the chart with a separator underline */
+.chartTitle {
+  font-size: 1.5rem;             /* 24 px display heading */
+  font-weight: 900;              /* max weight for impact */
+  text-transform: uppercase;     /* all-caps label style */
+  font-style: italic;            /* slanted for the sporty design language */
+  border-bottom: 4px solid hsl(var(--foreground)); /* thick underline acts as a visual divider */
+  padding-bottom: 0.5rem;        /* space between text and the underline */
+  margin-bottom: 2rem;           /* 32 px gap before the chart area begins */
+  color: hsl(var(--foreground));
+}
+
+/* Fixed-height container that recharts fills completely */
+.chartArea {
+  height: 25rem; /* 400 px — tall enough for clear data visualization */
+}
+
+/* Shown in place of the chart when there are no data points to plot */
+.chartEmpty {
+  height: 100%;          /* fills the full .chartArea height */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centers the "no data" message */
+  background-color: hsl(var(--muted));
+  /* Dot-grid halftone pattern used as a textured empty-state background */
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+  color: hsl(var(--foreground));
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.1em; /* wide tracking makes the all-caps placeholder text more readable */
+}
+
+/* ─── Bottom Row (Pie + Bounty) ────────────────────────────────────────────── */
+
+/* Single column on mobile; expands to two equal columns on tablet+ */
+.analyticsBottomRow {
+  display: grid;
+  grid-template-columns: 1fr; /* stacked single column on mobile */
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .analyticsBottomRow {
+    grid-template-columns: 1fr 1fr; /* pie chart and bounty card sit side by side */
+  }
+}
+
+/* Padding wrapper for the recharts pie chart */
+.pieCard {
+  padding: 2rem;
+}
+
+/* Fixed height for the pie chart so it doesn't collapse */
+.pieArea {
+  height: 18.75rem; /* 300 px */
+}
+
+/* ─── Bounty Card ──────────────────────────────────────────────────────────── */
+
+/* The cost-summary card; uses the primary accent as its background for visual emphasis */
+.bountyCard {
+  padding: 2rem;
+  background-color: hsl(var(--primary)); /* pink card stands out as the financial highlight */
+  /* Halftone dot-grid textured on top of the pink background */
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+/* Italicized title within the bounty card */
+.bountyTitle {
+  font-style: italic; /* adds dynamism to the card heading */
+}
+
+/* Vertical list of budget rows */
+.bountyRows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 24 px between each row */
+}
+
+/* Single budget row: label on left, amount on right */
+.bountyRow {
+  display: flex;
+  justify-content: space-between; /* label floats left, value floats right */
+  align-items: center;
+  border-bottom: 2px solid hsl(var(--foreground)); /* thin separator line below each row */
+  padding-bottom: 0.5rem;
+}
+
+/* Small uppercase descriptor for the budget line item */
+.bountyLabel {
+  font-weight: 700;
+  font-size: 0.75rem;       /* 12 px — small label */
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+}
+
+/* Large number showing the dollar amount for each line item */
+.bountyAmount {
+  font-weight: 900;
+  font-size: 1.5rem;        /* 24 px — makes the number the visual focus */
+  color: hsl(var(--foreground));
+}
+
+/* Applied to the reimbursable amount — shifts it to the secondary teal color to distinguish it */
+.bountyReclaim {
+  color: hsl(var(--secondary));
+}
+
+/* The net total row overrides the separator border to avoid a double-line at the bottom */
+.bountyNetRow {
+  border-bottom: none;  /* removes the under-line on the final totals row */
+  padding-top: 0.5rem;  /* small gap separates it visually from the rows above */
+}
+
+/* Bold label for the net total line */
+.bountyNetLabel {
+  font-weight: 900;
+  font-size: 0.875rem;      /* 14 px — slightly bigger than regular labels */
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+}
+
+/* Large display number for the final net amount — the most important figure on the card */
+.bountyNet {
+  font-weight: 900;
+  font-size: 2.5rem;        /* 40 px — largest text in the card to draw the eye */
+  font-style: italic;
+  letter-spacing: -0.05em; /* tight tracking on big display numbers */
+  color: hsl(var(--foreground));
+}
+
+/* ─── Range Select ─────────────────────────────────────────────────────────── */
+
+/* Styled <select> dropdown for choosing the chart date range (30 / 90 / 365 days etc.) */
+.rangeSelect {
+  height: 3rem;             /* 48 px — matches button heights throughout the app */
+  padding: 0 1rem;
+  background-color: hsl(var(--card));           /* card background keeps it neutral */
+  border: 4px solid hsl(var(--foreground));     /* thick neo-brutalist border */
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);        /* hard offset shadow */
+  color: hsl(var(--foreground));
+  font-weight: 900;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  appearance: none;         /* removes the browser's default dropdown arrow for consistent styling */
+  min-width: 12rem;         /* prevents the select from collapsing too narrow on small screens */
+}

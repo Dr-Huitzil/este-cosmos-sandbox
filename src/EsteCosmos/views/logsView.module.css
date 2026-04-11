@@ -1,0 +1,33 @@
+/* ─── Logs View ────────────────────────────────────────────────────────────── */
+
+/* Stacks each log card (Fuel, Service) vertically with generous spacing */
+.logGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* 32 px between the fuel-log card and the service-log card */
+}
+
+/* Wrapper for a single log section (heading + table) */
+.logCard {
+  overflow: hidden; /* clips the table's horizontal scroll within the card boundary */
+}
+
+/* Inverted header strip at the top of each log card */
+.logCardHeader {
+  background-color: hsl(var(--foreground)); /* dark background creates a strong heading bar */
+  color: hsl(var(--background));            /* light text (white in light mode) over the dark strip */
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;             /* space between the icon and the heading text */
+  font-weight: 900;
+  font-size: 0.75rem;      /* 12 px — compact heading for the table section */
+  text-transform: uppercase;
+  letter-spacing: 0.15em;  /* wide tracking for the all-caps label style */
+}
+
+/* Modifier: swaps the default dark header for the primary pink — used on the fuel-log card */
+.logCardHeaderPrimary {
+  background-color: hsl(var(--primary));   /* Espeon Pink header distinguishes Fuel from Service */
+  color: hsl(var(--foreground));           /* dark text on the pink background */
+}
