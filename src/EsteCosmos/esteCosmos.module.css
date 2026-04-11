@@ -1,0 +1,657 @@
+/* ─── Widget Root ─────────────────────────────────────────────────────────── */
+
+.window {
+  height: 100%;
+  display: flex;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  /* Scanline texture */
+  background-image:
+    linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.04) 50%),
+    url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 4px, 20px 20px;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─── Loading Screen ──────────────────────────────────────────────────────── */
+
+.loadingScreen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(var(--background));
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+  color: hsl(var(--foreground));
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 3rem;
+  height: 3rem;
+  color: hsl(var(--primary));
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────────────────────── */
+
+.sidebar {
+  display: none;
+  width: 20rem;
+  flex-direction: column;
+  background-color: hsl(var(--card));
+  border-right: 8px solid hsl(var(--foreground));
+  padding: 2.5rem;
+  gap: 3rem;
+  position: sticky;
+  top: 0;
+  height: 100%;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex;
+  }
+}
+
+.sidebarBrand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 8px solid hsl(var(--foreground));
+  padding-bottom: 2rem;
+}
+
+.brandIcon {
+  padding: 1rem;
+  background-color: hsl(var(--primary));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  flex-shrink: 0;
+}
+
+.brandRocketIcon {
+  color: white;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brandLine1 {
+  font-size: 1.875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+.brandLine2 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  font-style: italic;
+  color: hsl(var(--secondary));
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+/* Sidebar nav container (items live in NavItem.module.css) */
+.sidebarNav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Sidebar footer */
+.sidebarFooter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 8px solid hsl(var(--foreground));
+}
+
+.sidebarAvatarWrap {
+  flex-shrink: 0;
+}
+
+.sidebarAvatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0;
+  border: 2px solid hsl(var(--foreground));
+  box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  object-fit: cover;
+}
+
+.sidebarAvatarFallback {
+  width: 3rem;
+  height: 3rem;
+  background-color: hsl(var(--muted));
+  border: 2px solid hsl(var(--foreground));
+  box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: hsl(var(--foreground));
+}
+
+.sidebarUserInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebarUsername {
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: hsl(var(--foreground));
+}
+
+.sidebarStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.125rem;
+}
+
+.statusDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  background-color: hsl(var(--secondary));
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.statusText {
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* ─── Main Content ────────────────────────────────────────────────────────── */
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: hsl(var(--background) / 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top bar */
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  border-bottom: 8px solid hsl(var(--foreground));
+  background-color: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+}
+
+.topBarMobileBrand {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .topBarMobileBrand {
+    display: none;
+  }
+}
+
+.mobileBrandTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.iconBtn {
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(var(--card));
+}
+
+.refuelBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 3rem;
+  padding: 0 1.5rem;
+  background-color: hsl(var(--primary));
+  color: white;
+}
+
+/* View container */
+.viewContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 8rem; /* bottom nav clearance on mobile */
+}
+
+@media (min-width: 1024px) {
+  .viewContainer {
+    padding-bottom: 0;
+  }
+}
+
+/* ─── View Common (shared by all 4 views) ─────────────────────────────────── */
+
+.viewPad {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .viewPad {
+    padding: 3rem;
+  }
+}
+
+.viewHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.viewTitle {
+  font-size: 3.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+@media (min-width: 768px) {
+  .viewTitle {
+    font-size: 5rem;
+  }
+}
+
+.viewTitleAccent {
+  color: hsl(var(--primary));
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+  padding: 0 0.5rem;
+}
+
+.viewTitlePrimary {
+  color: hsl(var(--primary));
+  padding: 0 0.5rem;
+}
+
+.viewTitleSecondary {
+  color: hsl(var(--secondary));
+  padding: 0 0.5rem;
+}
+
+.viewSubtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  color: hsl(var(--muted-foreground));
+}
+
+/* ─── Shared Card (used by all views + modals) ────────────────────────────── */
+
+.retroCard {
+  background-color: hsl(var(--card));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+}
+
+/* ─── Bottom Mobile Nav ───────────────────────────────────────────────────── */
+
+.bottomNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: hsl(var(--background));
+  border-top: 8px solid hsl(var(--foreground));
+  z-index: 40;
+  padding: 1rem;
+  height: 6rem;
+}
+
+@media (min-width: 1024px) {
+  .bottomNav {
+    display: none;
+  }
+}
+
+/* (Mobile nav items live in NavItem.module.css) */
+
+/* ─── Mobile FAB ──────────────────────────────────────────────────────────── */
+
+.fabWrap {
+  position: relative;
+  margin-top: -4rem;
+}
+
+.fab {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  border: 8px solid hsl(var(--foreground));
+  background-color: hsl(var(--primary));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  transition: transform 0.15s;
+}
+
+.fab:hover {
+  transform: scale(1.05);
+}
+
+.fabMenu {
+  position: absolute;
+  bottom: calc(100% + 2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: hsl(var(--card));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 8px 8px 0px rgba(0,0,0,1);
+  min-width: 13rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fabMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.1s;
+}
+
+.fabMenuItem:hover {
+  background-color: hsl(var(--primary));
+  color: white;
+}
+
+/* ─── Modal Overlay (shared by all 4 modals) ──────────────────────────────── */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 28rem;
+  padding: 2.5rem;
+  background-color: hsl(var(--card));
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: -0.05em;
+  border-bottom: 4px solid hsl(var(--foreground));
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: hsl(var(--foreground));
+}
+
+.modalSubtitle {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-style: italic;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+  color: hsl(var(--foreground));
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ─── Forms (shared by modals + SettingsView) ─────────────────────────────── */
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.fieldGroupBottom {
+  justify-content: flex-end;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.label {
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--foreground));
+}
+
+.input {
+  height: 3rem;
+  padding: 0 0.75rem;
+  background-color: hsl(var(--muted));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: hsl(var(--primary));
+}
+
+.select {
+  height: 3rem;
+  padding: 0 0.75rem;
+  background-color: hsl(var(--muted));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  width: 100%;
+}
+
+.textarea {
+  padding: 0.75rem;
+  background-color: hsl(var(--muted));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  min-height: 6rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.check {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 3px solid hsl(var(--foreground));
+  accent-color: hsl(var(--primary));
+  cursor: pointer;
+}
+
+/* ─── Retro Button (shared everywhere) ───────────────────────────────────── */
+
+.retroBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  font-weight: 900;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  cursor: pointer;
+  transition: box-shadow 0.1s, transform 0.1s;
+  padding: 0.5rem 1.25rem;
+  font-family: inherit;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--card));
+}
+
+.retroBtn:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.modalSubmitPrimary {
+  height: 4rem;
+  font-size: 1.25rem;
+  background-color: hsl(var(--primary));
+  color: white;
+}
+
+.modalSubmitSecondary {
+  height: 4rem;
+  font-size: 1.25rem;
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--foreground));
+}
+
+.modalSubmitDark {
+  height: 4rem;
+  font-size: 1.25rem;
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+
+.viewContainer::-webkit-scrollbar {
+  width: 12px;
+}
+
+.viewContainer::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+.viewContainer::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border: 3px solid hsl(var(--muted));
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
