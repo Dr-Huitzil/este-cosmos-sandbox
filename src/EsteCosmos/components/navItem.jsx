@@ -5,7 +5,7 @@ import styles from "./navItem.module.css";
  * Sidebar desktop navigation item
  * @param {{ icon: React.ReactNode, label: string, active: boolean, onClick: function}} props
  */
-export const NavItem = memo(function NavItem({ icon, label, active, oClick }) {
+export const NavItem = memo(function NavItem({ icon, label, active, onClick }) {
   return (
     <button
       onClick={onClick}
