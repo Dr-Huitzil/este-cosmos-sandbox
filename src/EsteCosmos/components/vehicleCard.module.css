@@ -1,0 +1,184 @@
+/* ─── Card Container ────────────────────────────────────────────────────────── */
+
+.card {
+  background-color: hsl(var(--card));      /* fills the card with the theme's card surface color */
+  border: 4px solid hsl(var(--foreground)); /* thick neo-brutalist border around the whole card */
+  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1); /* hard offset shadow gives the card a lifted, sticker-like feel */
+  cursor: pointer;                          /* shows a hand cursor so the user knows the card is clickable */
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s; /* smoothly animates lift/color changes on interaction */
+  overflow: hidden;                         /* clips child elements (e.g. zoomed image) to the card boundary */
+}
+
+/* Hover state — lightens the card surface to signal interactivity */
+.card:hover {
+  background-color: hsl(var(--muted));     /* shifts the background to the muted shade on hover */
+}
+
+/* Cascading hover — slightly zooms the vehicle photo when the card is hovered */
+.card:hover .image {
+  transform: scale(1.05);                  /* scales the image up 5 % for a parallax-like zoom effect */
+}
+
+/* Cascading hover — highlights the Access Bridge footer strip on hover */
+.card:hover .accessBridge {
+  background-color: hsl(var(--primary));   /* changes the footer bar to the brand accent color on hover */
+}
+
+/* Active / selected card — visually marks which vehicle is currently focused */
+.cardActive {
+  background-color: hsl(var(--primary) / 0.1); /* very light primary tint floods the background */
+  border-color: hsl(var(--primary));            /* swaps the border to the primary color to match */
+  box-shadow: 0 0 0 6px hsl(var(--primary) / 0.2); /* adds a soft glowing ring outside the border */
+  transform: scale(1.02);                       /* very slightly enlarges the card so it pops above its siblings */
+}
+
+/* ─── Image Block ───────────────────────────────────────────────────────────── */
+
+.imageWrapper {
+  position: relative;  /* establishes a stacking context so absolutely-positioned children (overlay, footer) layer on top */
+  height: 12rem;       /* fixed height keeps all cards uniform regardless of image aspect ratio */
+  width: 100%;         /* stretches to fill the full card width */
+  border-bottom: 4px solid hsl(var(--foreground)); /* separates the image area from the stats row with a bold divider line */
+  overflow: hidden;    /* clips the zoom animation so the image never bleeds outside the wrapper */
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px); /* dot-grid fallback visible while the image loads */
+  background-size: 4px 4px; /* controls the density of the dot grid (one dot every 4 px) */
+}
+
+.image {
+  width: 100%;         /* stretches the image to fill the wrapper horizontally */
+  height: 100%;        /* stretches the image to fill the wrapper vertically */
+  object-fit: cover;   /* crops the image to cover the wrapper without distorting its proportions */
+  transition: transform 0.3s; /* smoothly animates the scale(1.05) zoom triggered by the card hover */
+}
+
+/* Dark gradient overlay that fades from black at the bottom — makes the white text readable */
+.imageOverlay {
+  position: absolute; /* lifts the overlay out of normal flow so it sits directly on top of the image */
+  inset: 0;           /* shorthand for top/right/bottom/left: 0 — covers the entire image */
+  background: linear-gradient(to top, hsl(var(--foreground)) 0%, transparent 60%); /* solid at the bottom, fades to transparent toward the top */
+  opacity: 0.6;       /* partial transparency so the photo shows through the gradient */
+}
+
+/* Container for the vehicle name and the rocket badge, floating above the image at the bottom */
+.imageFooter {
+  position: absolute;          /* positions this on top of the overlay, inside the image wrapper */
+  bottom: 1rem;                /* 16 px gap from the bottom edge */
+  left: 1rem;                  /* 16 px gap from the left edge */
+  right: 1rem;                 /* 16 px gap from the right edge */
+  display: flex;               /* places the title group and rocket badge side-by-side */
+  justify-content: space-between; /* pushes the title to the left and the badge to the right */
+  align-items: flex-end;       /* bottom-aligns both items so the badge sits on the same baseline as the name */
+}
+
+/* Groups the vehicle name and the make/model subtitle in a vertical stack */
+.vehicleTitle {
+  display: flex;        /* enables flex layout for the two text lines */
+  flex-direction: column; /* stacks name on top of subtitle */
+  gap: 0.25rem;         /* 4 px space between the name and the subtitle */
+}
+
+/* Large bold vehicle name rendered in italic uppercase for a sporty look */
+.vehicleName {
+  font-size: 1.5rem;          /* 24 px — large enough to be the dominant text on the card */
+  font-weight: 900;           /* maximum weight for a heavy, impactful look */
+  text-transform: uppercase;  /* forces all letters to caps regardless of the source data */
+  font-style: italic;         /* slants the text to add dynamism */
+  letter-spacing: -0.05em;   /* tightens the spacing slightly — common in display/sports typography */
+  line-height: 1;             /* removes extra leading so the tall numbers pack tightly */
+  color: white;               /* white ensures contrast against the dark image overlay */
+  text-shadow: 2px 2px 0 #000; /* hard black shadow gives the text a comic-book / sticker clarity */
+}
+
+/* Small uppercase label showing make and model */
+.vehicleSubtitle {
+  font-size: 0.625rem;       /* 10 px — intentionally tiny to not compete with the vehicle name */
+  font-weight: 900;          /* bold weight keeps it legible despite the small size */
+  text-transform: uppercase; /* matches the all-caps design language of the rest of the card */
+  letter-spacing: 0.15em;   /* wide tracking on small caps improves legibility */
+  color: hsl(var(--secondary)); /* uses the secondary theme color to visually de-emphasize vs. the name */
+}
+
+/* Square badge holding the rocket icon, bottom-right of the image */
+.rocketBadge {
+  background-color: hsl(var(--foreground)); /* solid foreground background ensures the icon pops regardless of the photo behind it */
+  padding: 0.5rem;   /* 8 px of space around the icon for breathing room and tap-target size */
+  border: 2px solid white; /* thin white border lifts the badge off the dark overlay */
+}
+
+/* The Lucide Rocket icon inside the badge */
+.rocketIcon {
+  color: hsl(var(--primary)); /* tints the icon with the brand accent color */
+}
+
+/* ─── Stats Row ─────────────────────────────────────────────────────────────── */
+
+/* Two-column grid below the image that shows odometer and efficiency */
+.stats {
+  padding: 1.5rem;                       /* 24 px inner spacing so the numbers don't touch the card edges */
+  display: grid;                         /* uses CSS grid to create equal-width columns */
+  grid-template-columns: 1fr 1fr;        /* two equal columns — left for Distance, right for Efficiency */
+  gap: 1rem;                             /* 16 px gutter between the two stat items */
+}
+
+/* A single label + value group inside the stats grid */
+.statItem {
+  display: flex;        /* stacks the label and value vertically */
+  flex-direction: column;
+  gap: 0.25rem;         /* 4 px gap between the tiny label and the larger number */
+}
+
+/* Applied to the Efficiency column to align everything to the right */
+.statRight {
+  text-align: right; /* right-aligns text in the Efficiency column */
+}
+
+/* Tiny label line that prefixes the stat value (e.g. "⚡ EFFICIENCY") */
+.statLabel {
+  display: flex;         /* rows the icon and the text side-by-side */
+  align-items: center;   /* vertically centers the icon relative to the text cap-height */
+  gap: 0.25rem;          /* 4 px between the icon and the label text */
+  font-size: 0.5rem;     /* 8 px — deliberately tiny so it reads as a caption, not body text */
+  font-weight: 900;      /* keeps the tiny text legible by using maximum weight */
+  text-transform: uppercase; /* all-caps label style */
+  opacity: 0.6;          /* reduces visual weight so the label doesn't compete with the value */
+  color: hsl(var(--foreground)); /* inherits the foreground color, muted by the opacity above */
+}
+
+/* Modifier that right-aligns the icon + text in the Efficiency label */
+.statLabelRight {
+  justify-content: flex-end; /* pushes the icon and text to the right side of the flex container */
+}
+
+/* The main numeric value for each stat */
+.statValue {
+  font-size: 1.125rem;      /* 18 px — large enough to be easily scannable */
+  font-weight: 900;         /* heavy weight reinforces the numeric hierarchy */
+  font-style: italic;       /* italic slant matches the card's sporty aesthetic */
+  letter-spacing: -0.05em; /* tight tracking for a display-number feel */
+  color: hsl(var(--foreground)); /* default stat color — used for the Distance/odometer value */
+}
+
+/* Modifier for the Efficiency value — makes it bigger and accent-colored to draw the eye */
+.statValuePrimary {
+  font-size: 1.5rem;        /* 24 px — larger than the odometer value to emphasize efficiency */
+  color: hsl(var(--primary)); /* brand accent color highlights this as the headline metric */
+}
+
+/* ─── Access Bridge Footer ──────────────────────────────────────────────────── */
+
+/* Full-width button-like footer strip at the very bottom of the card */
+.accessBridge {
+  background-color: hsl(var(--foreground)); /* inverted (dark) background creates a strong visual end-cap for the card */
+  padding: 0.5rem;           /* 8 px top/bottom padding gives the strip enough height to be tappable */
+  text-align: center;        /* centers the label text horizontally */
+  transition: background-color 0.2s; /* smoothly shifts to the primary color on card hover */
+}
+
+/* The text label inside the Access Bridge strip */
+.accessBridgeText {
+  font-size: 0.625rem;       /* 10 px — matches the vehicleSubtitle size for visual consistency */
+  font-weight: 900;          /* bold so it stays sharp at a small size */
+  text-transform: uppercase; /* all-caps to match the rest of the card's label language */
+  letter-spacing: 0.15em;   /* wide tracking for clarity on tiny uppercase text */
+  color: hsl(var(--background)); /* inverted text color (light on dark) so it reads against the dark strip */
+}

@@ -1,0 +1,185 @@
+/* ─── Health Indicator ─────────────────────────────────────────────────────── */
+
+/* Single health metric row: label-with-% header above a progress bar */
+.healthItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* 8 px between the header and the bar track */
+}
+
+/* Row that places the label on the left and the percentage value on the right */
+.healthHeader {
+  display: flex;
+  justify-content: space-between; /* label left, % value right */
+  align-items: flex-end;          /* bottom-aligns them on the same baseline */
+}
+
+/* Icon + metric name label (e.g. "🔧 BRAKE PADS") */
+.healthLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;           /* 8 px between the icon and the text */
+  font-weight: 900;
+  font-size: 0.625rem;   /* 10 px — tiny caption style */
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+}
+
+/* Numeric percentage displayed on the right of the header row */
+.healthPercent {
+  font-weight: 900;
+  font-size: 0.75rem;    /* 12 px — slightly larger than the label for emphasis */
+  color: hsl(var(--foreground));
+}
+
+/* The outer container of the progress bar — acts as the background / track */
+.healthBarTrack {
+  height: 1.5rem;        /* 24 px tall — chunky enough to be noticed */
+  width: 100%;
+  background-color: hsl(var(--foreground)); /* dark track background provides contrast for the pink fill */
+  border: 2px solid hsl(var(--foreground));
+  padding: 3px;          /* inner padding creates a visual inset frame around the fill */
+}
+
+/* The colored fill that grows to represent the health percentage */
+.healthBarFill {
+  height: 100%;
+  background-color: hsl(var(--primary)); /* Espeon Pink fill */
+  transition: width 0.5s ease;           /* smoothly animates when the percentage value changes */
+}
+
+/* ─── Hull / Pressure ──────────────────────────────────────────────────────── */
+
+/* Tire-pressure section separated from the health bars above by a thick top border */
+.hullSection {
+  padding-top: 1.5rem;                           /* 24 px space below the border */
+  border-top: 4px solid hsl(var(--foreground));  /* divides the health bars from the pressure grid */
+}
+
+/* Section heading for the pressure grid; contains an icon + label */
+.hullTitle {
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 1rem; /* space between the title and the 2-column pressure grid */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;         /* space between the gauge icon and the text */
+  color: hsl(var(--foreground));
+}
+
+/* 2×2 grid of tire-pressure badges (FL, FR, RL, RR) */
+.pressureGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* two columns for four tire positions */
+  gap: 0.5rem;                     /* 8 px gutter between badges */
+}
+
+/* Default tire-pressure badge (normal pressure) */
+.pressureBadge {
+  padding: 0.75rem;                          /* comfortable touch target */
+  border: 2px solid hsl(var(--foreground));
+  box-shadow: 2px 2px 0px rgba(0,0,0,1);    /* small hard shadow */
+  background-color: hsl(var(--card));        /* white/dark card surface for normal tires */
+}
+
+/* Modifier applied when a tire is LOW — overrides the badge background to pink alert color */
+.pressureBadgeLow {
+  background-color: hsl(var(--primary));    /* pink fills the badge to signal a low-pressure warning */
+  color: white;
+  /* Dot-grid texture over the pink to reinforce the "alert" visual language */
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+/* Tiny label above the pressure value (e.g. "FL") */
+.pressureBadgeLabel {
+  font-size: 0.5rem;     /* 8 px — very small to avoid competing with the value */
+  font-weight: 900;
+  text-transform: uppercase;
+  opacity: 0.6;          /* dimmed so the eye goes to the number first */
+  color: hsl(var(--foreground));
+}
+
+/* The actual PSI number displayed in the badge */
+.pressureBadgeVal {
+  font-weight: 900;
+  font-size: 0.75rem;    /* 12 px */
+  color: hsl(var(--foreground));
+}
+
+/* Shown when no tire-pressure data exists for this vehicle */
+.hullNoData {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+/* ─── Tire History ─────────────────────────────────────────────────────────── */
+
+/* Empty state shown when there are no past tire-pressure records */
+.tireEmpty {
+  padding: 3rem;
+  text-align: center;
+  border: 4px dashed hsl(var(--foreground)); /* dashed border signals "add data here" */
+  /* Dot-grid textured background for the empty state */
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+  color: hsl(var(--foreground));
+}
+
+/* The text message inside the empty state */
+.tireEmptyText {
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+/* Vertical list of historical tire-check rows */
+.tireList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* 16 px between each log entry */
+}
+
+/* A single tire-history record card */
+.tireRow {
+  background-color: hsl(var(--card));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); /* hard drop shadow */
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between; /* date left, pressure readings right */
+  align-items: center;
+}
+
+/* The date of the tire check, dimmed so the pressure readings stand out */
+.tireDate {
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-style: italic;
+  opacity: 0.6;          /* visually de-emphasized date label */
+  color: hsl(var(--foreground));
+}
+
+/* Inline list of FL / FR / RL / RR pressure readings */
+.tirePressures {
+  display: flex;
+  gap: 1rem;         /* 16 px between each reading */
+  font-weight: 900;
+  font-size: 0.625rem;
+}
+
+/* Low pressure reading — pink to match the badge alert color */
+.tireLow {
+  color: hsl(var(--primary));
+}
+
+/* Normal pressure reading — teal to signal "all good" */
+.tireOk {
+  color: hsl(var(--secondary));
+}

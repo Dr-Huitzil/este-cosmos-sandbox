@@ -1,0 +1,156 @@
+/* Allows the table to scroll horizontally on narrow screens without breaking the layout */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+/* The <table> itself — collapses borders so adjacent cell borders merge into one line */
+.table {
+  width: 100%;              /* stretches to fill the wrapper */
+  border-collapse: collapse; /* removes the default double-border between cells */
+  font-size: 0.875rem;      /* 14 px default for all table text */
+}
+
+/* The <tr> inside <thead> — gets a thicker bottom border to separate headers from data rows */
+.headerRow {
+  border-bottom: 4px solid hsl(var(--foreground)); /* bold line emphasizes the column headers */
+}
+
+/* Individual <th> header cell */
+.th {
+  padding: 0.75rem 1rem;    /* 12 px top/bottom, 16 px left/right */
+  text-align: left;
+  font-weight: 900;
+  font-size: 0.625rem;      /* 10 px — intentionally tiny for a "data-dense" table feel */
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  color: hsl(var(--foreground));
+}
+
+/* Applied to right-aligned headers (e.g. numeric columns on the right) */
+.thRight {
+  text-align: right;
+}
+
+/* <tr> data row — thin underline with hover highlight */
+.row {
+  border-bottom: 2px solid hsl(var(--foreground)); /* thinner than the header separator */
+  transition: background-color 0.15s;
+}
+
+/* Subtle teal wash on hover to indicate which row the user is reading */
+.row:hover {
+  background-color: hsl(var(--secondary) / 0.1);
+}
+
+/* Standard <td> cell — consistent padding across all columns */
+.td {
+  padding: 0.75rem 1rem;
+  color: hsl(var(--foreground));
+}
+
+/* Monospaced numeric variant for odometer / volume values so digits align column-by-column */
+.tdMono {
+  font-weight: 900;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums; /* forces fixed-width digits — prevents numbers from shifting */
+}
+
+/* Price cell — colored pink to draw attention to fuel cost */
+.tdPrice {
+  font-weight: 900;
+  color: hsl(var(--primary)); /* Espeon Pink makes the price stand out */
+}
+
+/* Right-aligns numeric columns (volume, price, mileage) */
+.tdRight {
+  text-align: right;
+}
+
+/* Stacks a primary value on top of a secondary sub-label within a single cell */
+.cellStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem; /* 2 px — very tight so the two lines read as a single unit */
+}
+
+/* The main line of text in a stacked cell (e.g. the formatted date) */
+.cellPrimary {
+  font-weight: 900;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+/* The secondary sub-line — shows additional metadata below the primary value */
+.cellSecondary {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.5625rem;  /* 9 px — clearly smaller than the primary */
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.6;          /* de-emphasized so it doesn't compete with the primary */
+}
+
+/* Inline badge showing the calculated efficiency for a fill-up */
+.effBadge {
+  display: inline-block;
+  background-color: hsl(var(--secondary)); /* teal background */
+  color: hsl(var(--foreground));
+  padding: 0.125rem 0.5rem; /* pill-style horizontal padding */
+  font-weight: 900;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  font-style: italic;
+  border: 2px solid hsl(var(--foreground));
+  box-shadow: 2px 2px 0px hsl(var(--foreground)); /* tiny hard shadow in the badge's own foreground color */
+}
+
+/* Tiny label indicating an entry was a partial fill (not a full tank) */
+.partialLabel {
+  font-size: 0.5rem;    /* 8 px — smallest text in the table */
+  font-weight: 700;
+  opacity: 0.4;         /* very faint so it doesn't distract from the data */
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+/* ─── Empty State ────────────────────────────────────────────────────────────── */
+
+/* Shown when no fuel-log entries exist for the selected vehicle */
+.emptyState {
+  text-align: center;
+  padding: 4rem 1rem;         /* generous vertical padding to fill the table area */
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;  /* dot-grid texture as a textured empty placeholder */
+  background-color: hsl(var(--muted));
+  border: 4px dashed hsl(var(--foreground)); /* dashed border signals "no data yet" */
+}
+
+/* Centered icon above the title in the empty state */
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem; /* auto left/right centers it; bottom margin separates it from the title */
+  color: hsl(var(--primary)); /* pink tint makes the icon recognizable as part of the app brand */
+}
+
+/* Large title text in the empty state */
+.emptyTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+/* Smaller supporting text below the empty state title */
+.emptySubtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;          /* de-emphasized caption under the title */
+  color: hsl(var(--foreground));
+}

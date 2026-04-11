@@ -1,0 +1,78 @@
+/* ─── Sidebar Nav Item ─────────────────────────────────────────────────────── */
+
+.navItem {
+  display: flex;         /* lays out the icon and label side-by-side in a row */
+  align-items: center;   /* vertically centers the icon and text within the 4 rem height */
+  gap: 1rem;             /* 16 px space between the icon and its label text */
+  width: 100%;           /* fills the entire sidebar column width */
+  height: 4rem;          /* fixed height (64 px) keeps all nav items the same size */
+  padding: 0 1.5rem;     /* 24 px horizontal padding gives breathing room from the edges */
+  background-color: hsl(var(--muted));      /* subtle muted surface distinguishes nav items from the sidebar bg */
+  color: hsl(var(--foreground));            /* default text/icon color */
+  border: 4px solid hsl(var(--foreground)); /* thick neo-brutalist outline around each item */
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);   /* hard offset shadow makes the item look raised / pressable */
+  font-weight: 900;          /* maximum weight so the label reads boldly at small sizes */
+  text-transform: uppercase; /* all-caps label style matches the rest of the app's design language */
+  letter-spacing: -0.05em;  /* tight tracking for a display / sporty look */
+  font-size: 0.875rem;      /* 14 px — legible but compact enough for a sidebar */
+  cursor: pointer;           /* hand cursor signals the item is clickable */
+  transition: box-shadow 0.1s, transform 0.1s, background-color 0.1s; /* animates the "press" effect on interaction */
+  text-align: left;          /* keeps the label text left-aligned (overrides any inherited center) */
+}
+
+/* Hover state — slightly lightens the surface to acknowledge the cursor */
+.navItem:hover {
+  background-color: hsl(var(--muted) / 0.7); /* semi-transparent muted shade gives a gentle highlight */
+}
+
+/* Active / selected state — the currently active navigation page */
+.navItemActive {
+  background-color: hsl(var(--primary)); /* fills the item with the brand accent color to mark it as selected */
+  color: white;                          /* white icon + text ensures contrast on the colored background */
+  box-shadow: none;                      /* removes the raised shadow so the item looks pressed down */
+  transform: translate(2px, 2px);       /* shifts the item 2 px right-and-down, mimicking a physical button press */
+}
+
+/* Wrapper that keeps the icon from shrinking when the label is long */
+.navIcon {
+  flex-shrink: 0;    /* prevents the icon container from collapsing when space is tight */
+  display: flex;     /* centers the Lucide icon svg inside the wrapper */
+  align-items: center;
+}
+
+/* Text label next to the icon */
+.navLabel {
+  font-size: 0.875rem;     /* 14 px — matches the navItem font-size for consistency */
+  font-weight: 900;        /* heavy weight reinforces the nav label hierarchy */
+  letter-spacing: -0.05em; /* tight tracking matches the item-level style */
+}
+
+/* ─── Mobile Nav Item ──────────────────────────────────────────────────────── */
+
+/* Bottom-bar tab button on small screens — stacks icon above label */
+.mobileNavItem {
+  display: flex;          /* enables flex layout */
+  flex-direction: column; /* stacks the icon on top of the label */
+  align-items: center;    /* horizontally centers both the icon and the text */
+  gap: 0.25rem;           /* 4 px gap between the icon and the tiny label */
+  background: none;       /* transparent background — the tab bar provides its own surface */
+  border: none;           /* no border needed on the mobile tab style */
+  cursor: pointer;        /* hand cursor for tap affordance */
+  color: hsl(var(--muted-foreground)); /* muted color for non-active tabs to reduce visual noise */
+  opacity: 0.5;           /* dims non-active tabs further to make the active one stand out */
+  transition: opacity 0.15s, color 0.15s, transform 0.15s; /* smoothly animates between inactive and active states */
+}
+
+/* Active mobile tab — full visibility and accent color */
+.mobileNavItemActive {
+  color: hsl(var(--primary)); /* switches to the brand accent color to mark the selected tab */
+  opacity: 1;                 /* removes the dim effect so the active tab is fully visible */
+  transform: scale(1.1);      /* very slightly enlarges the active tab for a subtle "selected" pop */
+}
+
+/* Tiny label below the icon in the mobile tab bar */
+.mobileNavLabel {
+  font-size: 0.5rem;       /* 8 px — small enough to not dominate the icon */
+  font-weight: 900;        /* bold so it remains readable at 8 px */
+  text-transform: uppercase; /* all-caps keeps the label style consistent with the rest of the app */
+}

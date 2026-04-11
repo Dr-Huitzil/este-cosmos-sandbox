@@ -1,0 +1,161 @@
+/* Allows the table to scroll horizontally on narrow screens */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+/* The <table> element — border-collapse removes the default gap between cell borders */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem; /* 14 px default for all table text */
+}
+
+/* The <thead> row — slightly muted background to distinguish headers from data rows */
+.headerRow {
+  border-bottom: 4px solid hsl(var(--foreground)); /* thick underline separates headers from data */
+  background-color: hsl(var(--muted) / 0.5);       /* 50 % muted wash for a subtle header background */
+}
+
+/* Column header cell */
+.th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 900;
+  font-size: 0.625rem;   /* 10 px — tiny to keep the table compact */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--foreground));
+}
+
+/* Right-aligns numeric column headers (e.g. Cost) */
+.thRight {
+  text-align: right;
+}
+
+/* Data row — thin separator line with hover highlight */
+.row {
+  border-bottom: 2px solid hsl(var(--foreground));
+  transition: background-color 0.15s;
+}
+
+/* Subtle teal wash when the user hovers a row */
+.row:hover {
+  background-color: hsl(var(--secondary) / 0.1);
+}
+
+/* Standard <td> cell */
+.td {
+  padding: 0.75rem 1rem;
+  color: hsl(var(--foreground));
+  vertical-align: top; /* top-aligns cells so multi-line descriptions don't push numbers down */
+}
+
+/* Monospaced numeric cell for odometer values — ensures consistent digit alignment */
+.tdMono {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums; /* fixed-width digits prevent columns from shifting */
+}
+
+/* Right-aligns the cost column */
+.tdRight {
+  text-align: right;
+}
+
+/* Groups a primary value and its sub-label into a tightly stacked column */
+.cellStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem; /* 2 px — barely any space so they read as one unit */
+}
+
+/* Row holding the service type name and the reimbursable badge */
+.serviceTypeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* space between service name and the green checkmark badge */
+}
+
+/* The service type name (e.g. "OIL CHANGE") */
+.serviceType {
+  font-weight: 700;
+  font-size: 0.8125rem; /* 13 px — slightly smaller than 14 px body for a data-dense feel */
+  color: hsl(var(--foreground));
+}
+
+/* Green checkmark icon that signals a reimbursable expense */
+.reimbursableBadge {
+  color: #10b981;     /* emerald-500 — a universally recognized "green = money back" signal */
+  display: flex;
+  align-items: center;
+  cursor: help;       /* ? cursor hints that hovering reveals more information via title attribute */
+}
+
+/* Optional service description text — smaller and muted below the type name */
+.description {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground)); /* muted so it's readable but clearly secondary */
+  font-weight: 400;                    /* regular weight differentiates from the bold type name */
+}
+
+/* Tiny service-provider label (garage / shop name) */
+.provider {
+  font-size: 0.625rem;  /* 10 px — smallest text in the table */
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.5;         /* heavily dimmed so it reads as metadata, not content */
+  color: hsl(var(--foreground));
+}
+
+/* Stacks total and net costs in a right-aligned column */
+.costStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* right-aligns both cost lines */
+}
+
+/* The gross cost of the service */
+.totalCost {
+  font-weight: 700;
+  color: hsl(var(--accent)); /* teal accent highlights the monetary value */
+}
+
+/* The net cost after reimbursement — green because money is coming back */
+.netCost {
+  font-size: 0.625rem;
+  color: #059669;   /* emerald-600 — slightly darker than #10b981 for better small-text contrast */
+  font-weight: 500;
+}
+
+/* ─── Empty State ────────────────────────────────────────────────────────────── */
+
+/* Shown when there are no service records for the selected vehicle */
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  border: 2px dashed hsl(var(--foreground) / 0.3); /* low-opacity dashed border: subtle "add data" hint */
+  background-color: hsl(var(--muted) / 0.3);        /* very faint muted wash */
+}
+
+/* Centered icon in the empty state */
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem;               /* centers horizontally, adds bottom margin before the title */
+  color: hsl(var(--muted-foreground)); /* muted icon color — not as prominent as the fuel-log empty state */
+}
+
+/* Empty state title */
+.emptyTitle {
+  font-size: 1.125rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+/* Smaller description below the title */
+.emptySubtitle {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.25rem;
+}
