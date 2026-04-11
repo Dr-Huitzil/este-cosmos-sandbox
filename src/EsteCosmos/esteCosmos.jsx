@@ -22,6 +22,7 @@ import { FuelLogModal } from "./modals/fuelLogModal";
 import { ServiceLogModal } from "./modals/serviceLogModal";
 import { TireLogModal } from "./modals/tireLogModal";
 import { useFuelTracker, isSafePhotoURL } from "../hooks/useEsteCosmos";
+import { Toaster } from "@/ui/toaster";
 import styles from "./esteCosmos.module.css";
 
 /**

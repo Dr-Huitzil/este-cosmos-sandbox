@@ -1,5 +1,5 @@
 import { memo } from "react";
-import styles from "../FuelTrackerWindow.module.css";
+import styles from "../esteCosmos.module.css";
 
 /**
  * Modal for logging tire pressure readings across all four pods.

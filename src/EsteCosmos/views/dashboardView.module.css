@@ -1,0 +1,198 @@
+/* ─── Alert Boxes ──────────────────────────────────────────────────────────── */
+
+/* Stacks alert banners vertically at the top of the dashboard */
+.alertGrid {
+  display: grid;
+  gap: 1rem; /* 16 px between each alert */
+}
+
+/* Individual alert banner — icon + title + description side by side */
+.alertBox {
+  padding: 1.5rem;                              /* 24 px of inner whitespace */
+  border: 4px solid hsl(var(--foreground));     /* thick neo-brutalist border */
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);   /* hard offset shadow */
+  display: flex;
+  align-items: flex-start; /* tops of icon and text stay aligned even if text wraps */
+  gap: 1rem;                /* 16 px between the icon and the text content */
+}
+
+/* Red-pink destructive alert (e.g. "overdue service") */
+.alertDestructive {
+  background-color: hsl(var(--primary)); /* Espeon Pink background signals high urgency */
+}
+
+/* Teal warning alert (e.g. "approaching service interval") */
+.alertWarning {
+  background-color: hsl(var(--secondary)); /* Cyber Teal background signals medium urgency */
+}
+
+/* Fixed-size icon so it never wraps or shrinks even in a narrow container */
+.alertIcon {
+  width: 2rem;      /* 32 px square */
+  height: 2rem;
+  flex-shrink: 0;   /* prevents flex from squishing the icon when the title text is long */
+  color: hsl(var(--foreground));
+}
+
+/* Bold vehicle / alert title */
+.alertTitle {
+  font-weight: 900;
+  font-size: 1.25rem;        /* 20 px — prominent enough to catch the eye */
+  text-transform: uppercase;
+  letter-spacing: -0.05em;   /* tight tracking for the display-font aesthetic */
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+/* Supporting description text below the title */
+.alertDesc {
+  font-size: 0.875rem;       /* 14 px — readable body text */
+  font-weight: 700;
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+}
+
+/* ─── Fleet Section ────────────────────────────────────────────────────────── */
+
+/* Contains the section heading and the vehicle card grid */
+.fleetSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 24 px between the header row and the card grid */
+}
+
+/* Header row: section title on the left, "Add Vehicle" button on the right */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* title left, button right */
+  border-bottom: 8px solid hsl(var(--foreground)); /* extra-thick baseline separator */
+  padding-bottom: 1rem;
+}
+
+/* "YOUR FLEET" display heading */
+.sectionTitle {
+  font-size: 2.5rem;         /* 40 px — large enough to anchor the section */
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  font-style: italic;
+  color: hsl(var(--foreground));
+}
+
+/* Responsive grid of VehicleCards */
+.fleetGrid {
+  display: grid;
+  grid-template-columns: 1fr; /* single column on mobile */
+  gap: 2rem;                   /* 32 px gutters between cards */
+}
+
+/* 2-column layout on tablet */
+@media (min-width: 768px) {
+  .fleetGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* 3-column layout on wide desktop */
+@media (min-width: 1280px) {
+  .fleetGrid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* ─── Dashboard Detail (Tabs + Diagnostics) ────────────────────────────────── */
+
+/* Lower section of the dashboard: fuel-log tabs (2/3 width) + diagnostics aside (1/3 width) */
+.dashboardDetail {
+  display: grid;
+  grid-template-columns: 1fr; /* stacked on mobile */
+  gap: 3rem;
+}
+
+/* Switches to a 3-column grid on desktop — tabs span 2 cols, diagnostics takes 1 col */
+@media (min-width: 1024px) {
+  .dashboardDetail {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .tabsPanel {
+    grid-column: span 2; /* fuel tables take up 2/3 of the row */
+  }
+}
+
+/* Wrapper for the tab bar + table content */
+.tabsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* tab buttons sit flush against the table below */
+}
+
+/* Horizontal row of tab buttons (Fuel / Service) */
+.tabList {
+  display: flex;
+  gap: 1rem;        /* space between the two tabs */
+  margin-bottom: 2rem; /* gap between tabs and the table */
+}
+
+/* Individual tab button */
+.tabBtn {
+  flex: 1;                /* both tabs share the row equally */
+  height: 4rem;           /* 64 px — generous tap target */
+  padding: 0 2rem;
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1); /* raised shadow */
+  font-weight: 900;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  cursor: pointer;
+  transition: box-shadow 0.1s, transform 0.1s;
+}
+
+/* Active tab: primary color + "pressed" appearance (shadow removed, shifted 2 px) */
+.tabBtnActive {
+  background-color: hsl(var(--primary));
+  color: white;
+  box-shadow: none;              /* removes raised shadow so it looks pushed in */
+  transform: translate(2px, 2px); /* 2 px shift mimics a physical button press */
+}
+
+/* ─── Diagnostics Aside ────────────────────────────────────────────────────── */
+
+/* Sidebar column containing diagnostic and health panels */
+.diagnosticsAside {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* 32 px between diagnostic cards */
+}
+
+/* Individual diagnostic card — teal background with dot-grid texture */
+.diagnosticsCard {
+  padding: 2rem;
+  background-color: hsl(var(--secondary));
+  /* Halftone dot texture layered on top of the teal background */
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+/* Card title with a thick underline separator */
+.diagnosticsTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: -0.05em;
+  border-bottom: 4px solid hsl(var(--foreground)); /* divides title from panels below */
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: hsl(var(--foreground));
+}
+
+/* Stacks individual diagnostic panels (DiagnosticsPanel components) vertically */
+.diagnosticsBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}

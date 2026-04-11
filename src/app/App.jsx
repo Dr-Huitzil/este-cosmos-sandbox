@@ -1,13 +1,21 @@
-import React from 'react';
-// We will import your main window here soon!
-import './index.css';
+import React, { useMemo } from "react";
+import "./index.css";
+import { initializeFirebase, FirebaseProvider } from "@/firebase";
+import { ToastProvider } from "@/hooks/use-toast";
+import { Toaster } from "@/ui/toaster";
+import EsteCosmosWindow from "../EsteCosmos/esteCosmos";
 
 function App() {
+  const sdk = useMemo(() => initializeFirebase(), []);
+
   return (
-    <div style={{ padding: '2rem', minHeight: '100vh', backgroundColor: '#333' }}>
-       {/* <FuelTrackerWindow /> will go here */}
-    </div>
-  )
+    <ToastProvider>
+      <FirebaseProvider {...sdk}>
+        <EsteCosmosWindow />
+        <Toaster />
+      </FirebaseProvider>
+    </ToastProvider>
+  );
 }
 
 export default App;
