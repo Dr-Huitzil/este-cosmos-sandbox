@@ -1,7 +1,8 @@
 import { memo } from "react";
-import { Zap, Wrench } from "lucide-react";
+import { Zap, Wrench, Banknote } from "lucide-react";
 import { FuelLogTable } from "../components/fuelLogTable";
 import { ServiceLogTable } from "../components/serviceLogTable";
+import { ReclaimLogTable } from "../components/reclaimLogTable";
 import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./logsView.module.css";
 const styles = { ...ownStyles, ...sharedStyles };
@@ -12,6 +13,7 @@ const styles = { ...ownStyles, ...sharedStyles };
 export const LogsView = memo(function LogsView({
   fuelEntries,
   serviceEntries,
+  reclaimEntries,
 }) {
   return (
     <div className={styles.viewPad}>
@@ -25,6 +27,13 @@ export const LogsView = memo(function LogsView({
             <span>ENERGY CONSUMPTION</span>
           </header>
           <FuelLogTable entries={fuelEntries} />
+        </div>
+        <div className={`${styles.retroCard} ${styles.logCard}`}>
+          <header className={styles.logCardHeader}>
+            <Banknote size={20} />
+            <span>BERRY RECLAIM</span>
+          </header>
+          <ReclaimLogTable entries={reclaimEntries} />
         </div>
       </div>
       <div className={`${styles.retroCard} ${styles.logCard}`}>

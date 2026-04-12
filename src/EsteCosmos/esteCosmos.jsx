@@ -21,6 +21,7 @@ import { VehicleModal } from "./modals/vehicleModal";
 import { FuelLogModal } from "./modals/fuelLogModal";
 import { ServiceLogModal } from "./modals/serviceLogModal";
 import { TireLogModal } from "./modals/tireLogModal";
+import { ReclaimModal } from "./modals/reclaimModal";
 import { useFuelTracker, isSafePhotoURL } from "../hooks/useEsteCosmos";
 import { Toaster } from "@/ui/toaster";
 import styles from "./esteCosmos.module.css";
@@ -47,11 +48,13 @@ export default function FuelTrackerWindow() {
     isNewFuelLogOpen,
     isNewServiceLogOpen,
     isNewTireLogOpen,
+    isNewReclaimOpen,
     isMobileFabOpen,
     vehicles,
     fuelEntries,
     serviceEntries,
     tireEntries,
+    reclaimEntries,
     selectedVehicle,
     oilHealth,
     thrusterHealth,
@@ -71,9 +74,11 @@ export default function FuelTrackerWindow() {
     handleCloseFuelLog,
     handleCloseServiceLog,
     handleCloseTireLog,
+    handleCloseReclaim,
     handleToggleFab,
     fabOpenFuel,
     fabOpenService,
+    fabOpenReclaim,
     fabOpenVehicle,
     toggleTheme,
     handleSignOut,
@@ -83,6 +88,7 @@ export default function FuelTrackerWindow() {
     handleAddVehicle,
     handleAddFuelLog,
     handleAddServiceLog,
+    handleAddReclaim,
     handleAddTireLog,
     handleUpdateProfile,
     handleMigrateMPG,
@@ -223,6 +229,7 @@ export default function FuelTrackerWindow() {
             <LogsView
               fuelEntries={fuelEntries}
               serviceEntries={serviceEntries}
+              reclaimEntries={reclaimEntries}
             />
           )}
           {currentView === "analytics" && (
@@ -280,6 +287,13 @@ export default function FuelTrackerWindow() {
                   {" "}
                   <Rocket size={16} /> ENLIST SHIP
                 </button>
+                <button className={styles.fabMenuItem} onClick={fabOpenReclaim}>
+                  {" "}
+                  <span style={{ fontSize: "16px", lineHeight: 1 }}>
+                    💰
+                  </span>{" "}
+                  LOG RECLAIM
+                </button>
               </div>
             )}
           </div>
@@ -326,6 +340,12 @@ export default function FuelTrackerWindow() {
         <TireLogModal
           onClose={handleCloseTireLog}
           onSubmit={handleAddTireLog}
+        />
+      )}
+      {isNewReclaimOpen && (
+        <ReclaimModal
+          onClose={handleCloseReclaim}
+          onSubmit={handleAddReclaim}
         />
       )}
 

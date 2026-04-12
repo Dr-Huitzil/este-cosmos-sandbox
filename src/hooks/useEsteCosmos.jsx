@@ -14,6 +14,7 @@ import {
   doc,
   serverTimestamp,
   updateDoc,
+  getDocs,
 } from "firebase/firestore";
 import { signOut, updateProfile } from "firebase/auth";
 import { calculateMPG, calculateHealth } from "../util/fuel-utils";
@@ -72,6 +73,7 @@ export function useFuelTracker() {
   const [isNewFuelLogOpen, setIsNewFuelLogOpen] = useState(false);
   const [isNewServiceLogOpen, setIsNewServiceLogOpen] = useState(false);
   const [isNewTireLogOpen, setIsNewTireLogOpen] = useState(false);
+  const [isNewReclaimOpen, setIsNewReclaimOpen] = useState(false);
   const [isMobileFabOpen, setIsMobileFabOpen] = useState(false);
 
   // ── Form checkbox + async-op state ─────────────────────────────
@@ -147,6 +149,23 @@ export function useFuelTracker() {
   }, [firestore, user?.uid, selectedVehicleId, currentView]);
   const { data: serviceEntriesData } = useCollection(serviceQuery);
   const serviceEntries = serviceEntriesData || [];
+
+  // ── Firebase — reimbursement entries ───────────────────────────
+  // PERF: Not needed on settings view.
+  const reclaimQuery = useMemoFirebase(() => {
+    if (!firestore || !user || !selectedVehicleId || currentView === "settings")
+      return null;
+    return collection(
+      firestore,
+      "userProfiles",
+      user.uid,
+      "vehicles",
+      selectedVehicleId,
+      "reimbursementEntries",
+    );
+  }, [firestore, user?.uid, selectedVehicleId, currentView]);
+  const { data: reclaimEntriesData } = useCollection(reclaimQuery);
+  const reclaimEntries = reclaimEntriesData || [];
 
   // ── Firebase — tire pressure entries ───────────────────────────
   // PERF: Only used on the dashboard (alerts + health bar) — gate to dashboard only.
@@ -282,6 +301,13 @@ export function useFuelTracker() {
     return serviceEntries.filter((e) => new Date(e.date) >= cutoff);
   }, [serviceEntries, analyticsRange]);
 
+  const filteredReclaim = useMemo(() => {
+    if (analyticsRange === "all") return reclaimEntries;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - parseInt(analyticsRange));
+    return reclaimEntries.filter((e) => new Date(e.day) >= cutoff);
+  }, [reclaimEntries, analyticsRange]);
+
   const fuelEfficiencyData = useMemo(() => {
     const sorted = [...filteredFuel].sort(
       (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime(),
@@ -305,13 +331,10 @@ export function useFuelTracker() {
   }, [filteredService]);
 
   const reimbursementStats = useMemo(() => {
-    const total = filteredService.reduce((sum, s) => sum + s.totalCost, 0);
-    const reimbursed = filteredService.reduce(
-      (sum, s) => sum + (s.reimbursementAmount || 0),
-      0,
-    );
+    const total = filteredFuel.reduce((sum, f) => sum + f.totalPrice, 0);
+    const reimbursed = filteredReclaim.reduce((sum, r) => sum + r.amount, 0);
     return { total, reimbursed, net: total - reimbursed };
-  }, [filteredService]);
+  }, [filteredFuel, filteredReclaim]);
 
   // ── Stable callbacks — theme & nav ──────────────────────────────
   const toggleTheme = useCallback(() => {
@@ -349,6 +372,8 @@ export function useFuelTracker() {
   );
   const handleOpenTireLog = useCallback(() => setIsNewTireLogOpen(true), []);
   const handleCloseTireLog = useCallback(() => setIsNewTireLogOpen(false), []);
+  const handleOpenReclaim = useCallback(() => setIsNewReclaimOpen(true), []);
+  const handleCloseReclaim = useCallback(() => setIsNewReclaimOpen(false), []);
   const handleToggleFab = useCallback(() => setIsMobileFabOpen((v) => !v), []);
 
   // ── Stable callbacks — auth & misc ─────────────────────────────
@@ -370,6 +395,10 @@ export function useFuelTracker() {
   }, []);
   const fabOpenService = useCallback(() => {
     setIsNewServiceLogOpen(true);
+    setIsMobileFabOpen(false);
+  }, []);
+  const fabOpenReclaim = useCallback(() => {
+    setIsNewReclaimOpen(true);
     setIsMobileFabOpen(false);
   }, []);
   const fabOpenVehicle = useCallback(() => {
@@ -594,6 +623,52 @@ export function useFuelTracker() {
     [user, firestore, selectedVehicleId, isReimbursable, toast],
   );
 
+  const handleAddReclaim = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!user || !firestore || !selectedVehicleId) return;
+
+      const fd = new FormData(e.currentTarget);
+      const amount = parseFloat(fd.get("amount"));
+      const day = fd.get("date");
+
+      if (!Number.isFinite(amount) || amount <= 0 || amount > 999_999) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Amount",
+          description: "Reclaim amount must be a positive number.",
+        });
+        return;
+      }
+      if (!day) return;
+
+      const colRef = collection(
+        firestore,
+        "userProfiles",
+        user.uid,
+        "vehicles",
+        selectedVehicleId,
+        "reimbursementEntries",
+      );
+      addDocumentNonBlocking(colRef, {
+        vehicleId: selectedVehicleId,
+        day,
+        amount,
+        description: String(fd.get("description") ?? "")
+          .trim()
+          .slice(0, 500),
+        createdAt: serverTimestamp(),
+      });
+      setIsNewReclaimOpen(false);
+      e.currentTarget.reset();
+      toast({
+        title: "RECLAIM SAVED",
+        description: "Berry deposit cataloged.",
+      });
+    },
+    [user, firestore, selectedVehicleId, toast],
+  );
+
   const handleAddTireLog = useCallback(
     (e) => {
       e.preventDefault();
@@ -685,26 +760,31 @@ export function useFuelTracker() {
   const handleMigrateMPG = useCallback(async () => {
     if (!user || !firestore || !selectedVehicleId) return;
     try {
+      const colRef = collection(
+        firestore,
+        "userProfiles",
+        user.uid,
+        "vehicles",
+        selectedVehicleId,
+        "fuelEntries",
+      );
+      const snapshot = await getDocs(colRef);
+
+      const allEntries = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+
       let updatedCount = 0;
       let dbg = [];
-      for (const entry of fuelEntriesRef.current) {
-        const correctMpg = calculateMPG(entry, fuelEntriesRef.current);
+      for (const entry of allEntries) {
+        const correctMpg = calculateMPG(entry, allEntries);
         if (correctMpg !== entry.mileage) {
-          const entryRef = doc(
-            firestore,
-            "userProfiles",
-            user.uid,
-            "vehicles",
-            selectedVehicleId,
-            "fuelEntries",
-            entry.id,
-          );
+          const entryRef = doc(colRef, entry.id);
           await updateDoc(entryRef, { mileage: correctMpg });
           updatedCount++;
           if (dbg.length < 2)
             dbg.push(`${entry.day}: ${entry.mileage} -> ${correctMpg}`);
         }
       }
+
       if (updatedCount > 0) {
         toast({
           title: "CALIBRATION FINISHED",
@@ -744,6 +824,7 @@ export function useFuelTracker() {
     isNewFuelLogOpen,
     isNewServiceLogOpen,
     isNewTireLogOpen,
+    isNewReclaimOpen,
     isMobileFabOpen,
 
     // Data
@@ -751,6 +832,7 @@ export function useFuelTracker() {
     fuelEntries,
     serviceEntries,
     tireEntries,
+    reclaimEntries,
     selectedVehicle,
     oilHealth,
     thrusterHealth,
@@ -778,11 +860,14 @@ export function useFuelTracker() {
     handleCloseServiceLog,
     handleOpenTireLog,
     handleCloseTireLog,
+    handleOpenReclaim,
+    handleCloseReclaim,
     handleToggleFab,
 
     // FAB shortcuts
     fabOpenFuel,
     fabOpenService,
+    fabOpenReclaim,
     fabOpenVehicle,
 
     // Form / misc handlers
@@ -794,6 +879,7 @@ export function useFuelTracker() {
     handleAddVehicle,
     handleAddFuelLog,
     handleAddServiceLog,
+    handleAddReclaim,
     handleAddTireLog,
     handleUpdateProfile,
     handleMigrateMPG,

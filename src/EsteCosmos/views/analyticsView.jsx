@@ -97,41 +97,47 @@ export const AnalyticsView = memo(function AnalyticsView({
           <div className={`${styles.retroCard} ${styles.pieCard}`}>
             <h3 className={styles.chartTitle}>CREDIT ALLOCATION</h3>
             <div className={styles.pieArea}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={maintenanceSpendData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
-                    dataKey="value"
-                    stroke="#000"
-                    strokeWidth={4}
-                  >
-                    {maintenanceSpendData.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={
-                          i % 2 === 0
-                            ? "hsl(var(--primary))"
-                            : "hsl(var(--secondary))"
-                        }
-                      />
-                    ))}
-                  </Pie>
-                  <ReChartsTooltip />
-                  <Legend
-                    verticalAlign="bottom"
-                    height={36}
-                    wrapperStyle={{
-                      fontWeight: 900,
-                      fontSize: "10px",
-                      textTransform: "uppercase",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+              {maintenanceSpendData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={maintenanceSpendData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={90}
+                      dataKey="value"
+                      stroke="#000"
+                      strokeWidth={4}
+                    >
+                      {maintenanceSpendData.map((_, i) => (
+                        <Cell
+                          key={i}
+                          fill={
+                            i % 2 === 0
+                              ? "hsl(var(--primary))"
+                              : "hsl(var(--secondary))"
+                          }
+                        />
+                      ))}
+                    </Pie>
+                    <ReChartsTooltip />
+                    <Legend
+                      verticalAlign="bottom"
+                      height={36}
+                      wrapperStyle={{
+                        fontWeight: 900,
+                        fontSize: "10px",
+                        textTransform: "uppercase",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className={styles.chartEmpty}>
+                  <p>No Refit Expenditure Data</p>
+                </div>
+              )}
             </div>
           </div>
 
