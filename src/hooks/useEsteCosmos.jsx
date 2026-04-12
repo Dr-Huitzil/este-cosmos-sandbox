@@ -68,6 +68,7 @@ export function FuelTrackerProvider({ children }) {
   const [isNewFuelLogOpen, setIsNewFuelLogOpen] = useState(false);
   const [isNewServiceLogOpen, setIsNewServiceLogOpen] = useState(false);
   const [isNewTireLogOpen, setIsNewTireLogOpen] = useState(false);
+  const [isNewReclaimOpen, setIsNewReclaimOpen] = useState(false);
   const [isMobileFabOpen, setIsMobileFabOpen] = useState(false);
 
   // ── Form checkbox + async-op state ─────────────────────────────
@@ -168,6 +169,25 @@ export function FuelTrackerProvider({ children }) {
   }, [firestore, user?.uid, selectedVehicleId, currentView]);
   const { data: tireEntriesData } = useCollection(tireQuery);
   const tireEntries = useMemo(() => tireEntriesData || [], [tireEntriesData]);
+
+  // ── Firebase — reclaim entries ──────────────────────────────────
+  const reclaimQuery = useMemoFirebase(() => {
+    if (!firestore || !user || !selectedVehicleId || currentView === "settings")
+      return null;
+    return collection(
+      firestore,
+      "userProfiles",
+      user.uid,
+      "vehicles",
+      selectedVehicleId,
+      "reclaimEntries",
+    );
+  }, [firestore, user?.uid, selectedVehicleId, currentView]);
+  const { data: reclaimEntriesData } = useCollection(reclaimQuery);
+  const reclaimEntries = useMemo(
+    () => reclaimEntriesData || [],
+    [reclaimEntriesData],
+  );
 
   // ── Pre-sorted arrays (computed once, reused by all consumers) ──
   // Sorting is O(n log n) — do it once per data change, never per sub-consumer.
@@ -348,6 +368,8 @@ export function FuelTrackerProvider({ children }) {
   );
   const handleOpenTireLog = useCallback(() => setIsNewTireLogOpen(true), []);
   const handleCloseTireLog = useCallback(() => setIsNewTireLogOpen(false), []);
+  const handleOpenReclaim = useCallback(() => setIsNewReclaimOpen(true), []);
+  const handleCloseReclaim = useCallback(() => setIsNewReclaimOpen(false), []);
   const handleToggleFab = useCallback(() => setIsMobileFabOpen((v) => !v), []);
 
   // ── Stable callbacks — auth & misc ─────────────────────────────
@@ -373,6 +395,10 @@ export function FuelTrackerProvider({ children }) {
   }, []);
   const fabOpenVehicle = useCallback(() => {
     setIsNewVehicleOpen(true);
+    setIsMobileFabOpen(false);
+  }, []);
+  const fabOpenReclaim = useCallback(() => {
+    setIsNewReclaimOpen(true);
     setIsMobileFabOpen(false);
   }, []);
 
@@ -639,6 +665,56 @@ export function FuelTrackerProvider({ children }) {
     [user, firestore, selectedVehicleId, toast],
   );
 
+  const handleAddReclaim = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!user || !firestore || !selectedVehicleId) return;
+      const fd = new FormData(e.currentTarget);
+      const amount = parseFloat(fd.get("amount"));
+      const day = fd.get("date");
+
+      // ── Validation ──
+      if (!Number.isFinite(amount) || amount <= 0 || amount > 99_999) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Amount",
+          description: "Reclaim amount must be between 0 and 99,999.",
+        });
+        return;
+      }
+      if (!day) {
+        toast({
+          variant: "destructive",
+          title: "Missing Date",
+          description: "Please select a reclaim date.",
+        });
+        return;
+      }
+
+      const colRef = collection(
+        firestore,
+        "userProfiles",
+        user.uid,
+        "vehicles",
+        selectedVehicleId,
+        "reclaimEntries",
+      );
+      addDocumentNonBlocking(colRef, {
+        vehicleId: selectedVehicleId,
+        day,
+        amount,
+        description: String(fd.get("description") ?? "")
+          .trim()
+          .slice(0, 500),
+        createdAt: serverTimestamp(),
+      });
+      setIsNewReclaimOpen(false);
+      e.currentTarget.reset();
+      toast({ title: "LOGGED", description: "Berry deposit confirmed." });
+    },
+    [user, firestore, selectedVehicleId, toast],
+  );
+
   const handleUpdateProfile = useCallback(
     async (e) => {
       e.preventDefault();
@@ -701,6 +777,7 @@ export function FuelTrackerProvider({ children }) {
     isNewFuelLogOpen,
     isNewServiceLogOpen,
     isNewTireLogOpen,
+    isNewReclaimOpen,
     isMobileFabOpen,
 
     // Data
@@ -708,6 +785,7 @@ export function FuelTrackerProvider({ children }) {
     fuelEntries,
     serviceEntries,
     tireEntries,
+    reclaimEntries,
     selectedVehicle,
     oilHealth,
     thrusterHealth,
@@ -735,12 +813,15 @@ export function FuelTrackerProvider({ children }) {
     handleCloseServiceLog,
     handleOpenTireLog,
     handleCloseTireLog,
+    handleOpenReclaim,
+    handleCloseReclaim,
     handleToggleFab,
 
     // FAB shortcuts
     fabOpenFuel,
     fabOpenService,
     fabOpenVehicle,
+    fabOpenReclaim,
 
     // Form / misc handlers
     toggleTheme,
@@ -752,6 +833,7 @@ export function FuelTrackerProvider({ children }) {
     handleAddFuelLog,
     handleAddServiceLog,
     handleAddTireLog,
+    handleAddReclaim,
     handleUpdateProfile,
   };
 

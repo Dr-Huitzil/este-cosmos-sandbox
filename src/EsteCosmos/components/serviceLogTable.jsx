@@ -9,7 +9,7 @@ import styles from "./serviceLogTable.module.css";
  * wrapped in React.memo - only re-renders when entries array reference changes
  * @param {{ entries: Array }} props
  */
-export const ServiceLogTable = memo(function ServiceLogTable({ entries }) {
+export const ServiceLogTable = memo(function ServiceLogTable({ entries = [] }) {
   const sortedEntries = useMemo(
     () =>
       [...entries].sort(
@@ -53,7 +53,7 @@ export const ServiceLogTable = memo(function ServiceLogTable({ entries }) {
                     {entry.reimbursable && (
                       <span
                         className={styles.reimbursableBadge}
-                        title={`Reimbursable: ${formatCurrency(entry.reimbursableAmount || 0)}`}
+                        title={`Reimbursable: ${formatCurrency(entry.reimbursementAmount || 0)}`}
                       >
                         <CheckCircle2 size={12} />
                       </span>
@@ -76,7 +76,7 @@ export const ServiceLogTable = memo(function ServiceLogTable({ entries }) {
                     <span className={styles.netCost}>
                       Net:{" "}
                       {formatCurrency(
-                        entry.totalCost - (entry.reimbursmentAmount || 0),
+                        entry.totalCost - (entry.reimbursementAmount || 0),
                       )}
                     </span>
                   )}

@@ -9,7 +9,7 @@ import styles from "./fuelLogTable.module.css";
  * Wrapped in React.memo - only re-renders when entries reference change
  * @param {{ entries: Array }} props
  */
-export const FuelLogTable = memo(function FuelLogTable({ entries }) {
+export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
   const [pageSize, setPageSize] = useState("5");
 
   const sortedEntries = useMemo(
