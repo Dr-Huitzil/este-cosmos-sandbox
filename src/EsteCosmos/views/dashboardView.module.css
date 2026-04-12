@@ -103,12 +103,7 @@
   }
 }
 
-/* 5-column layout on extreme resolutions */
-@media (min-width: 1920px) {
-  .fleetGrid {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  }
-}
+
 
 /* ─── Dashboard Detail (Tabs + Diagnostics) ────────────────────────────────── */
 
@@ -177,19 +172,25 @@
 
 .carouselLabel {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   cursor: default;
 }
 
 /* Individual tab button */
 .tabBtn {
-  flex: 1;                /* both tabs share the row equally */
-  height: 4rem;           /* 64 px — generous tap target */
+  flex: 1;
+  height: 4rem;
   padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: hsl(var(--muted));
   color: hsl(var(--foreground));
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0px rgba(0,0,0,1); /* raised shadow */
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
   font-weight: 900;
   font-size: 0.875rem;
   text-transform: uppercase;

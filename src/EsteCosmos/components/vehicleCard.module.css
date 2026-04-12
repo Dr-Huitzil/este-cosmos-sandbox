@@ -26,10 +26,10 @@
 
 /* Active / selected card — visually marks which vehicle is currently focused */
 .cardActive {
-  background-color: hsl(var(--primary) / 0.1); /* very light primary tint floods the background */
-  border-color: hsl(var(--primary));            /* swaps the border to the primary color to match */
-  box-shadow: 0 0 0 6px hsl(var(--primary) / 0.2); /* adds a soft glowing ring outside the border */
-  transform: scale(1.02);                       /* very slightly enlarges the card so it pops above its siblings */
+  background-color: hsl(var(--card));
+  border: 8px solid hsl(var(--primary)); /* Thick pink border from target image */
+  box-shadow: 12px 12px 0px 0px rgba(0,0,0,1); /* Slightly heavier shadow for active state */
+  transform: scale(1.02);
 }
 
 /* ─── Image Block ───────────────────────────────────────────────────────────── */
@@ -114,10 +114,14 @@
 
 /* Two-column grid below the image that shows odometer and efficiency */
 .stats {
-  padding: 1.5rem;                       /* 24 px inner spacing so the numbers don't touch the card edges */
-  display: grid;                         /* uses CSS grid to create equal-width columns */
-  grid-template-columns: 1fr 1fr;        /* two equal columns — left for Distance, right for Efficiency */
-  gap: 1rem;                             /* 16 px gutter between the two stat items */
+  padding: 1.25rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background-color: hsl(var(--primary) / 0.08); /* Pinkish tint for the stats area */
+  /* Added scanline texture to match the target screenshot */
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.03) 50%);
+  background-size: 100% 4px;
 }
 
 /* A single label + value group inside the stats grid */
@@ -151,17 +155,18 @@
 
 /* The main numeric value for each stat */
 .statValue {
-  font-size: 1.125rem;      /* 18 px — large enough to be easily scannable */
-  font-weight: 900;         /* heavy weight reinforces the numeric hierarchy */
-  font-style: italic;       /* italic slant matches the card's sporty aesthetic */
-  letter-spacing: -0.05em; /* tight tracking for a display-number feel */
-  color: hsl(var(--foreground)); /* default stat color — used for the Distance/odometer value */
+  font-size: 1.5rem;        /* Boosted size for better hierarchy */
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.05em;
+  color: hsl(var(--foreground));
 }
 
 /* Modifier for the Efficiency value — makes it bigger and accent-colored to draw the eye */
 .statValuePrimary {
-  font-size: 1.5rem;        /* 24 px — larger than the odometer value to emphasize efficiency */
-  color: hsl(var(--primary)); /* brand accent color highlights this as the headline metric */
+  font-size: 2.25rem;       /* Huge pink efficiency value from target image */
+  color: hsl(var(--primary));
+  line-height: 1;
 }
 
 /* ─── Access Bridge Footer ──────────────────────────────────────────────────── */

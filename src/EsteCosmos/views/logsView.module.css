@@ -19,6 +19,7 @@
   padding: 1rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;             /* space between the icon and the heading text */
   font-weight: 900;
   font-size: 0.75rem;      /* 12 px — compact heading for the table section */

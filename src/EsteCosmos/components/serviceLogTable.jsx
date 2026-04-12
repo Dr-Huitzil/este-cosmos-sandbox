@@ -20,7 +20,7 @@ export const ServiceLogTable = memo(function ServiceLogTable({ entries }) {
 
   if (entries.length === 0) {
     return (
-      <div className={StyleSheet.emptyState}>
+      <div className={styles.emptyState}>
         <Wrench className={styles.emptyIcon} />
         <h3 className={styles.emptyTitle}>NO RECORDS</h3>
         <p className={styles.emptySubtitle}>

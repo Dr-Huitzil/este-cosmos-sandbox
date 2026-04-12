@@ -21,10 +21,9 @@ export const FuelLogTable = memo(function FuelLogTable({ entries }) {
   if (entries.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <Zap className={styles.emptyIcon}>
-          <h3 className={styles.emptyTitle}>NO TELEMETRY</h3>
-          <p className={styles.emptySubtitle}>Initialize logging</p>
-        </Zap>
+        <Zap className={styles.emptyIcon} />
+        <h3 className={styles.emptyTitle}>NO TELEMETRY</h3>
+        <p className={styles.emptySubtitle}>Initialize reactor logging</p>
       </div>
     );
   }

@@ -64,14 +64,14 @@ export const VehicleCard = memo(function VehicleCar({
               ? `${latestEntry.odometer.toLocaleString()} LY`
               : "---"}
           </p>
-          <div className={`${styles.statItem} ${styles.statRight}`}>
-            <p className={`${styles.statItem} ${styles.statLabelRight}`}>
-              <Zap size={12} /> EFFICIENCY
-            </p>
-            <p className={`${styles.statValue} ${styles.statValuePrimary}`}>
-              {avgMileage} U/C
-            </p>
-          </div>
+        </div>
+        <div className={`${styles.statItem} ${styles.statRight}`}>
+          <p className={`${styles.statLabel} ${styles.statLabelRight}`}>
+            <Zap size={12} /> EFFICIENCY
+          </p>
+          <p className={`${styles.statValue} ${styles.statValuePrimary}`}>
+            {avgMileage} U/C
+          </p>
         </div>
       </div>
 
