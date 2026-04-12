@@ -101,7 +101,7 @@ export function FuelTrackerProvider({ children }) {
     return collection(firestore, "userProfiles", user.uid, "vehicles");
   }, [firestore, user?.uid]);
   const { data: vehiclesData } = useCollection(vehiclesQuery);
-  const vehicles = vehiclesData || [];
+  const vehicles = useMemo(() => vehiclesData || [], [vehiclesData]);
 
   // Auto-select first vehicle once data arrives
   useEffect(() => {
