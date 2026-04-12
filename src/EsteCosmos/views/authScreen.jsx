@@ -86,7 +86,7 @@ export function AuthScreen() {
 
         <div className={styles.tabList}>
           <button
-            className={`${styles.tabBtn} ${auth === "login" ? styles.tabBtnActive : ""}`}
+            className={`${styles.tabBtn} ${authTab === "login" ? styles.tabBtnActive : ""}`}
             onClick={() => setAuthTab("login")}
           >
             Link

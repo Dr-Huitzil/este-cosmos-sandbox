@@ -5,18 +5,15 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
-  CollectionReference,
-  DocumentReference,
-  SetOptions,
 } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
-import {FirestorePermissionError} from '@/firebase/errors';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 /**
  * Initiates a setDoc operation for a document reference.
  * Does NOT await the write operation internally.
  */
-export function setDocumentNonBlocking(docRef: DocumentReference, data: any, options: SetOptions) {
+export function setDocumentNonBlocking(docRef, data, options) {
   setDoc(docRef, data, options).catch(error => {
     errorEmitter.emit(
       'permission-error',
@@ -36,7 +33,7 @@ export function setDocumentNonBlocking(docRef: DocumentReference, data: any, opt
  * Does NOT await the write operation internally.
  * Returns the Promise for the new doc ref, but typically not awaited by caller.
  */
-export function addDocumentNonBlocking(colRef: CollectionReference, data: any) {
+export function addDocumentNonBlocking(colRef, data) {
   const promise = addDoc(colRef, data)
     .catch(error => {
       errorEmitter.emit(
@@ -56,7 +53,7 @@ export function addDocumentNonBlocking(colRef: CollectionReference, data: any) {
  * Initiates an updateDoc operation for a document reference.
  * Does NOT await the write operation internally.
  */
-export function updateDocumentNonBlocking(docRef: DocumentReference, data: any) {
+export function updateDocumentNonBlocking(docRef, data) {
   updateDoc(docRef, data)
     .catch(error => {
       errorEmitter.emit(
@@ -75,7 +72,7 @@ export function updateDocumentNonBlocking(docRef: DocumentReference, data: any) 
  * Initiates a deleteDoc operation for a document reference.
  * Does NOT await the write operation internally.
  */
-export function deleteDocumentNonBlocking(docRef: DocumentReference) {
+export function deleteDocumentNonBlocking(docRef) {
   deleteDoc(docRef)
     .catch(error => {
       errorEmitter.emit(

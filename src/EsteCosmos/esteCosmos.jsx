@@ -30,7 +30,7 @@ import styles from "./esteCosmos.module.css";
  * This file is intentionally a thin shell: all logic lives in useFuelTracker,
  * all views in their own View files, and all modals in modals/.
  */
-export default function FuelTrackerWindow() {
+export default function EsteCosmosWindow() {
   const {
     user,
     isUserLoading,

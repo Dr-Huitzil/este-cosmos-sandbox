@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import "./index.css";
 import { initializeFirebase, FirebaseProvider } from "@/firebase";
 import { ToastProvider } from "@/hooks/use-toast";
 import { Toaster } from "@/ui/toaster";
