@@ -18,13 +18,7 @@ import {
   useAuth,
   setDocumentNonBlocking,
 } from "@/firebase";
-import {
-  collection,
-  doc,
-  serverTimestamp,
-  updateDoc,
-  getDocs,
-} from "firebase/firestore";
+import { collection, doc, serverTimestamp } from "firebase/firestore";
 import { signOut, updateProfile } from "firebase/auth";
 import { calculateMPG, calculateHealth } from "../util/fuel-utils";
 // ---------------------------------------------------------------------------
@@ -46,6 +40,7 @@ export function isSafePhotoURL(url) {
     return false;
   }
 }
+
 /**
  * useFuelTracker — central hook for FuelTrackerWindow.
  * Owns all state, Firebase subscriptions, derived memos, and stable callbacks.
@@ -55,17 +50,7 @@ const FuelTrackerContext = createContext(null);
 
 export function FuelTrackerProvider({ children }) {
   const { toast } = useToast();
-  const { user, isUserLoading: firebaseLoading } = useUser();
-  const [minLoadingDone, setMinLoadingDone] = useState(false);
-
-  // ── Extend Preloader ──────────────────────────────────────────
-  // Artificial delay to ensure the splash screen feels substantial
-  useEffect(() => {
-    const timer = setTimeout(() => setMinLoadingDone(true), 1500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const isUserLoading = firebaseLoading || !minLoadingDone;
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const auth = useAuth();
 
@@ -83,7 +68,6 @@ export function FuelTrackerProvider({ children }) {
   const [isNewFuelLogOpen, setIsNewFuelLogOpen] = useState(false);
   const [isNewServiceLogOpen, setIsNewServiceLogOpen] = useState(false);
   const [isNewTireLogOpen, setIsNewTireLogOpen] = useState(false);
-  const [isNewReclaimOpen, setIsNewReclaimOpen] = useState(false);
   const [isMobileFabOpen, setIsMobileFabOpen] = useState(false);
 
   // ── Form checkbox + async-op state ─────────────────────────────
@@ -105,9 +89,10 @@ export function FuelTrackerProvider({ children }) {
     }
   }, []);
 
-  // Sync 'dark' class on HTML root whenever isDarkMode changes
+  // Sync 'dark' class on the widget root whenever isDarkMode changes
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
+    if (!rootRef.current) return;
+    rootRef.current.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
   // ── Firebase — vehicles ─────────────────────────────────────────
@@ -140,7 +125,7 @@ export function FuelTrackerProvider({ children }) {
     );
   }, [firestore, user?.uid, selectedVehicleId, currentView]);
   const { data: fuelEntriesData } = useCollection(fuelQuery);
-  const fuelEntries = fuelEntriesData || [];
+  const fuelEntries = useMemo(() => fuelEntriesData || [], [fuelEntriesData]);
 
   // ── Firebase — service entries ──────────────────────────────────
   // PERF: Not needed on settings view — gate it off.
@@ -157,24 +142,10 @@ export function FuelTrackerProvider({ children }) {
     );
   }, [firestore, user?.uid, selectedVehicleId, currentView]);
   const { data: serviceEntriesData } = useCollection(serviceQuery);
-  const serviceEntries = serviceEntriesData || [];
-
-  // ── Firebase — reimbursement entries ───────────────────────────
-  // PERF: Not needed on settings view.
-  const reclaimQuery = useMemoFirebase(() => {
-    if (!firestore || !user || !selectedVehicleId || currentView === "settings")
-      return null;
-    return collection(
-      firestore,
-      "userProfiles",
-      user.uid,
-      "vehicles",
-      selectedVehicleId,
-      "reimbursementEntries",
-    );
-  }, [firestore, user?.uid, selectedVehicleId, currentView]);
-  const { data: reclaimEntriesData } = useCollection(reclaimQuery);
-  const reclaimEntries = reclaimEntriesData || [];
+  const serviceEntries = useMemo(
+    () => serviceEntriesData || [],
+    [serviceEntriesData],
+  );
 
   // ── Firebase — tire pressure entries ───────────────────────────
   // PERF: Only used on the dashboard (alerts + health bar) — gate to dashboard only.
@@ -196,7 +167,7 @@ export function FuelTrackerProvider({ children }) {
     );
   }, [firestore, user?.uid, selectedVehicleId, currentView]);
   const { data: tireEntriesData } = useCollection(tireQuery);
-  const tireEntries = tireEntriesData || [];
+  const tireEntries = useMemo(() => tireEntriesData || [], [tireEntriesData]);
 
   // ── Pre-sorted arrays (computed once, reused by all consumers) ──
   // Sorting is O(n log n) — do it once per data change, never per sub-consumer.
@@ -310,25 +281,18 @@ export function FuelTrackerProvider({ children }) {
     return serviceEntries.filter((e) => new Date(e.date) >= cutoff);
   }, [serviceEntries, analyticsRange]);
 
-  const filteredReclaim = useMemo(() => {
-    if (analyticsRange === "all") return reclaimEntries;
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - parseInt(analyticsRange));
-    return reclaimEntries.filter((e) => new Date(e.day) >= cutoff);
-  }, [reclaimEntries, analyticsRange]);
-
-  const fuelEfficiencyData = useMemo(() => {
-    const sorted = [...filteredFuel].sort(
-      (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime(),
-    );
-    return sorted
-      .map((e) => ({
-        // PERF: Reuse the stable Intl instance instead of creating a new one per entry
-        date: shortDateFormatter.format(new Date(e.day)),
-        mpg: calculateMPG(e, fuelEntries),
-      }))
-      .filter((item) => item.mpg > 0);
-  }, [filteredFuel, fuelEntries, shortDateFormatter]);
+  const fuelEfficiencyData = useMemo(
+    () =>
+      [...filteredFuel]
+        .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime())
+        .filter((e) => e.mileage > 0)
+        .map((e) => ({
+          // PERF: Reuse the stable Intl instance instead of creating a new one per entry
+          date: shortDateFormatter.format(new Date(e.day)),
+          mpg: e.mileage,
+        })),
+    [filteredFuel, shortDateFormatter],
+  );
 
   const maintenanceSpendData = useMemo(() => {
     const categories = {};
@@ -340,10 +304,13 @@ export function FuelTrackerProvider({ children }) {
   }, [filteredService]);
 
   const reimbursementStats = useMemo(() => {
-    const total = filteredFuel.reduce((sum, f) => sum + f.totalPrice, 0);
-    const reimbursed = filteredReclaim.reduce((sum, r) => sum + r.amount, 0);
+    const total = filteredService.reduce((sum, s) => sum + s.totalCost, 0);
+    const reimbursed = filteredService.reduce(
+      (sum, s) => sum + (s.reimbursementAmount || 0),
+      0,
+    );
     return { total, reimbursed, net: total - reimbursed };
-  }, [filteredFuel, filteredReclaim]);
+  }, [filteredService]);
 
   // ── Stable callbacks — theme & nav ──────────────────────────────
   const toggleTheme = useCallback(() => {
@@ -381,8 +348,6 @@ export function FuelTrackerProvider({ children }) {
   );
   const handleOpenTireLog = useCallback(() => setIsNewTireLogOpen(true), []);
   const handleCloseTireLog = useCallback(() => setIsNewTireLogOpen(false), []);
-  const handleOpenReclaim = useCallback(() => setIsNewReclaimOpen(true), []);
-  const handleCloseReclaim = useCallback(() => setIsNewReclaimOpen(false), []);
   const handleToggleFab = useCallback(() => setIsMobileFabOpen((v) => !v), []);
 
   // ── Stable callbacks — auth & misc ─────────────────────────────
@@ -404,10 +369,6 @@ export function FuelTrackerProvider({ children }) {
   }, []);
   const fabOpenService = useCallback(() => {
     setIsNewServiceLogOpen(true);
-    setIsMobileFabOpen(false);
-  }, []);
-  const fabOpenReclaim = useCallback(() => {
-    setIsNewReclaimOpen(true);
     setIsMobileFabOpen(false);
   }, []);
   const fabOpenVehicle = useCallback(() => {
@@ -632,52 +593,6 @@ export function FuelTrackerProvider({ children }) {
     [user, firestore, selectedVehicleId, isReimbursable, toast],
   );
 
-  const handleAddReclaim = useCallback(
-    (e) => {
-      e.preventDefault();
-      if (!user || !firestore || !selectedVehicleId) return;
-
-      const fd = new FormData(e.currentTarget);
-      const amount = parseFloat(fd.get("amount"));
-      const day = fd.get("date");
-
-      if (!Number.isFinite(amount) || amount <= 0 || amount > 999_999) {
-        toast({
-          variant: "destructive",
-          title: "Invalid Amount",
-          description: "Reclaim amount must be a positive number.",
-        });
-        return;
-      }
-      if (!day) return;
-
-      const colRef = collection(
-        firestore,
-        "userProfiles",
-        user.uid,
-        "vehicles",
-        selectedVehicleId,
-        "reimbursementEntries",
-      );
-      addDocumentNonBlocking(colRef, {
-        vehicleId: selectedVehicleId,
-        day,
-        amount,
-        description: String(fd.get("description") ?? "")
-          .trim()
-          .slice(0, 500),
-        createdAt: serverTimestamp(),
-      });
-      setIsNewReclaimOpen(false);
-      e.currentTarget.reset();
-      toast({
-        title: "RECLAIM SAVED",
-        description: "Berry deposit cataloged.",
-      });
-    },
-    [user, firestore, selectedVehicleId, toast],
-  );
-
   const handleAddTireLog = useCallback(
     (e) => {
       e.preventDefault();
@@ -727,7 +642,6 @@ export function FuelTrackerProvider({ children }) {
   const handleUpdateProfile = useCallback(
     async (e) => {
       e.preventDefault();
-      if (isUpdating) return; // SEC: block double-submission spam
       // SEC: Guard against null currentUser if session expires between renders
       if (!auth.currentUser) {
         toast({
@@ -764,55 +678,8 @@ export function FuelTrackerProvider({ children }) {
         setIsUpdating(false);
       }
     },
-    [auth, toast, isUpdating],
+    [auth, toast],
   );
-
-  const handleMigrateMPG = useCallback(async () => {
-    if (!user || !firestore || !selectedVehicleId) return;
-    try {
-      const colRef = collection(
-        firestore,
-        "userProfiles",
-        user.uid,
-        "vehicles",
-        selectedVehicleId,
-        "fuelEntries",
-      );
-      const snapshot = await getDocs(colRef);
-
-      const allEntries = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-
-      let updatedCount = 0;
-      let dbg = [];
-      for (const entry of allEntries) {
-        const correctMpg = calculateMPG(entry, allEntries);
-        if (correctMpg !== entry.mileage) {
-          const entryRef = doc(colRef, entry.id);
-          await updateDoc(entryRef, { mileage: correctMpg });
-          updatedCount++;
-          if (dbg.length < 2)
-            dbg.push(`${entry.day}: ${entry.mileage} -> ${correctMpg}`);
-        }
-      }
-
-      if (updatedCount > 0) {
-        toast({
-          title: "CALIBRATION FINISHED",
-          description: `Updated ${updatedCount} logs. e.g. ${dbg.join(", ")}`,
-        });
-      } else {
-        toast({
-          description: "All database logs are already perfectly calibrated.",
-        });
-      }
-    } catch (err) {
-      toast({
-        variant: "destructive",
-        title: "Calibration Failed",
-        description: err.message,
-      });
-    }
-  }, [user, firestore, selectedVehicleId, toast]);
 
   // ── Return everything the shell needs ───────────────────────────
   const value = {
@@ -834,7 +701,6 @@ export function FuelTrackerProvider({ children }) {
     isNewFuelLogOpen,
     isNewServiceLogOpen,
     isNewTireLogOpen,
-    isNewReclaimOpen,
     isMobileFabOpen,
 
     // Data
@@ -842,7 +708,6 @@ export function FuelTrackerProvider({ children }) {
     fuelEntries,
     serviceEntries,
     tireEntries,
-    reclaimEntries,
     selectedVehicle,
     oilHealth,
     thrusterHealth,
@@ -870,14 +735,11 @@ export function FuelTrackerProvider({ children }) {
     handleCloseServiceLog,
     handleOpenTireLog,
     handleCloseTireLog,
-    handleOpenReclaim,
-    handleCloseReclaim,
     handleToggleFab,
 
     // FAB shortcuts
     fabOpenFuel,
     fabOpenService,
-    fabOpenReclaim,
     fabOpenVehicle,
 
     // Form / misc handlers
@@ -889,10 +751,8 @@ export function FuelTrackerProvider({ children }) {
     handleAddVehicle,
     handleAddFuelLog,
     handleAddServiceLog,
-    handleAddReclaim,
     handleAddTireLog,
     handleUpdateProfile,
-    handleMigrateMPG,
   };
 
   return (
