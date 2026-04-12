@@ -9,7 +9,12 @@ import {
   useAuth,
   setDocumentNonBlocking,
 } from "@/firebase";
-import { collection, doc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { signOut, updateProfile } from "firebase/auth";
 import { calculateMPG, calculateHealth } from "../util/fuel-utils";
 // ---------------------------------------------------------------------------
@@ -277,18 +282,18 @@ export function useFuelTracker() {
     return serviceEntries.filter((e) => new Date(e.date) >= cutoff);
   }, [serviceEntries, analyticsRange]);
 
-  const fuelEfficiencyData = useMemo(
-    () =>
-      [...filteredFuel]
-        .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime())
-        .filter((e) => e.mileage > 0)
-        .map((e) => ({
-          // PERF: Reuse the stable Intl instance instead of creating a new one per entry
-          date: shortDateFormatter.format(new Date(e.day)),
-          mpg: e.mileage,
-        })),
-    [filteredFuel, shortDateFormatter],
-  );
+  const fuelEfficiencyData = useMemo(() => {
+    const sorted = [...filteredFuel].sort(
+      (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime(),
+    );
+    return sorted
+      .map((e) => ({
+        // PERF: Reuse the stable Intl instance instead of creating a new one per entry
+        date: shortDateFormatter.format(new Date(e.day)),
+        mpg: calculateMPG(e, fuelEntries),
+      }))
+      .filter((item) => item.mpg > 0);
+  }, [filteredFuel, fuelEntries, shortDateFormatter]);
 
   const maintenanceSpendData = useMemo(() => {
     const categories = {};
@@ -677,6 +682,48 @@ export function useFuelTracker() {
     [auth, toast],
   );
 
+  const handleMigrateMPG = useCallback(async () => {
+    if (!user || !firestore || !selectedVehicleId) return;
+    try {
+      let updatedCount = 0;
+      let dbg = [];
+      for (const entry of fuelEntriesRef.current) {
+        const correctMpg = calculateMPG(entry, fuelEntriesRef.current);
+        if (correctMpg !== entry.mileage) {
+          const entryRef = doc(
+            firestore,
+            "userProfiles",
+            user.uid,
+            "vehicles",
+            selectedVehicleId,
+            "fuelEntries",
+            entry.id,
+          );
+          await updateDoc(entryRef, { mileage: correctMpg });
+          updatedCount++;
+          if (dbg.length < 2)
+            dbg.push(`${entry.day}: ${entry.mileage} -> ${correctMpg}`);
+        }
+      }
+      if (updatedCount > 0) {
+        toast({
+          title: "CALIBRATION FINISHED",
+          description: `Updated ${updatedCount} logs. e.g. ${dbg.join(", ")}`,
+        });
+      } else {
+        toast({
+          description: "All database logs are already perfectly calibrated.",
+        });
+      }
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Calibration Failed",
+        description: err.message,
+      });
+    }
+  }, [user, firestore, selectedVehicleId, toast]);
+
   // ── Return everything the shell needs ───────────────────────────
   return {
     // Auth / Firebase primitives
@@ -749,5 +796,6 @@ export function useFuelTracker() {
     handleAddServiceLog,
     handleAddTireLog,
     handleUpdateProfile,
+    handleMigrateMPG,
   };
 }

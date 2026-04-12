@@ -14,6 +14,7 @@ export const SettingsView = memo(function SettingsView({
   onSignOut,
   onUpdateProfile,
   isUpdating,
+  onMigrateMPG,
 }) {
   return (
     <div className={styles.viewPad}>
@@ -87,6 +88,22 @@ export const SettingsView = memo(function SettingsView({
               </span>
             </label>
           </div>
+        </div>
+
+        {/* Database Calibration */}
+        <div
+          className={`${styles.retroCard} ${styles.settingsCard} ${styles.settingsCardSecondary}`}
+        >
+          <h3 className={styles.settingsCardTitle}>SYSTEM MAINTENANCE</h3>
+          <p className={styles.themeSubLabel} style={{ marginBottom: "1rem" }}>
+            Identify and correct historical fuel logs with inaccurate telemetry.
+          </p>
+          <button
+            onClick={onMigrateMPG}
+            className={`${styles.retroBtn} ${styles.updateBtn}`}
+          >
+            RUN CALIBRATION
+          </button>
         </div>
 
         {/* Sign out */}

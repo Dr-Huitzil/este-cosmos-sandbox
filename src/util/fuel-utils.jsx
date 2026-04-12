@@ -20,11 +20,13 @@ export function calculateMPG(currentEntry, allEntries) {
 
   for (const entry of sorted) {
     if (entry.odometer >= currentEntry.odometer) continue;
-    totalFuel += entry.fuelQuantity;
+
     if (entry.isFull) {
       prevFullEntry = entry;
       break;
     }
+    // Only add partial fill-ups to the total fuel
+    totalFuel += entry.fuelQuantity;
   }
 
   if (!prevFullEntry) return 0;

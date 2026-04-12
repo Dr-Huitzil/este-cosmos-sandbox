@@ -3,6 +3,42 @@
   overflow-x: auto;
 }
 
+/* ─── Controls ───────────────────────────────────────────────────────────────── */
+.tableHeaderControls {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid hsl(var(--foreground));
+  margin-bottom: 0.5rem;
+}
+
+.pageSelectLabel {
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pageSelect {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border: 2px solid hsl(var(--foreground));
+  padding: 0.25rem 0.5rem;
+  font-weight: 900;
+  font-family: inherit;
+  font-style: italic;
+  font-size: 0.75rem;
+  box-shadow: 2px 2px 0px hsl(var(--primary));
+  cursor: pointer;
+  outline: none;
+}
+.pageSelect:focus {
+  box-shadow: 2px 2px 0px hsl(var(--secondary));
+}
+
 /* The <table> itself — collapses borders so adjacent cell borders merge into one line */
 .table {
   width: 100%;              /* stretches to fill the wrapper */

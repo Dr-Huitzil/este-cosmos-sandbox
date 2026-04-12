@@ -1,7 +1,7 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { MapPin, Zap } from "lucide-react";
 import { format } from "date-fns";
-import { formatCurrency } from "../../util/fuel-utils";
+import { formatCurrency, calculateMPG } from "../../util/fuel-utils";
 import styles from "./fuelLogTable.module.css";
 
 /**
@@ -10,6 +10,8 @@ import styles from "./fuelLogTable.module.css";
  * @param {{ entries: Array }} props
  */
 export const FuelLogTable = memo(function FuelLogTable({ entries }) {
+  const [pageSize, setPageSize] = useState("5");
+
   const sortedEntries = useMemo(
     () =>
       [...entries].sort(
@@ -17,6 +19,11 @@ export const FuelLogTable = memo(function FuelLogTable({ entries }) {
       ),
     [entries],
   );
+
+  const displayedEntries = useMemo(() => {
+    if (pageSize === "all") return sortedEntries;
+    return sortedEntries.slice(0, parseInt(pageSize, 10));
+  }, [sortedEntries, pageSize]);
 
   if (entries.length === 0) {
     return (
@@ -30,6 +37,22 @@ export const FuelLogTable = memo(function FuelLogTable({ entries }) {
 
   return (
     <div className={styles.tableWrapper}>
+      <div className={styles.tableHeaderControls}>
+        <label className={styles.pageSelectLabel}>
+          SHOW:
+          <select
+            className={styles.pageSelect}
+            value={pageSize}
+            onChange={(e) => setPageSize(e.target.value)}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="100">100</option>
+            <option value="all">ALL</option>
+          </select>
+        </label>
+      </div>
       <table className={styles.table}>
         <thead>
           <tr className={styles.headerRow}>
@@ -41,38 +64,41 @@ export const FuelLogTable = memo(function FuelLogTable({ entries }) {
           </tr>
         </thead>
         <tbody>
-          {sortedEntries.map((entry) => (
-            <tr key={entry.id} className={styles.row}>
-              <td className={styles.td}>
-                <div className={styles.cellStack}>
-                  <span className={styles.cellPrimary}>
-                    {format(new Date(entry.day), "MM DD, YYYY")}
-                  </span>
-                  {entry.gasStation && (
-                    <span className={styles.cellSecondary}>
-                      <MapPin size={8} /> {entry.gasStation}
+          {displayedEntries.map((entry) => {
+            const dynamicMPG = calculateMPG(entry, entries);
+            return (
+              <tr key={entry.id} className={styles.row}>
+                <td className={styles.td}>
+                  <div className={styles.cellStack}>
+                    <span className={styles.cellPrimary}>
+                      {format(new Date(entry.day), "MMM dd, yyyy")}
+                    </span>
+                    {entry.gasStation && (
+                      <span className={styles.cellSecondary}>
+                        <MapPin size={8} /> {entry.gasStation}
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className={`${styles.td} ${styles.tdMono}`}>
+                  {entry.odometer?.toLocaleString()}
+                </td>
+                <td className={styles.td}>{entry.fuelQuantity}</td>
+                <td className={`${styles.td} ${styles.tdPrice}`}>
+                  {formatCurrency(entry.totalPrice)}
+                </td>
+                <td className={`${styles.td} ${styles.tdRight}`}>
+                  {dynamicMPG > 0 ? (
+                    <span className={styles.effBadge}>{dynamicMPG} U/C</span>
+                  ) : (
+                    <span className={styles.partialLabel}>
+                      {entry.isFull ? "FULL TANK" : "PARTIAL"}
                     </span>
                   )}
-                </div>
-              </td>
-              <td className={`${styles.td} ${styles.tdMono}`}>
-                {entry.odometer.toLocalString()}
-              </td>
-              <td className={styles.td}>{entry.fuelQuantity}</td>
-              <td className={`${styles.td} ${styles.tdPrice}`}>
-                {formatCurrency(entry.totalPrice)}
-              </td>
-              <td className={`${styles.td} ${styles.tdRight}`}>
-                {entry.mileage > 0 ? (
-                  <span className={styles.effBadge}>{entry.mileage} U/C</span>
-                ) : (
-                  <span className={styles.partialLabel}>
-                    {entry.isFull ? "FULL TANK" : "PARTIAL"}
-                  </span>
-                )}
-              </td>
-            </tr>
-          ))}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

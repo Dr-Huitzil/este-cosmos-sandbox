@@ -21,12 +21,33 @@ export const VehicleCard = memo(function VehicleCar({
   }, [entries]);
 
   const avgMileage = useMemo(() => {
-    const validMileages = entries.filter((e) => e.mileage > 0);
-    if (validMileages.length === 0) return "0";
-    return (
-      validMileages.reduce((sum, e) => sum + e.mileage, 0) /
-      validMileages.length
-    ).toFixed(1);
+    if (entries.length < 2) return "0";
+
+    // Sort oldest first for chronological processing
+    const sorted = [...entries].sort(
+      (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime(),
+    );
+
+    const firstFull = sorted.find((e) => e.isFull);
+    const lastFull = [...sorted].reverse().find((e) => e.isFull);
+
+    if (!firstFull || !lastFull || firstFull.id === lastFull.id) return "0";
+
+    let totalFuel = 0;
+    let started = false;
+    for (const e of sorted) {
+      if (e.id === firstFull.id) {
+        started = true;
+        continue;
+      }
+      if (started) {
+        totalFuel += e.fuelQuantity;
+        if (e.id === lastFull.id) break;
+      }
+    }
+
+    if (totalFuel === 0) return "0";
+    return ((lastFull.odometer - firstFull.odometer) / totalFuel).toFixed(1);
   }, [entries]);
 
   return (
