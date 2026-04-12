@@ -35,13 +35,13 @@
 /* ─── Image Block ───────────────────────────────────────────────────────────── */
 
 .imageWrapper {
-  position: relative;  /* establishes a stacking context so absolutely-positioned children (overlay, footer) layer on top */
-  height: 12rem;       /* fixed height keeps all cards uniform regardless of image aspect ratio */
-  width: 100%;         /* stretches to fill the full card width */
-  border-bottom: 4px solid hsl(var(--foreground)); /* separates the image area from the stats row with a bold divider line */
-  overflow: hidden;    /* clips the zoom animation so the image never bleeds outside the wrapper */
-  background-image: radial-gradient(circle, currentColor 1px, transparent 1px); /* dot-grid fallback visible while the image loads */
-  background-size: 4px 4px; /* controls the density of the dot grid (one dot every 4 px) */
+  position: relative;
+  aspect-ratio: 16 / 9; /* Cinematic landscape ratio that scales with card width */
+  width: 100%;
+  border-bottom: 4px solid hsl(var(--foreground));
+  overflow: hidden;
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
 }
 
 .image {

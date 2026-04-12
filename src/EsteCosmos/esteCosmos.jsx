@@ -30,7 +30,7 @@ import styles from "./esteCosmos.module.css";
  * This file is intentionally a thin shell: all logic lives in useFuelTracker,
  * all views in their own View files, and all modals in modals/.
  */
-export default function EsteCosmosWindow() {
+export default function FuelTrackerWindow() {
   const {
     user,
     isUserLoading,
@@ -185,7 +185,11 @@ export default function EsteCosmosWindow() {
               className={`${styles.retroBtn} ${styles.iconBtn}`}
               onClick={toggleTheme}
             >
-              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+              {isDarkMode ? (
+                <Sun size={24} className={styles.sunIcon} />
+              ) : (
+                <Moon size={24} className={styles.moonIcon} />
+              )}
             </button>
             <button
               className={`${styles.retroBtn} ${styles.refuelBtn}`}

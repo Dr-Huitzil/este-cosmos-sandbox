@@ -34,11 +34,19 @@
 
 /* The outer container of the progress bar — acts as the background / track */
 .healthBarTrack {
-  height: 1.5rem;        /* 24 px tall — chunky enough to be noticed */
-  width: 100%;
-  background-color: hsl(var(--foreground)); /* dark track background provides contrast for the pink fill */
+  height: 1.25rem;       /* Slightly shorter for mobile density */
+  width: calc(100% - 4px); /* Subtract a tiny bit to avoid pixel-rounding overflows */
+  background-color: hsl(var(--foreground));
   border: 2px solid hsl(var(--foreground));
-  padding: 3px;          /* inner padding creates a visual inset frame around the fill */
+  padding: 3px;          /* inner padding creates a visual inset frame */
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .healthBarTrack {
+    height: 1.5rem;
+    width: 100%;
+  }
 }
 
 /* The colored fill that grows to represent the health percentage */

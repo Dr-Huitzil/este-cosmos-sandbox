@@ -260,6 +260,14 @@
   background-color: hsl(var(--card));
 }
 
+.sunIcon {
+  color: #ffcc00; /* Bright yellow for the light-mode switch */
+}
+
+.moonIcon {
+  color: #a78bfa; /* Soft violet for the dark-mode switch */
+}
+
 .refuelBtn {
   display: flex;
   align-items: center;
@@ -289,12 +297,13 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1.5rem; /* Reduced from 3rem for tighter spacing on mobile */
 }
 
 @media (min-width: 768px) {
   .viewPad {
     padding: 3rem;
+    gap: 3rem; /* Restore wide gap on tablet/desktop */
   }
 }
 
@@ -305,13 +314,14 @@
 }
 
 .viewTitle {
-  font-size: 3.75rem;
+  font-size: 2.25rem; /* Reduced from 3.75rem to prevent mobile truncation */
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.05em;
-  line-height: 1;
+  line-height: 1.1; /* Increased slightly for better wrap readability */
   font-style: italic;
   color: hsl(var(--foreground));
+  word-wrap: break-word; /* Ensure wrapping */
 }
 
 @media (min-width: 768px) {
@@ -338,11 +348,18 @@
 }
 
 .viewSubtitle {
-  font-size: 0.75rem;
+  font-size: 0.625rem; /* Reduced from 0.75rem for mobile */
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.4em;
+  letter-spacing: 0.2em; /* Tightened from 0.4em for mobile */
   color: hsl(var(--muted-foreground));
+}
+
+@media (min-width: 768px) {
+  .viewSubtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+  }
 }
 
 /* ─── Shared Card (used by all views + modals) ────────────────────────────── */
@@ -601,6 +618,13 @@
   font-family: inherit;
   color: hsl(var(--foreground));
   background-color: hsl(var(--card));
+}
+
+.retroBtn:hover {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--primary));
+  box-shadow: 6px 6px 0px rgba(0,0,0,1);
+  transform: translate(-2px, -2px);
 }
 
 .retroBtn:active {

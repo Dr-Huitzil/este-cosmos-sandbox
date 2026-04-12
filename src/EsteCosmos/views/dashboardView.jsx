@@ -7,6 +7,8 @@ import {
   Cpu,
   Zap,
   Wrench,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { VehicleCard } from "../components/vehicleCard";
 import { FuelLogTable } from "../components/fuelLogTable";
@@ -119,6 +121,40 @@ export const DashboardView = memo(function DashboardView({
       {selectedVehicle && (
         <div className={styles.dashboardDetail}>
           <div className={styles.tabsPanel}>
+            {/* Mobile Tab Carousel */}
+            <div className={styles.tabCarousel}>
+              <button
+                className={styles.carouselBtn}
+                onClick={() => {
+                  const tabs = ["fuel", "maintenance", "tires"];
+                  const idx = tabs.indexOf(activeTab);
+                  onSetActiveTab(tabs[(idx - 1 + tabs.length) % tabs.length]);
+                }}
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <div
+                className={`${styles.tabBtn} ${styles.tabBtnActive} ${styles.carouselLabel}`}
+              >
+                {activeTab === "fuel"
+                  ? "REACTOR"
+                  : activeTab === "maintenance"
+                    ? "REPLACEMENTS"
+                    : "BODY"}
+              </div>
+              <button
+                className={styles.carouselBtn}
+                onClick={() => {
+                  const tabs = ["fuel", "maintenance", "tires"];
+                  const idx = tabs.indexOf(activeTab);
+                  onSetActiveTab(tabs[(idx + 1) % tabs.length]);
+                }}
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
+
+            {/* Desktop Tab List */}
             <div className={styles.tabList}>
               {["fuel", "maintenance", "tires"].map((tab) => (
                 <button
