@@ -37,61 +37,24 @@ export default function FuelTrackerWindow() {
     isUserLoading,
     rootRef,
     currentView,
-    selectedVehicleId,
-    activeTab,
-    analyticsRange,
     isDarkMode,
-    isFull,
-    isReimbursable,
-    isUpdating,
     isNewVehicleOpen,
     isNewFuelLogOpen,
     isNewServiceLogOpen,
     isNewTireLogOpen,
     isNewReclaimOpen,
     isMobileFabOpen,
-    vehicles,
-    fuelEntries,
-    serviceEntries,
-    tireEntries,
-    reclaimEntries,
-    selectedVehicle,
-    oilHealth,
-    thrusterHealth,
-    alerts,
-    fuelEfficiencyData,
-    maintenanceSpendData,
-    reimbursementStats,
     navToDashboard,
     navToLogs,
     navToAnalytics,
     navToSettings,
-    handleSelectVehicle,
-    handleSetActiveTab,
-    handleOpenNewVehicle,
-    handleCloseNewVehicle,
-    handleOpenFuelLog,
-    handleCloseFuelLog,
-    handleCloseServiceLog,
-    handleCloseTireLog,
-    handleCloseReclaim,
     handleToggleFab,
+    handleOpenFuelLog,
     fabOpenFuel,
     fabOpenService,
     fabOpenReclaim,
     fabOpenVehicle,
     toggleTheme,
-    handleSignOut,
-    handleChangeRange,
-    handleIsFull,
-    handleIsReimbursable,
-    handleAddVehicle,
-    handleAddFuelLog,
-    handleAddServiceLog,
-    handleAddReclaim,
-    handleAddTireLog,
-    handleUpdateProfile,
-    handleMigrateMPG,
   } = useFuelTracker();
 
   // ── Loading / auth guards ────────────────────────────────────────
@@ -208,50 +171,10 @@ export default function FuelTrackerWindow() {
         </header>
 
         <div className={styles.viewContainer}>
-          {currentView === "dashboard" && (
-            <DashboardView
-              alerts={alerts}
-              vehicles={vehicles}
-              fuelEntries={fuelEntries}
-              selectedVehicleId={selectedVehicleId}
-              selectedVehicle={selectedVehicle}
-              serviceEntries={serviceEntries}
-              tireEntries={tireEntries}
-              activeTab={activeTab}
-              oilHealth={oilHealth}
-              thrusterHealth={thrusterHealth}
-              onSetActiveTab={handleSetActiveTab}
-              onOpenNewVehicle={handleOpenNewVehicle}
-              onSelectVehicle={handleSelectVehicle}
-            />
-          )}
-          {currentView === "logs" && (
-            <LogsView
-              fuelEntries={fuelEntries}
-              serviceEntries={serviceEntries}
-              reclaimEntries={reclaimEntries}
-            />
-          )}
-          {currentView === "analytics" && (
-            <AnalyticsView
-              analyticsRange={analyticsRange}
-              onChangeRange={handleChangeRange}
-              fuelEfficiencyData={fuelEfficiencyData}
-              maintenanceSpendData={maintenanceSpendData}
-              reimbursementStats={reimbursementStats}
-            />
-          )}
-          {currentView === "settings" && (
-            <SettingsView
-              user={user}
-              isDarkMode={isDarkMode}
-              onToggleTheme={toggleTheme}
-              onSignOut={handleSignOut}
-              onUpdateProfile={handleUpdateProfile}
-              isUpdating={isUpdating}
-              onMigrateMPG={handleMigrateMPG}
-            />
-          )}
+          {currentView === "dashboard" && <DashboardView />}
+          {currentView === "logs" && <LogsView />}
+          {currentView === "analytics" && <AnalyticsView />}
+          {currentView === "settings" && <SettingsView />}
         </div>
 
         {/* ── Bottom nav (mobile) ──────────────────────────────── */}
@@ -314,40 +237,11 @@ export default function FuelTrackerWindow() {
       </main>
 
       {/* ── Modals ─────────────────────────────────────────────── */}
-      {isNewVehicleOpen && (
-        <VehicleModal
-          onClose={handleCloseNewVehicle}
-          onSubmit={handleAddVehicle}
-        />
-      )}
-      {isNewFuelLogOpen && (
-        <FuelLogModal
-          onClose={handleCloseFuelLog}
-          onSubmit={handleAddFuelLog}
-          isFull={isFull}
-          onIsFull={handleIsFull}
-        />
-      )}
-      {isNewServiceLogOpen && (
-        <ServiceLogModal
-          onClose={handleCloseServiceLog}
-          onSubmit={handleAddServiceLog}
-          isReimbursable={isReimbursable}
-          onIsReimbursable={handleIsReimbursable}
-        />
-      )}
-      {isNewTireLogOpen && (
-        <TireLogModal
-          onClose={handleCloseTireLog}
-          onSubmit={handleAddTireLog}
-        />
-      )}
-      {isNewReclaimOpen && (
-        <ReclaimModal
-          onClose={handleCloseReclaim}
-          onSubmit={handleAddReclaim}
-        />
-      )}
+      {isNewVehicleOpen && <VehicleModal />}
+      {isNewFuelLogOpen && <FuelLogModal />}
+      {isNewServiceLogOpen && <ServiceLogModal />}
+      {isNewTireLogOpen && <TireLogModal />}
+      {isNewReclaimOpen && <ReclaimModal />}
 
       <Toaster />
     </div>

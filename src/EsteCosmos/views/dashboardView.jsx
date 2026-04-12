@@ -22,24 +22,28 @@ import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./dashboardView.module.css";
 const styles = { ...sharedStyles, ...ownStyles };
 
+import { useFuelTracker } from "../../hooks/useEsteCosmos";
+
 /**
  * Dashboard view — fleet overview, diagnostics sidebar, and tabbed log detail.
  */
-export const DashboardView = memo(function DashboardView({
-  alerts,
-  vehicles,
-  fuelEntries,
-  selectedVehicleId,
-  selectedVehicle,
-  serviceEntries,
-  tireEntries,
-  activeTab,
-  oilHealth,
-  thrusterHealth,
-  onSetActiveTab,
-  onOpenNewVehicle,
-  onSelectVehicle,
-}) {
+export const DashboardView = memo(function DashboardView() {
+  const {
+    alerts,
+    vehicles,
+    fuelEntries,
+    selectedVehicleId,
+    selectedVehicle,
+    serviceEntries,
+    tireEntries,
+    activeTab,
+    oilHealth,
+    thrusterHealth,
+    handleSetActiveTab,
+    handleOpenNewVehicle,
+    handleSelectVehicle,
+  } = useFuelTracker();
+
   // Stable per-vehicle entry slices — prevents inline filter creating new arrays on every render
   const vehicleFuelMap = useMemo(() => {
     const map = {};
@@ -101,7 +105,7 @@ export const DashboardView = memo(function DashboardView({
       <section className={styles.fleetSection}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>ACTIVE FLEET</h2>
-          <button className={styles.retroBtn} onClick={onOpenNewVehicle}>
+          <button className={styles.retroBtn} onClick={handleOpenNewVehicle}>
             <PlusCircle size={20} /> ENLIST VEHICLE
           </button>
         </div>
@@ -111,7 +115,7 @@ export const DashboardView = memo(function DashboardView({
               key={vehicle.id}
               vehicle={vehicle}
               entries={vehicleFuelMap[vehicle.id] || []}
-              onSelect={onSelectVehicle}
+              onSelect={handleSelectVehicle}
               isActive={selectedVehicleId === vehicle.id}
             />
           ))}
@@ -128,7 +132,9 @@ export const DashboardView = memo(function DashboardView({
                 onClick={() => {
                   const tabs = ["fuel", "maintenance", "tires"];
                   const idx = tabs.indexOf(activeTab);
-                  onSetActiveTab(tabs[(idx - 1 + tabs.length) % tabs.length]);
+                  handleSetActiveTab(
+                    tabs[(idx - 1 + tabs.length) % tabs.length],
+                  );
                 }}
               >
                 <ChevronLeft size={24} />
@@ -147,7 +153,7 @@ export const DashboardView = memo(function DashboardView({
                 onClick={() => {
                   const tabs = ["fuel", "maintenance", "tires"];
                   const idx = tabs.indexOf(activeTab);
-                  onSetActiveTab(tabs[(idx + 1) % tabs.length]);
+                  handleSetActiveTab(tabs[(idx + 1) % tabs.length]);
                 }}
               >
                 <ChevronRight size={24} />
@@ -159,7 +165,7 @@ export const DashboardView = memo(function DashboardView({
               {["fuel", "maintenance", "tires"].map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => onSetActiveTab(tab)}
+                  onClick={() => handleSetActiveTab(tab)}
                   className={`${styles.tabBtn} ${activeTab === tab ? styles.tabBtnActive : ""}`}
                 >
                   {tab === "fuel"

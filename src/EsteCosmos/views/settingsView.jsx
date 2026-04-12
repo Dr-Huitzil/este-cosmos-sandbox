@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { isSafePhotoURL } from "../../hooks/useEsteCosmos";
+import { useFuelTracker, isSafePhotoURL } from "../../hooks/useEsteCosmos";
 import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./settingsView.module.css";
 const styles = { ...sharedStyles, ...ownStyles };
@@ -7,15 +7,17 @@ const styles = { ...sharedStyles, ...ownStyles };
 /**
  * Settings view — pilot identity, theme toggle, sign out.
  */
-export const SettingsView = memo(function SettingsView({
-  user,
-  isDarkMode,
-  onToggleTheme,
-  onSignOut,
-  onUpdateProfile,
-  isUpdating,
-  onMigrateMPG,
-}) {
+export const SettingsView = memo(function SettingsView() {
+  const {
+    user,
+    isDarkMode,
+    toggleTheme,
+    handleSignOut,
+    handleUpdateProfile,
+    isUpdating,
+    handleMigrateMPG,
+  } = useFuelTracker();
+
   return (
     <div className={styles.viewPad}>
       <h2 className={styles.viewTitle}>
@@ -47,7 +49,7 @@ export const SettingsView = memo(function SettingsView({
               <p className={styles.pilotEmail}>{user.email}</p>
             </div>
           </div>
-          <form onSubmit={onUpdateProfile} className={styles.settingsForm}>
+          <form onSubmit={handleUpdateProfile} className={styles.settingsForm}>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>DISPLAY NAME</label>
               <input
@@ -81,7 +83,7 @@ export const SettingsView = memo(function SettingsView({
                 type="checkbox"
                 className={styles.toggleInput}
                 checked={isDarkMode}
-                onChange={onToggleTheme}
+                onChange={toggleTheme}
               />
               <span className={styles.toggleTrack}>
                 <span className={styles.toggleThumb} />
@@ -99,7 +101,7 @@ export const SettingsView = memo(function SettingsView({
             Identify and correct historical fuel logs with inaccurate telemetry.
           </p>
           <button
-            onClick={onMigrateMPG}
+            onClick={handleMigrateMPG}
             className={`${styles.retroBtn} ${styles.updateBtn}`}
           >
             RUN CALIBRATION
@@ -108,7 +110,7 @@ export const SettingsView = memo(function SettingsView({
 
         {/* Sign out */}
         <button
-          onClick={onSignOut}
+          onClick={handleSignOut}
           className={`${styles.retroBtn} ${styles.signOutBtn}`}
         >
           LEAVE STATION

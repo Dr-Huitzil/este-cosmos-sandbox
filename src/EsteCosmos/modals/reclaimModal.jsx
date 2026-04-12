@@ -1,19 +1,21 @@
 import { memo } from "react";
 import styles from "../esteCosmos.module.css";
+import { useFuelTracker } from "../../hooks/useEsteCosmos";
 
 /**
  * Modal for logging a reimbursement / berry reclaim.
- * @param {{ onClose: function, onSubmit: function }} props
  */
-export const ReclaimModal = memo(function ReclaimModal({ onClose, onSubmit }) {
+export const ReclaimModal = memo(function ReclaimModal() {
+  const { handleCloseReclaim, handleAddReclaim } = useFuelTracker();
+
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleCloseReclaim}>
       <div
         className={`${styles.retroCard} ${styles.modalContent}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className={styles.modalTitle}>BERRY RECLAIM</h2>
-        <form onSubmit={onSubmit} className={styles.modalForm}>
+        <form onSubmit={handleAddReclaim} className={styles.modalForm}>
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>DATE</label>

@@ -1,13 +1,15 @@
 import { memo } from "react";
 import styles from "../esteCosmos.module.css";
+import { useFuelTracker } from "../../hooks/useEsteCosmos";
 
 /**
  * Modal for logging tire pressure readings across all four pods.
- * @param {{ onClose: function, onSubmit: function }} props
  */
-export const TireLogModal = memo(function TireLogModal({ onClose, onSubmit }) {
+export const TireLogModal = memo(function TireLogModal() {
+  const { handleCloseTireLog, handleAddTireLog } = useFuelTracker();
+
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleCloseTireLog}>
       <div
         className={`${styles.retroCard} ${styles.modalContent}`}
         onClick={(e) => e.stopPropagation()}
@@ -16,7 +18,7 @@ export const TireLogModal = memo(function TireLogModal({ onClose, onSubmit }) {
         <p className={styles.modalSubtitle}>
           Archive pressure telemetry for all tires.
         </p>
-        <form onSubmit={onSubmit} className={styles.modalForm}>
+        <form onSubmit={handleAddTireLog} className={styles.modalForm}>
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>FRONT LEFT (PSI)</label>

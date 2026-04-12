@@ -1,24 +1,26 @@
 import { memo } from "react";
 import styles from "../esteCosmos.module.css";
+import { useFuelTracker } from "../../hooks/useEsteCosmos";
 
 /**
  * Modal for logging a service / maintenance record.
- * @param {{ onClose: function, onSubmit: function, isReimbursable: boolean, onIsReimbursable: function }} props
  */
-export const ServiceLogModal = memo(function ServiceLogModal({
-  onClose,
-  onSubmit,
-  isReimbursable,
-  onIsReimbursable,
-}) {
+export const ServiceLogModal = memo(function ServiceLogModal() {
+  const {
+    handleCloseServiceLog,
+    handleAddServiceLog,
+    isReimbursable,
+    handleIsReimbursable,
+  } = useFuelTracker();
+
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleCloseServiceLog}>
       <div
         className={`${styles.retroCard} ${styles.modalContent}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className={styles.modalTitle}>VEHICLE MAINTENANCE</h2>
-        <form onSubmit={onSubmit} className={styles.modalForm}>
+        <form onSubmit={handleAddServiceLog} className={styles.modalForm}>
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>DATE</label>
@@ -87,7 +89,7 @@ export const ServiceLogModal = memo(function ServiceLogModal({
                   id="reimbursable"
                   type="checkbox"
                   checked={isReimbursable}
-                  onChange={onIsReimbursable}
+                  onChange={handleIsReimbursable}
                   className={styles.check}
                 />
                 <label htmlFor="reimbursable" className={styles.label}>

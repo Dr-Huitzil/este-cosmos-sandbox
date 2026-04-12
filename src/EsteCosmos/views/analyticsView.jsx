@@ -18,16 +18,20 @@ import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./analyticsView.module.css";
 const styles = { ...sharedStyles, ...ownStyles };
 
+import { useFuelTracker } from "../../hooks/useEsteCosmos";
+
 /**
  * Analytics view — efficiency line chart, maintenance spend pie chart, bounty reclaim stats.
  */
-export const AnalyticsView = memo(function AnalyticsView({
-  analyticsRange,
-  onChangeRange,
-  fuelEfficiencyData,
-  maintenanceSpendData,
-  reimbursementStats,
-}) {
+export const AnalyticsView = memo(function AnalyticsView() {
+  const {
+    analyticsRange,
+    handleChangeRange,
+    fuelEfficiencyData,
+    maintenanceSpendData,
+    reimbursementStats,
+  } = useFuelTracker();
+
   return (
     <div className={styles.viewPad}>
       <div className={styles.analyticsTopRow}>
@@ -37,7 +41,7 @@ export const AnalyticsView = memo(function AnalyticsView({
         <select
           className={styles.rangeSelect}
           value={analyticsRange}
-          onChange={onChangeRange}
+          onChange={handleChangeRange}
         >
           {DATE_RANGES.map((r) => (
             <option key={r.value} value={r.value}>

@@ -1,19 +1,21 @@
 import { memo } from "react";
 import styles from "../esteCosmos.module.css";
+import { useFuelTracker } from "../../hooks/useEsteCosmos";
 
 /**
- * Modal for registering a new vessel.
- * @param {{ onClose: function, onSubmit: function }} props
+ * Modal to add a new vehicle
  */
-export const VehicleModal = memo(function VehicleModal({ onClose, onSubmit }) {
+export const VehicleModal = memo(function VehicleModal() {
+  const { handleCloseNewVehicle, handleAddVehicle } = useFuelTracker();
+
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleCloseNewVehicle}>
       <div
         className={`${styles.retroCard} ${styles.modalContent}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className={styles.modalTitle}>ENLIST VEHICLE</h2>
-        <form onSubmit={onSubmit} className={styles.modalForm}>
+        <form onSubmit={handleAddVehicle} className={styles.modalForm}>
           <div className={styles.fieldGroup}>
             <label className={styles.label}>VEHICLE NAME</label>
             <input

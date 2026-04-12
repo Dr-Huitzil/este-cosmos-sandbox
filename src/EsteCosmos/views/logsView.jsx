@@ -7,14 +7,14 @@ import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./logsView.module.css";
 const styles = { ...ownStyles, ...sharedStyles };
 
+import { useFuelTracker } from "../../hooks/useEsteCosmos";
+
 /**
  * Logs view - full fuel and service history tables side by side
  */
-export const LogsView = memo(function LogsView({
-  fuelEntries,
-  serviceEntries,
-  reclaimEntries,
-}) {
+export const LogsView = memo(function LogsView() {
+  const { fuelEntries, serviceEntries, reclaimEntries } = useFuelTracker();
+
   return (
     <div className={styles.viewPad}>
       <h2 className={styles.viewTitle}>

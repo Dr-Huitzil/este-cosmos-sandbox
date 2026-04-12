@@ -1,4 +1,13 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+  createContext,
+  useContext,
+} from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   useUser,
@@ -37,13 +46,14 @@ export function isSafePhotoURL(url) {
     return false;
   }
 }
-
 /**
  * useFuelTracker — central hook for FuelTrackerWindow.
  * Owns all state, Firebase subscriptions, derived memos, and stable callbacks.
  * Returns a flat object so the shell component can destructure what it needs.
  */
-export function useFuelTracker() {
+const FuelTrackerContext = createContext(null);
+
+export function FuelTrackerProvider({ children }) {
   const { toast } = useToast();
   const { user, isUserLoading: firebaseLoading } = useUser();
   const [minLoadingDone, setMinLoadingDone] = useState(false);
@@ -95,10 +105,9 @@ export function useFuelTracker() {
     }
   }, []);
 
-  // Sync 'dark' class on the widget root whenever isDarkMode changes
+  // Sync 'dark' class on HTML root whenever isDarkMode changes
   useEffect(() => {
-    if (!rootRef.current) return;
-    rootRef.current.classList.toggle("dark", isDarkMode);
+    document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
   // ── Firebase — vehicles ─────────────────────────────────────────
@@ -718,6 +727,7 @@ export function useFuelTracker() {
   const handleUpdateProfile = useCallback(
     async (e) => {
       e.preventDefault();
+      if (isUpdating) return; // SEC: block double-submission spam
       // SEC: Guard against null currentUser if session expires between renders
       if (!auth.currentUser) {
         toast({
@@ -754,7 +764,7 @@ export function useFuelTracker() {
         setIsUpdating(false);
       }
     },
-    [auth, toast],
+    [auth, toast, isUpdating],
   );
 
   const handleMigrateMPG = useCallback(async () => {
@@ -805,7 +815,7 @@ export function useFuelTracker() {
   }, [user, firestore, selectedVehicleId, toast]);
 
   // ── Return everything the shell needs ───────────────────────────
-  return {
+  const value = {
     // Auth / Firebase primitives
     user,
     isUserLoading,
@@ -884,4 +894,18 @@ export function useFuelTracker() {
     handleUpdateProfile,
     handleMigrateMPG,
   };
+
+  return (
+    <FuelTrackerContext.Provider value={value}>
+      {children}
+    </FuelTrackerContext.Provider>
+  );
+}
+
+export function useFuelTracker() {
+  const context = useContext(FuelTrackerContext);
+  if (!context) {
+    throw new Error("useFuelTracker must be used within a FuelTrackerProvider");
+  }
+  return context;
 }
