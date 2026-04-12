@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { Rocket, Loader2, Stars } from "lucide-react";
+import { Rocket, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import styles from "../views/authScreen.module.css";
 
@@ -66,9 +66,7 @@ export function AuthScreen() {
     <div className={styles.screen}>
       <div className={styles.glowLeft} />
       <div className={styles.glowRight} />
-      <div className={styles.starsDecor}>
-        <Stars className={styles.starsIcons} />
-      </div>
+      <div className={styles.starsDecor}></div>
 
       <div className={styles.card}>
         <div className={styles.orbitDecor} />

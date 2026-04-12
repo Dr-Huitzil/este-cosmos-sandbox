@@ -39,7 +39,17 @@ export function isSafePhotoURL(url) {
  */
 export function useFuelTracker() {
   const { toast } = useToast();
-  const { user, isUserLoading } = useUser();
+  const { user, isUserLoading: firebaseLoading } = useUser();
+  const [minLoadingDone, setMinLoadingDone] = useState(false);
+
+  // ── Extend Preloader ──────────────────────────────────────────
+  // Artificial delay to ensure the splash screen feels substantial
+  useEffect(() => {
+    const timer = setTimeout(() => setMinLoadingDone(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isUserLoading = firebaseLoading || !minLoadingDone;
   const firestore = useFirestore();
   const auth = useAuth();
 

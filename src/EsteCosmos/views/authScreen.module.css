@@ -1,348 +1,275 @@
-/* Full-viewport auth wrapper — centers the login card in the middle of the screen */
+/* ─── Auth View (Modern High-Fidelity) ───────────────────────────────────────── */
+
 .screen {
-  height: 100%;           /* fills the entire viewport height */
+  min-height: 100vh;
+  min-width: 320px; /* Minimum width to prevent layout collapse */
+  width: 100vw;
   display: flex;
-  align-items: center;    /* vertically centers the card */
-  justify-content: center; /* horizontally centers the card */
-  background-color: hsl(var(--background));
-  padding: 1rem;          /* small edge padding so the card doesn't touch the screen border on phones */
-  position: relative;     /* establishes a stacking context for the absolute glow blobs */
-  overflow: hidden;       /* clips the large glow circles so they don't extend scrollbars */
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  position: relative;
+  overflow-y: auto;
 }
 
-/* Large ambient glow blob, top-left quadrant — adds background depth */
-.glowLeft {
-  position: absolute; /* taken out of normal flow and placed behind the card (z-index < card) */
-  top: -12rem;        /* offset so the blob center is partially off-screen at the top */
-  left: -12rem;       /* offset left to keep it in the corner */
-  width: 40rem;       /* 640 px wide circle */
-  height: 40rem;
-  background-color: hsl(var(--primary) / 0.1); /* very faint primary pink */
-  border-radius: 50%;  /* makes the div a perfect circle */
-  filter: blur(120px); /* extreme blur turns the hard circle into a soft ambient glow */
-  animation: pulse 3s ease-in-out infinite; /* breathes in and out to feel alive */
+@media (min-width: 768px) {
+  .screen {
+    padding: 2rem;
+  }
 }
 
-/* Mirror blob in the bottom-right — balances the screen composition */
-.glowRight {
-  position: absolute;
-  bottom: -12rem;
-  right: -12rem;
-  width: 40rem;
-  height: 40rem;
-  background-color: hsl(var(--accent) / 0.1); /* faint teal accent — subtle color variety */
-  border-radius: 50%;
-  filter: blur(120px);
-  animation: pulse 3s ease-in-out infinite;
-  animation-delay: 2s; /* offset so the two blobs pulse out of phase with each other */
-}
-
-/* Decorative stars icon placed in the background — pure visual garnish */
-.starsDecor {
-  position: absolute;
-  top: 25%;    /* positioned in the upper-right area of the screen */
-  right: 25%;
-  opacity: 0.2; /* very faint so it doesn't compete with the card */
-}
-
-/* The Lucide Stars icon itself */
-.starsIcon {
-  width: 6rem;
-  height: 6rem;
-  color: hsl(var(--primary)); /* tinted pink to match the left glow blob */
-}
-
-/* ─── Auth Card ─────────────────────────────────────────────────────────────── */
-
-/* The main login/register form container */
+/* Base card with hyper-rounded corners */
 .card {
-  background-color: hsl(var(--card));
-  border: 4px solid hsl(var(--foreground));
-  border-top-width: 8px;                   /* thicker top border — a common neo-brutalist accent */
-  border-top-color: hsl(var(--primary));   /* top stripe is Espeon Pink for a colorful entry point */
-  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1); /* hard shadow lifts card off the screen */
-  width: 100%;          /* fills the screen on mobile */
-  max-width: 28rem;     /* caps at 448 px on larger screens for readability */
-  padding: 2.5rem;      /* 40 px of inner whitespace */
-  position: relative;   /* stacking context so the orbitDecor stays inside */
-  z-index: 10;          /* ensures the card sits above the glow blobs */
+  background-color: white;
+  border-radius: 2rem; /* Softened for mobile, slightly less extreme than 3.5rem */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 26rem;
+  padding: 2rem 1.5rem; /* Drastically reduced padding for mobile */
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  border-top: 6px solid hsl(var(--primary));
+  box-sizing: border-box;
 }
 
-/* Faint circle in the top-right corner of the card — purely decorative orbital ring */
-.orbitDecor {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 8rem;
-  height: 8rem;
-  opacity: 0.05;          /* barely visible ghost ring */
-  border-radius: 50%;
-  border: 4px solid currentColor; /* uses the current text color — adapts to dark/light mode */
+@media (min-width: 480px) {
+  .card {
+    border-radius: 3.5rem;
+    padding: 3rem 2.5rem;
+  }
 }
-
-/* ─── Card Header ───────────────────────────────────────────────────────────── */
 
 .cardHeader {
-  text-align: center;   /* centers the logo icon and title block */
-  margin-bottom: 2rem;  /* 32 px gap before the tab switcher */
+  text-align: center;
+  margin-bottom: 2.5rem;
 }
 
-/* The rocket icon wrapper — tilted and colored as the app logo */
+/* Hyper-rounded rocket logo */
 .rocketWrap {
-  display: inline-flex;                    /* shrinks to fit its icon child */
-  background-color: hsl(var(--primary));  /* pink background makes it pop */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(var(--primary));
   color: white;
-  padding: 1.25rem;                        /* generous padding creates a square badge shape */
-  margin-bottom: 1.5rem;
-  border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0 rgba(0,0,0,1);
-  transform: rotate(-12deg);              /* initial tilt gives the logo personality */
-  transition: transform 0.3s;
-  cursor: pointer;
+  width: 4.5rem; /* Explicit size for reliability */
+  height: 4.5rem;
+  border-radius: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 16px -4px hsl(var(--primary) / 0.4);
+  transition: transform 0.3s ease;
 }
 
-/* On hover: straightens the tilted rocket for a fun micro-interaction */
 .rocketWrap:hover {
-  transform: rotate(0deg);
+  transform: translateY(-5px) rotate(-5deg);
 }
 
-/* Bouncing rocket icon animation */
 .rocketIcon {
-  width: 3rem;
-  height: 3rem;
-  animation: bounce 1s infinite; /* continuously bobs up and down */
+  width: 2.5rem;
+  height: 2.5rem;
+  display: block;
 }
 
-/* Primary app name ("ROMANCE DAWN") */
 .title {
-  font-size: 3rem;           /* 48 px — large hero heading */
+  font-size: 2.25rem; /* Smaller for mobile */
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.05em;  /* tight tracking looks aggressive and sporty */
-  line-height: 1;            /* removes extra line height for stacked display text */
-  color: hsl(var(--foreground));
-}
-
-/* Secondary line ("FLEET") — slightly smaller and pink */
-.titleAccent {
-  font-size: 2.5rem;         /* 40 px — slightly smaller to create hierarchy */
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.05em;
+  color: #1a1b1e;
   line-height: 1;
-  color: hsl(var(--primary)); /* pink accent differentiates the second word */
-  opacity: 0.8;               /* slight transparency so it doesn't overpower the main title */
+  letter-spacing: -0.05em;
 }
 
-/* Very small tagline below the titles */
-.subtitle {
-  font-size: 0.5625rem;       /* 9 px — intentionally tiny for a "classified" aesthetic */
+@media (min-width: 480px) {
+  .title {
+    font-size: 3rem;
+  }
+}
+
+.titleAccent {
+  font-size: 2rem;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.4em;      /* very wide tracking reads like a classified stamp */
-  margin-top: 1rem;
-  color: hsl(var(--muted-foreground) / 0.6); /* heavily muted so it doesn't compete */
+  color: hsl(var(--primary));
+  line-height: 1;
+  letter-spacing: -0.05em;
+  margin-top: 0.25rem;
+  display: block;
 }
 
-/* ─── Tabs (Login / Register) ───────────────────────────────────────────────── */
+@media (min-width: 480px) {
+  .titleAccent {
+    font-size: 3rem;
+  }
+}
 
-/* Two-column grid housing the Login and Register tab buttons */
+.subtitle {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin-top: 1.5rem;
+  color: #a1a1aa;
+}
+
+/* ─── Tabs switcher ─────────────────────────────────────────────────────────── */
+
 .tabList {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* two equal-width tabs */
-  gap: 0;                          /* no gap — they share a border */
-  margin-bottom: 1.5rem;
-  background-color: hsl(var(--secondary) / 0.5); /* teal tinted background behind the tabs */
-  padding: 0.5rem;                 /* creates an inset appearance */
-  border: 2px solid hsl(var(--foreground));
+  grid-template-columns: 1fr 1fr;
+  background-color: #c9eff5; /* Pale cyan from mockup */
+  padding: 0.4rem;
+  border-radius: 1.5rem;
+  margin-bottom: 2.5rem;
 }
 
-/* Individual tab button */
 .tabBtn {
-  padding: 0.625rem;
+  padding: 0.75rem;
   font-weight: 900;
-  font-size: 0.625rem;       /* 10 px tiny label */
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  background: transparent;   /* inherits the teal wash from .tabList */
+  letter-spacing: 0.1em;
+  background: transparent;
   border: none;
+  border-radius: 1.2rem;
   cursor: pointer;
-  color: hsl(var(--foreground));
-  transition: background-color 0.15s, color 0.15s;
+  color: #4b5563;
+  transition: all 0.2s ease;
 }
 
-/* Active tab — highlighted with the primary pink */
 .tabBtnActive {
-  background-color: hsl(var(--primary)); /* solid pink fill marks the selected tab */
+  background-color: hsl(var(--primary));
   color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* ─── Form ──────────────────────────────────────────────────────────────────── */
+/* ─── Form Elements ─────────────────────────────────────────────────────────── */
 
-/* Vertical form layout with consistent spacing between fields */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* 20 px between each field group */
+  gap: 1.5rem;
 }
 
-/* Container for a label + input pair */
 .fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem; /* 6 px between the label and the input */
+  gap: 0.5rem;
 }
 
-/* Tiny uppercase label above each input */
 .label {
-  font-size: 0.625rem;    /* 10 px */
+  font-size: 0.65rem;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.2em; /* wide tracking for small caps readability */
-  color: hsl(var(--foreground));
+  letter-spacing: 0.1em;
+  color: #1a1b1e;
+  padding-left: 0.5rem;
 }
 
-/* Text input field */
 .input {
-  height: 3.5rem;           /* 56 px — tall enough for easy tap targeting */
-  padding: 0 1rem;
-  background-color: hsl(var(--secondary) / 0.3); /* subtle teal wash to distinguish from the white card */
-  border: 2px solid hsl(var(--foreground));
-  color: hsl(var(--foreground));
-  font-size: 0.875rem;
-  font-weight: 700;
-  outline: none;            /* removes browser default blue outline */
-  transition: border-color 0.15s;
-  width: 100%;
-  box-sizing: border-box;   /* includes padding in the width calculation so it never overflows */
+  height: 4rem;
+  padding: 0 1.5rem;
+  background-color: #fef9c3; /* Pale yellow from mockup */
+  border: none;
+  border-radius: 1.5rem;
+  color: #000;
+  font-size: 0.95rem;
+  font-weight: 800;
+  outline: none;
+  transition: transform 0.2s ease;
 }
 
-/* Switches border to primary pink when the input gains keyboard focus */
 .input:focus {
-  border-color: hsl(var(--primary));
+  transform: scale(1.02);
 }
 
-/* Primary submission button */
 .submitBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;        /* space between spinner/icon and label text */
-  padding: 1.25rem;   /* tall padding for a prominent CTA */
-  background-color: hsl(var(--primary)); /* Espeon Pink fills the button */
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background-color: hsl(var(--primary));
   color: white;
-  border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0 rgba(0,0,0,1); /* hard shadow makes it look pressable */
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.5);
   font-weight: 900;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: box-shadow 0.1s, transform 0.1s;
-  width: 100%;
+  transition: all 0.2s ease;
 }
 
-/* "Press" state: shadow collapses and button shifts 2 px to simulate being pushed down */
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px hsl(var(--primary) / 0.6);
+}
+
 .submitBtn:active {
-  box-shadow: none;
-  transform: translate(2px, 2px);
+  transform: scale(0.98);
 }
 
-/* Visually dimmed and non-interactive when a request is in flight */
-.submitBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+/* ─── Global Decorations ────────────────────────────────────────────────────── */
 
-/* Loading spinner shown inside the button during async operations */
-.spinner {
-  width: 1.25rem;
-  height: 1.25rem;
-  animation: spin 1s linear infinite; /* continuously rotates 360° */
-}
-
-/* ─── Divider ───────────────────────────────────────────────────────────────── */
-
-/* "OR" divider between the main submit button and the guest button */
 .divider {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin: 2rem 0;
+  justify-content: center;
+  margin: 2.5rem 0 1.5rem;
 }
 
-/* The horizontal line on either side of the "OR" text */
-.dividerLine {
-  flex: 1;              /* stretches to fill available horizontal space */
-  height: 1px;
-  background-color: hsl(var(--foreground) / 0.1); /* very faint line */
-}
-
-/* The "OR" label text in the center of the divider */
 .dividerLabel {
-  font-size: 0.625rem;
+  font-size: 0.6rem;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.5em; /* very wide tracking for a stamp-like look */
-  color: hsl(var(--muted-foreground) / 0.4); /* heavily muted — not the focus */
+  letter-spacing: 0.4em;
+  color: #d1d5db;
+  background-color: #f3f4f6;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
 }
 
-/* ─── Ghost Button (Continue as Guest) ─────────────────────────────────────── */
-
-/* An outline-style secondary button — lower visual priority than the pink submit button */
 .ghostBtn {
   width: 100%;
-  padding: 1.25rem;
-  background: transparent;                            /* no fill — lets the card bg show through */
-  border: 2px solid hsl(var(--foreground) / 0.1);    /* very faint border */
+  padding: 1rem;
+  background: white;
+  border: 4px solid #f3f4f6;
+  border-radius: 1.5rem;
   font-weight: 900;
-  font-size: 0.625rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   cursor: pointer;
-  color: hsl(var(--foreground));
-  transition: background-color 0.15s;
+  color: #9ca3af;
+  transition: all 0.2s ease;
 }
 
-/* On hover: fills with a soft teal wash to acknowledge the interaction */
 .ghostBtn:hover {
-  background-color: hsl(var(--secondary) / 0.5);
+  border-color: #e5e7eb;
+  color: #6b7280;
 }
 
-.ghostBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ─── Footer ────────────────────────────────────────────────────────────────── */
-
-/* Legal/branding line at the very bottom of the card */
 .footer {
   text-align: center;
-  font-size: 0.5rem;         /* 8 px — tiny fine print */
-  font-weight: 900;
+  font-size: 0.5rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5em;
-  color: hsl(var(--muted-foreground) / 0.3); /* barely visible */
-  margin-top: 1.5rem;
+  letter-spacing: 0.3em;
+  color: #cbd5e1;
+  margin-top: 2rem;
 }
 
-/* ─── Keyframe Animations ───────────────────────────────────────────────────── */
-
-/* Fades opacity between 100 % and 50 % — used for the glow blobs and the loading text */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+/* Spinner */
+.spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: spin 1s linear infinite;
 }
 
-/* Bounces an element up by 6 px and back — used for the rocket icon */
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-/* Full 360° rotation — used for the loading spinner */
 @keyframes spin {
-  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
