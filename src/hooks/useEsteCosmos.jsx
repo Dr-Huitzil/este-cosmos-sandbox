@@ -17,6 +17,7 @@ import {
   addDocumentNonBlocking,
   useAuth,
   setDocumentNonBlocking,
+  updateDocumentNonBlocking,
 } from "@/firebase";
 import { collection, doc, serverTimestamp } from "firebase/firestore";
 import { signOut, updateProfile } from "firebase/auth";
@@ -193,16 +194,22 @@ export function FuelTrackerProvider({ children }) {
   // Sorting is O(n log n) — do it once per data change, never per sub-consumer.
   const sortedFuelEntries = useMemo(
     () =>
-      [...fuelEntries].sort(
-        (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-      ),
+      [...fuelEntries].sort((a, b) => {
+        const d1 = new Date(b.day).getTime();
+        const d2 = new Date(a.day).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometer || 0) - (a.odometer || 0);
+      }),
     [fuelEntries],
   );
   const sortedServiceEntries = useMemo(
     () =>
-      [...serviceEntries].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      ),
+      [...serviceEntries].sort((a, b) => {
+        const d1 = new Date(b.date).getTime();
+        const d2 = new Date(a.date).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometerReading || 0) - (a.odometerReading || 0);
+      }),
     [serviceEntries],
   );
   const sortedTireEntries = useMemo(
@@ -323,14 +330,23 @@ export function FuelTrackerProvider({ children }) {
     return Object.entries(categories).map(([name, value]) => ({ name, value }));
   }, [filteredService]);
 
+  const filteredReclaim = useMemo(() => {
+    if (analyticsRange === "all") return reclaimEntries;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - parseInt(analyticsRange));
+    return reclaimEntries.filter((e) => new Date(e.day) >= cutoff);
+  }, [reclaimEntries, analyticsRange]);
+
   const reimbursementStats = useMemo(() => {
-    const total = filteredService.reduce((sum, s) => sum + s.totalCost, 0);
-    const reimbursed = filteredService.reduce(
-      (sum, s) => sum + (s.reimbursementAmount || 0),
+    // Total fuel spend for the period
+    const total = filteredFuel.reduce((sum, f) => sum + (f.totalPrice || 0), 0);
+    // Total reclaims (separate entries)
+    const reimbursed = filteredReclaim.reduce(
+      (sum, r) => sum + (r.amount || 0),
       0,
     );
     return { total, reimbursed, net: total - reimbursed };
-  }, [filteredService]);
+  }, [filteredFuel, filteredReclaim]);
 
   // ── Stable callbacks — theme & nav ──────────────────────────────
   const toggleTheme = useCallback(() => {
@@ -757,6 +773,60 @@ export function FuelTrackerProvider({ children }) {
     [auth, toast],
   );
 
+  /**
+   * handleMigrateMPG — Calibration routine.
+   * Fetches all fuel logs, sorts them ASC by odometer, and recalculates
+   * efficiency (MPG) for each 'full' entry based on its predecessors.
+   * Corrects historical data where mileage was missed or calculated incorrectly.
+   */
+  const handleMigrateMPG = useCallback(async () => {
+    if (!user || !firestore || !selectedVehicleId) return;
+
+    toast({
+      title: "CALIBRATION STARTED",
+      description: "Recalculating telemetry vectors...",
+    });
+
+    try {
+      // Use the current in-memory fuelEntries for the calculation
+      // Sort them by odometer ascending to process chronologically
+      const allEntries = [...fuelEntries].sort(
+        (a, b) => (a.odometer || 0) - (b.odometer || 0),
+      );
+
+      // Process each entry and update if its MPG changes
+      for (const entry of allEntries) {
+        const newMPG = calculateMPG(entry, allEntries);
+
+        // Only update if the value has actually changed to save on Firestore writes
+        if (entry.mileage !== newMPG) {
+          const docRef = doc(
+            firestore,
+            "userProfiles",
+            user.uid,
+            "vehicles",
+            selectedVehicleId,
+            "fuelEntries",
+            entry.id,
+          );
+          updateDocumentNonBlocking(docRef, { mileage: newMPG });
+        }
+      }
+
+      toast({
+        title: "CALIBRATION COMPLETE",
+        description: "Historical telemetry normalized.",
+      });
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "CALIBRATION FAILED",
+        description: "Neural link interrupted.",
+      });
+      console.error(err);
+    }
+  }, [user, firestore, selectedVehicleId, fuelEntries, toast]);
+
   // ── Return everything the shell needs ───────────────────────────
   const value = {
     // Auth / Firebase primitives
@@ -835,6 +905,7 @@ export function FuelTrackerProvider({ children }) {
     handleAddTireLog,
     handleAddReclaim,
     handleUpdateProfile,
+    handleMigrateMPG,
   };
 
   return (

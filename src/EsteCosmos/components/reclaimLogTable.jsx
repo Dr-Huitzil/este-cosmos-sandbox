@@ -15,9 +15,11 @@ export const ReclaimLogTable = memo(function ReclaimLogTable({ entries = [] }) {
 
   const sortedEntries = useMemo(
     () =>
-      [...entries].sort(
-        (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-      ),
+      [...entries].sort((a, b) => {
+        const d1 = new Date(b.day).getTime();
+        const d2 = new Date(a.day).getTime();
+        return d1 - d2;
+      }),
     [entries],
   );
 

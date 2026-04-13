@@ -12,9 +12,12 @@ import styles from "./serviceLogTable.module.css";
 export const ServiceLogTable = memo(function ServiceLogTable({ entries = [] }) {
   const sortedEntries = useMemo(
     () =>
-      [...entries].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      ),
+      [...entries].sort((a, b) => {
+        const d1 = new Date(b.date).getTime();
+        const d2 = new Date(a.date).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometerReading || 0) - (a.odometerReading || 0);
+      }),
     [entries],
   );
 
