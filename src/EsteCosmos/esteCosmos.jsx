@@ -86,8 +86,8 @@ export default function FuelTrackerWindow() {
             <Rocket size={32} className={styles.brandRocketIcon} />
           </div>
           <div className={styles.brandText}>
-            <span className={styles.brandLine1}>ROMANCE</span>
-            <span className={styles.brandLine2}>DAWN</span>
+            <span className={styles.brandLine1}>ESTE</span>
+            <span className={styles.brandLine2}>COSMOS</span>
           </div>
         </div>
 
@@ -148,7 +148,7 @@ export default function FuelTrackerWindow() {
       <main className={styles.mainContent}>
         <header className={styles.topBar}>
           <div className={styles.topBarMobileBrand}>
-            <h1 className={styles.mobileBrandTitle}>ROMANCE DAWN</h1>
+            <h1 className={styles.mobileBrandTitle}>ESTE COSMOS</h1>
           </div>
           <div className={styles.topBarActions}>
             <button
