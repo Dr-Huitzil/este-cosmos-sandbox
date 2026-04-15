@@ -93,7 +93,6 @@ export function FuelTrackerProvider({ children }) {
 
   // Sync 'dark' class on <html> so every CSS token consumer (body, modals, etc.) sees it
   useEffect(() => {
-    if (!rootRef.current) return;
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
