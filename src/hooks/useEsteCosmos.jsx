@@ -14,9 +14,9 @@ import {
   useFirestore,
   useCollection,
   useMemoFirebase,
-  addDocumentNonBlocking,
   useAuth,
   setDocumentNonBlocking,
+  updateDocumentNonBlocking,
 } from "@/firebase";
 import { collection, doc, serverTimestamp } from "firebase/firestore";
 import { signOut, updateProfile } from "firebase/auth";
@@ -68,6 +68,7 @@ export function FuelTrackerProvider({ children }) {
   const [isNewFuelLogOpen, setIsNewFuelLogOpen] = useState(false);
   const [isNewServiceLogOpen, setIsNewServiceLogOpen] = useState(false);
   const [isNewTireLogOpen, setIsNewTireLogOpen] = useState(false);
+  const [isNewReclaimOpen, setIsNewReclaimOpen] = useState(false);
   const [isMobileFabOpen, setIsMobileFabOpen] = useState(false);
 
   // ── Form checkbox + async-op state ─────────────────────────────
@@ -89,10 +90,9 @@ export function FuelTrackerProvider({ children }) {
     }
   }, []);
 
-  // Sync 'dark' class on the widget root whenever isDarkMode changes
+  // Sync 'dark' class on <html> so every CSS token consumer (body, modals, etc.) sees it
   useEffect(() => {
-    if (!rootRef.current) return;
-    rootRef.current.classList.toggle("dark", isDarkMode);
+    document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
   // ── Firebase — vehicles ─────────────────────────────────────────
@@ -169,20 +169,45 @@ export function FuelTrackerProvider({ children }) {
   const { data: tireEntriesData } = useCollection(tireQuery);
   const tireEntries = useMemo(() => tireEntriesData || [], [tireEntriesData]);
 
+  // ── Firebase — reclaim entries ──────────────────────────────────
+  const reclaimQuery = useMemoFirebase(() => {
+    if (!firestore || !user || !selectedVehicleId || currentView === "settings")
+      return null;
+    return collection(
+      firestore,
+      "userProfiles",
+      user.uid,
+      "vehicles",
+      selectedVehicleId,
+      "reclaimEntries",
+    );
+  }, [firestore, user?.uid, selectedVehicleId, currentView]);
+  const { data: reclaimEntriesData } = useCollection(reclaimQuery);
+  const reclaimEntries = useMemo(
+    () => reclaimEntriesData || [],
+    [reclaimEntriesData],
+  );
+
   // ── Pre-sorted arrays (computed once, reused by all consumers) ──
   // Sorting is O(n log n) — do it once per data change, never per sub-consumer.
   const sortedFuelEntries = useMemo(
     () =>
-      [...fuelEntries].sort(
-        (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-      ),
+      [...fuelEntries].sort((a, b) => {
+        const d1 = new Date(b.day).getTime();
+        const d2 = new Date(a.day).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometer || 0) - (a.odometer || 0);
+      }),
     [fuelEntries],
   );
   const sortedServiceEntries = useMemo(
     () =>
-      [...serviceEntries].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      ),
+      [...serviceEntries].sort((a, b) => {
+        const d1 = new Date(b.date).getTime();
+        const d2 = new Date(a.date).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometerReading || 0) - (a.odometerReading || 0);
+      }),
     [serviceEntries],
   );
   const sortedTireEntries = useMemo(
@@ -303,14 +328,23 @@ export function FuelTrackerProvider({ children }) {
     return Object.entries(categories).map(([name, value]) => ({ name, value }));
   }, [filteredService]);
 
+  const filteredReclaim = useMemo(() => {
+    if (analyticsRange === "all") return reclaimEntries;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - parseInt(analyticsRange));
+    return reclaimEntries.filter((e) => new Date(e.day) >= cutoff);
+  }, [reclaimEntries, analyticsRange]);
+
   const reimbursementStats = useMemo(() => {
-    const total = filteredService.reduce((sum, s) => sum + s.totalCost, 0);
-    const reimbursed = filteredService.reduce(
-      (sum, s) => sum + (s.reimbursementAmount || 0),
+    // Total fuel spend for the period
+    const total = filteredFuel.reduce((sum, f) => sum + (f.totalPrice || 0), 0);
+    // Total reclaims (separate entries)
+    const reimbursed = filteredReclaim.reduce(
+      (sum, r) => sum + (r.amount || 0),
       0,
     );
     return { total, reimbursed, net: total - reimbursed };
-  }, [filteredService]);
+  }, [filteredFuel, filteredReclaim]);
 
   // ── Stable callbacks — theme & nav ──────────────────────────────
   const toggleTheme = useCallback(() => {
@@ -348,6 +382,8 @@ export function FuelTrackerProvider({ children }) {
   );
   const handleOpenTireLog = useCallback(() => setIsNewTireLogOpen(true), []);
   const handleCloseTireLog = useCallback(() => setIsNewTireLogOpen(false), []);
+  const handleOpenReclaim = useCallback(() => setIsNewReclaimOpen(true), []);
+  const handleCloseReclaim = useCallback(() => setIsNewReclaimOpen(false), []);
   const handleToggleFab = useCallback(() => setIsMobileFabOpen((v) => !v), []);
 
   // ── Stable callbacks — auth & misc ─────────────────────────────
@@ -373,6 +409,10 @@ export function FuelTrackerProvider({ children }) {
   }, []);
   const fabOpenVehicle = useCallback(() => {
     setIsNewVehicleOpen(true);
+    setIsMobileFabOpen(false);
+  }, []);
+  const fabOpenReclaim = useCallback(() => {
+    setIsNewReclaimOpen(true);
     setIsMobileFabOpen(false);
   }, []);
 
@@ -639,6 +679,56 @@ export function FuelTrackerProvider({ children }) {
     [user, firestore, selectedVehicleId, toast],
   );
 
+  const handleAddReclaim = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!user || !firestore || !selectedVehicleId) return;
+      const fd = new FormData(e.currentTarget);
+      const amount = parseFloat(fd.get("amount"));
+      const day = fd.get("date");
+
+      // ── Validation ──
+      if (!Number.isFinite(amount) || amount <= 0 || amount > 99_999) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Amount",
+          description: "Reclaim amount must be between 0 and 99,999.",
+        });
+        return;
+      }
+      if (!day) {
+        toast({
+          variant: "destructive",
+          title: "Missing Date",
+          description: "Please select a reclaim date.",
+        });
+        return;
+      }
+
+      const colRef = collection(
+        firestore,
+        "userProfiles",
+        user.uid,
+        "vehicles",
+        selectedVehicleId,
+        "reclaimEntries",
+      );
+      addDocumentNonBlocking(colRef, {
+        vehicleId: selectedVehicleId,
+        day,
+        amount,
+        description: String(fd.get("description") ?? "")
+          .trim()
+          .slice(0, 500),
+        createdAt: serverTimestamp(),
+      });
+      setIsNewReclaimOpen(false);
+      e.currentTarget.reset();
+      toast({ title: "LOGGED", description: "Berry deposit confirmed." });
+    },
+    [user, firestore, selectedVehicleId, toast],
+  );
+
   const handleUpdateProfile = useCallback(
     async (e) => {
       e.preventDefault();
@@ -681,6 +771,60 @@ export function FuelTrackerProvider({ children }) {
     [auth, toast],
   );
 
+  /**
+   * handleMigrateMPG — Calibration routine.
+   * Fetches all fuel logs, sorts them ASC by odometer, and recalculates
+   * efficiency (MPG) for each 'full' entry based on its predecessors.
+   * Corrects historical data where mileage was missed or calculated incorrectly.
+   */
+  const handleMigrateMPG = useCallback(async () => {
+    if (!user || !firestore || !selectedVehicleId) return;
+
+    toast({
+      title: "CALIBRATION STARTED",
+      description: "Recalculating telemetry vectors...",
+    });
+
+    try {
+      // Use the current in-memory fuelEntries for the calculation
+      // Sort them by odometer ascending to process chronologically
+      const allEntries = [...fuelEntries].sort(
+        (a, b) => (a.odometer || 0) - (b.odometer || 0),
+      );
+
+      // Process each entry and update if its MPG changes
+      for (const entry of allEntries) {
+        const newMPG = calculateMPG(entry, allEntries);
+
+        // Only update if the value has actually changed to save on Firestore writes
+        if (entry.mileage !== newMPG) {
+          const docRef = doc(
+            firestore,
+            "userProfiles",
+            user.uid,
+            "vehicles",
+            selectedVehicleId,
+            "fuelEntries",
+            entry.id,
+          );
+          updateDocumentNonBlocking(docRef, { mileage: newMPG });
+        }
+      }
+
+      toast({
+        title: "CALIBRATION COMPLETE",
+        description: "Historical telemetry normalized.",
+      });
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "CALIBRATION FAILED",
+        description: "Neural link interrupted.",
+      });
+      console.error(err);
+    }
+  }, [user, firestore, selectedVehicleId, fuelEntries, toast]);
+
   // ── Return everything the shell needs ───────────────────────────
   const value = {
     // Auth / Firebase primitives
@@ -701,6 +845,7 @@ export function FuelTrackerProvider({ children }) {
     isNewFuelLogOpen,
     isNewServiceLogOpen,
     isNewTireLogOpen,
+    isNewReclaimOpen,
     isMobileFabOpen,
 
     // Data
@@ -708,6 +853,7 @@ export function FuelTrackerProvider({ children }) {
     fuelEntries,
     serviceEntries,
     tireEntries,
+    reclaimEntries,
     selectedVehicle,
     oilHealth,
     thrusterHealth,
@@ -735,12 +881,15 @@ export function FuelTrackerProvider({ children }) {
     handleCloseServiceLog,
     handleOpenTireLog,
     handleCloseTireLog,
+    handleOpenReclaim,
+    handleCloseReclaim,
     handleToggleFab,
 
     // FAB shortcuts
     fabOpenFuel,
     fabOpenService,
     fabOpenVehicle,
+    fabOpenReclaim,
 
     // Form / misc handlers
     toggleTheme,
@@ -752,7 +901,9 @@ export function FuelTrackerProvider({ children }) {
     handleAddFuelLog,
     handleAddServiceLog,
     handleAddTireLog,
+    handleAddReclaim,
     handleUpdateProfile,
+    handleMigrateMPG,
   };
 
   return (

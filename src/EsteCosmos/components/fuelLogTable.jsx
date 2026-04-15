@@ -9,14 +9,17 @@ import styles from "./fuelLogTable.module.css";
  * Wrapped in React.memo - only re-renders when entries reference change
  * @param {{ entries: Array }} props
  */
-export const FuelLogTable = memo(function FuelLogTable({ entries }) {
+export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
   const [pageSize, setPageSize] = useState("5");
 
   const sortedEntries = useMemo(
     () =>
-      [...entries].sort(
-        (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-      ),
+      [...entries].sort((a, b) => {
+        const d1 = new Date(b.day).getTime();
+        const d2 = new Date(a.day).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometer || 0) - (a.odometer || 0);
+      }),
     [entries],
   );
 
