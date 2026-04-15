@@ -91,10 +91,10 @@ export function FuelTrackerProvider({ children }) {
     }
   }, []);
 
-  // Sync 'dark' class on the widget root whenever isDarkMode changes
+  // Sync 'dark' class on <html> so every CSS token consumer (body, modals, etc.) sees it
   useEffect(() => {
     if (!rootRef.current) return;
-    rootRef.current.classList.toggle("dark", isDarkMode);
+    document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
   // ── Firebase — vehicles ─────────────────────────────────────────
