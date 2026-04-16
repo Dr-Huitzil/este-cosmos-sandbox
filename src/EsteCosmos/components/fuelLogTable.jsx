@@ -1,7 +1,11 @@
 import { memo, useMemo, useState } from "react";
 import { MapPin, Zap } from "lucide-react";
 import { format } from "date-fns";
-import { formatCurrency, calculateMPG } from "../../util/fuel-utils";
+import {
+  formatCurrency,
+  calculateMPG,
+  parseLocalDate,
+} from "../../util/fuel-utils";
 import styles from "./fuelLogTable.module.css";
 
 /**
@@ -74,7 +78,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
                 <td className={styles.td}>
                   <div className={styles.cellStack}>
                     <span className={styles.cellPrimary}>
-                      {format(new Date(entry.day), "MMM dd, yyyy")}
+                      {format(parseLocalDate(entry.day), "MMM dd, yyyy")}
                     </span>
                     {entry.gasStation && (
                       <span className={styles.cellSecondary}>

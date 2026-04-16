@@ -154,12 +154,12 @@ export default function FuelTrackerWindow() {
             <button
               className={`${styles.retroBtn} ${styles.iconBtn}`}
               onClick={toggleTheme}
+              title={
+                isDarkMode ? "swtich to light mode" : "switch to dark mode"
+              }
+              style={{ color: isDarkMode ? "#ffcc00" : "a78bfa" }}
             >
-              {isDarkMode ? (
-                <Sun size={24} className={styles.sunIcon} />
-              ) : (
-                <Moon size={24} className={styles.moonIcon} />
-              )}
+              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
             </button>
             <button
               className={`${styles.retroBtn} ${styles.refuelBtn}`}
