@@ -38,6 +38,20 @@ export function calculateMPG(currentEntry, allEntries) {
 }
 
 /**
+ * Parses a date string (YYYY-MM-DD) into a local Date object.
+ * new Date('YYYY-MM-DD') defaults to UTC midnight, which shift back a day
+ * in many timezones. This helper parses manually to preserve the local day.
+ * @param {string} dateStr
+ * @returns {Date}
+ */
+export function parseLocalDate(dateStr) {
+  if (!dateStr) return new Date();
+  const [year, month, day] = dateStr.split("-").map(Number);
+  // months are 0-indexed in JS Date constructor
+  return new Date(year, month - 1, day);
+}
+
+/**
  * Formats a number to USD currency
  * @param {number} amount
  * @return {string}

@@ -1,7 +1,7 @@
 import { memo, useMemo, useState } from "react";
 import { Banknote } from "lucide-react";
 import { format } from "date-fns";
-import { formatCurrency } from "../../util/fuel-utils";
+import { formatCurrency, parseLocalDate } from "../../util/fuel-utils";
 // We safely reuse the fuelLogTable CSS for consistent UI between the two tables
 import styles from "./fuelLogTable.module.css";
 
@@ -73,7 +73,7 @@ export const ReclaimLogTable = memo(function ReclaimLogTable({ entries = [] }) {
             <tr key={entry.id} className={styles.row}>
               <td className={styles.td}>
                 <span className={styles.cellPrimary}>
-                  {format(new Date(entry.day), "MMM dd, yyyy")}
+                  {format(parseLocalDate(entry.day), "MMM dd, yyyy")}
                 </span>
               </td>
               <td className={styles.td}>

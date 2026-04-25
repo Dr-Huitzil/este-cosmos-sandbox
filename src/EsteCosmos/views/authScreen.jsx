@@ -64,21 +64,15 @@ export function AuthScreen() {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.glowLeft} />
-      <div className={styles.glowRight} />
-      <div className={styles.starsDecor}></div>
-
       <div className={styles.card}>
-        <div className={styles.orbitDecor} />
-
         <div className={styles.cardHeader}>
           <div className={styles.rocketWrap}>
             <Rocket className={styles.rocketIcon} />
           </div>
-          <h1 className={styles.title}>Este</h1>
-          <h2 className={styles.titleAccent}>Cosmos</h2>
+          <h1 className={styles.title}>ROMANCE</h1>
+          <h2 className={styles.titleAccent}>DAWN</h2>
           <p className={styles.subtitle}>
-            Telemetria Orbital &amp; Fleet Management
+            FLEET TRACKING &amp; LOGISTICS
           </p>
         </div>
 

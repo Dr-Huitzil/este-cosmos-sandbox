@@ -1,16 +1,21 @@
-/* ─── Auth View (Modern High-Fidelity) ───────────────────────────────────────── */
+/* ─── Auth View (Neo-Brutalist / Romance Dawn Theme) ────────────────────────── */
 
 .screen {
   min-height: 100vh;
-  min-width: 320px; /* Minimum width to prevent layout collapse */
+  min-width: 320px;
   width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8f9fa;
+  background-color: hsl(var(--background));
   padding: 1rem;
   position: relative;
   overflow-y: auto;
+  /* Match the app's layered background */
+  background-image:
+    radial-gradient(circle at center, transparent 0%, transparent 100%),
+    url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
 }
 
 @media (min-width: 768px) {
@@ -19,89 +24,86 @@
   }
 }
 
-/* Base card with hyper-rounded corners */
+/* Scanline effect for that retro terminal feel */
+.screen::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.04) 50%
+    );
+  background-size: 100% 4px;
+  z-index: 100;
+}
+
+/* Card: Neo-Brutalist sharp corners, thick borders, hard shadow */
 .card {
-  background-color: white;
-  border-radius: 2rem; /* Softened for mobile, slightly less extreme than 3.5rem */
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  background-color: hsl(var(--card));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
   width: 100%;
   max-width: 26rem;
-  padding: 2rem 1.5rem; /* Drastically reduced padding for mobile */
+  padding: 2.5rem;
   position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  border-top: 6px solid hsl(var(--primary));
   box-sizing: border-box;
-}
-
-@media (min-width: 480px) {
-  .card {
-    border-radius: 3.5rem;
-    padding: 3rem 2.5rem;
-  }
 }
 
 .cardHeader {
   text-align: center;
   margin-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Hyper-rounded rocket logo */
+/* Sharp rocket logo box */
 .rocketWrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background-color: hsl(var(--primary));
   color: white;
-  width: 4.5rem; /* Explicit size for reliability */
-  height: 4.5rem;
-  border-radius: 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 8px 16px -4px hsl(var(--primary) / 0.4);
-  transition: transform 0.3s ease;
-}
-
-.rocketWrap:hover {
-  transform: translateY(-5px) rotate(-5deg);
+  width: 5rem;
+  height: 5rem;
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  margin-bottom: 1.5rem;
+  transition: transform 0.1s;
 }
 
 .rocketIcon {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: block;
+  width: 3rem;
+  height: 3rem;
 }
 
 .title {
-  font-size: 2.25rem; /* Smaller for mobile */
+  font-size: 2.5rem;
   font-weight: 900;
   text-transform: uppercase;
-  color: #1a1b1e;
+  color: hsl(var(--foreground));
   line-height: 1;
   letter-spacing: -0.05em;
-}
-
-@media (min-width: 480px) {
-  .title {
-    font-size: 3rem;
-  }
+  font-style: italic;
 }
 
 .titleAccent {
   font-size: 2rem;
   font-weight: 900;
   text-transform: uppercase;
-  color: hsl(var(--primary));
+  color: hsl(var(--secondary));
   line-height: 1;
   letter-spacing: -0.05em;
+  font-style: italic;
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 4px 4px;
+  padding: 0.25rem 0.5rem;
   margin-top: 0.25rem;
   display: block;
-}
-
-@media (min-width: 480px) {
-  .titleAccent {
-    font-size: 3rem;
-  }
 }
 
 .subtitle {
@@ -110,7 +112,7 @@
   text-transform: uppercase;
   letter-spacing: 0.3em;
   margin-top: 1.5rem;
-  color: #a1a1aa;
+  color: hsl(var(--muted-foreground));
 }
 
 /* ─── Tabs switcher ─────────────────────────────────────────────────────────── */
@@ -118,30 +120,29 @@
 .tabList {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  background-color: #c9eff5; /* Pale cyan from mockup */
-  padding: 0.4rem;
-  border-radius: 1.5rem;
+  background-color: hsl(var(--muted));
+  border: 4px solid hsl(var(--foreground));
+  padding: 0.25rem;
   margin-bottom: 2.5rem;
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
 }
 
 .tabBtn {
-  padding: 0.75rem;
+  padding: 1rem;
   font-weight: 900;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   background: transparent;
   border: none;
-  border-radius: 1.2rem;
   cursor: pointer;
-  color: #4b5563;
-  transition: all 0.2s ease;
+  color: hsl(var(--muted-foreground));
+  transition: all 0.1s ease;
 }
 
 .tabBtnActive {
   background-color: hsl(var(--primary));
   color: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* ─── Form Elements ─────────────────────────────────────────────────────────── */
@@ -163,25 +164,24 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #1a1b1e;
-  padding-left: 0.5rem;
+  color: hsl(var(--foreground));
 }
 
 .input {
-  height: 4rem;
-  padding: 0 1.5rem;
-  background-color: #fef9c3; /* Pale yellow from mockup */
-  border: none;
-  border-radius: 1.5rem;
-  color: #000;
-  font-size: 0.95rem;
-  font-weight: 800;
+  height: 3.5rem;
+  padding: 0 1rem;
+  background-color: hsl(var(--muted));
+  border: 4px solid hsl(var(--foreground));
+  color: hsl(var(--foreground));
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
   outline: none;
-  transition: transform 0.2s ease;
+  transition: border-color 0.15s;
 }
 
 .input:focus {
-  transform: scale(1.02);
+  border-color: hsl(var(--primary));
 }
 
 .submitBtn {
@@ -190,36 +190,50 @@
   justify-content: center;
   gap: 0.75rem;
   margin-top: 1rem;
-  padding: 1.5rem;
+  padding: 1.25rem;
   background-color: hsl(var(--primary));
   color: white;
-  border: none;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.5);
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
   font-weight: 900;
-  font-size: 0.85rem;
+  font-size: 1rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .submitBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px -5px hsl(var(--primary) / 0.6);
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px rgba(0,0,0,1);
 }
 
 .submitBtn:active {
-  transform: scale(0.98);
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
-/* ─── Global Decorations ────────────────────────────────────────────────────── */
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Divider ────────────────────────────────────────────────────────────── */
 
 .divider {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 2.5rem 0 1.5rem;
+  gap: 1rem;
+}
+
+.dividerLine {
+  height: 4px;
+  flex: 1;
+  background-color: hsl(var(--foreground));
 }
 
 .dividerLabel {
@@ -227,30 +241,36 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.4em;
-  color: #d1d5db;
-  background-color: #f3f4f6;
+  color: hsl(var(--muted-foreground));
+  background-color: hsl(var(--card));
   padding: 0.25rem 1rem;
-  border-radius: 1rem;
+  border: 2px solid hsl(var(--foreground));
 }
 
 .ghostBtn {
   width: 100%;
-  padding: 1rem;
-  background: white;
-  border: 4px solid #f3f4f6;
-  border-radius: 1.5rem;
+  padding: 1.25rem;
+  background: hsl(var(--card));
+  border: 4px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
   font-weight: 900;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   cursor: pointer;
-  color: #9ca3af;
-  transition: all 0.2s ease;
+  color: hsl(var(--foreground));
+  transition: all 0.1s ease;
 }
 
 .ghostBtn:hover {
-  border-color: #e5e7eb;
-  color: #6b7280;
+  background-color: hsl(var(--muted));
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px rgba(0,0,0,1);
+}
+
+.ghostBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 .footer {
@@ -259,7 +279,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.3em;
-  color: #cbd5e1;
+  color: hsl(var(--muted-foreground));
   margin-top: 2rem;
 }
 

@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { Wrench, CheckCircle2 } from "lucide-react";
 import { format } from "date-fns";
-import { formatCurrency } from "../../util/fuel-utils";
+import { formatCurrency, parseLocalDate } from "../../util/fuel-utils";
 import styles from "./serviceLogTable.module.css";
 
 /**
@@ -65,7 +65,7 @@ export const ServiceLogTable = memo(function ServiceLogTable({ entries = [] }) {
                 </div>
               </td>
               <td className={styles.td}>
-                {format(new Date(entry.date), "mm dd, yyyy")}
+                {format(parseLocalDate(entry.date), "MMM dd, yyyy")}
               </td>
               <td className={`${styles.td} ${styles.tdMono}`}>
                 {entry.odometerReading.toLocaleString()}

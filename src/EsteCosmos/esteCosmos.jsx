@@ -154,13 +154,56 @@ export default function FuelTrackerWindow() {
             <button
               className={`${styles.retroBtn} ${styles.iconBtn}`}
               onClick={toggleTheme}
+              title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              style={{ color: isDarkMode ? "#ffcc00" : "#a78bfa" }}
             >
               {isDarkMode ? (
-                <Sun size={24} className={styles.sunIcon} />
+                <Sun size={24} />
               ) : (
-                <Moon size={24} className={styles.moonIcon} />
+                <Moon size={24} />
               )}
             </button>
+            <div className={styles.desktopQuickActions}>
+              <button
+                className={`${styles.retroBtn} ${styles.iconBtn}`}
+                onClick={handleToggleFab}
+                title="Quick Action Menu"
+              >
+                <Plus size={24} />
+              </button>
+              {isMobileFabOpen && (
+                <div className={`${styles.fabMenu} ${styles.desktopMenu}`}>
+                  <button className={styles.fabMenuItem} onClick={fabOpenFuel}>
+                    {" "}
+                    <Zap size={16} /> LOG FUEL
+                  </button>
+                  <button
+                    className={styles.fabMenuItem}
+                    onClick={fabOpenService}
+                  >
+                    {" "}
+                    <Wrench size={16} /> LOG REFIT
+                  </button>
+                  <button
+                    className={styles.fabMenuItem}
+                    onClick={fabOpenVehicle}
+                  >
+                    {" "}
+                    <Rocket size={16} /> ENLIST SHIP
+                  </button>
+                  <button
+                    className={styles.fabMenuItem}
+                    onClick={fabOpenReclaim}
+                  >
+                    {" "}
+                    <span style={{ fontSize: "16px", lineHeight: 1 }}>
+                      💰
+                    </span>{" "}
+                    LOG RECLAIM
+                  </button>
+                </div>
+              )}
+            </div>
             <button
               className={`${styles.retroBtn} ${styles.refuelBtn}`}
               onClick={handleOpenFuelLog}

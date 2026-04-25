@@ -250,15 +250,7 @@
   margin-left: auto;
 }
 
-.iconBtn {
-  width: 3rem;
-  height: 3rem;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: hsl(var(--card));
-}
+
 
 .sunIcon {
   color: #ffcc00; /* Bright yellow for the light-mode switch */
@@ -267,6 +259,30 @@
 .moonIcon {
   color: #a78bfa; /* Soft violet for the dark-mode switch */
 }
+
+.desktopQuickActions {
+  position: relative;
+  display: none;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .desktopQuickActions {
+    display: flex;
+  }
+}
+
+
+.desktopMenu {
+  top: calc(100% + 1rem) !important;
+  bottom: auto !important;
+  right: 0;
+  left: auto !important;
+  transform: none !important;
+  z-index: 100;
+}
+
+
 
 .refuelBtn {
   display: flex;
@@ -277,6 +293,7 @@
   background-color: hsl(var(--primary));
   color: white;
 }
+
 
 /* View container */
 .viewContainer {
@@ -630,6 +647,17 @@
 .retroBtn:active {
   box-shadow: none;
   transform: translate(2px, 2px);
+}
+
+.iconBtn {
+  width: 3rem;
+  height: 3rem;
+  min-width: 3rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(var(--card));
 }
 
 .modalSubmitPrimary {

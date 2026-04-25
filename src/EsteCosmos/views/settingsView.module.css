@@ -4,8 +4,9 @@
 .settingsGrid {
   display: flex;
   flex-direction: column;
-  gap: 2rem;       /* 32 px between each settings card */
-  max-width: 42rem; /* caps the form width at 672 px — prevents overly wide inputs on large screens */
+  gap: 2rem;
+  max-width: 42rem;
+  margin: 0 auto; /* Center the grid container itself */
 }
 
 /* Standard settings card padding */
@@ -39,9 +40,18 @@
 .pilotRow {
   display: flex;
   align-items: center;
-  gap: 2rem;         /* 32 px between avatar and text */
-  margin-bottom: 2rem; /* 32 px gap before the update form starts */
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
+
+@media (max-width: 640px) {
+  .pilotRow {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
 
 /* Prevents the avatar block from shrinking when the text is long */
 .avatarWrap {
@@ -188,3 +198,24 @@
   background-color: hsl(var(--destructive)); /* red fills the button to warn the user */
   color: white;
 }
+
+@media (max-width: 640px) {
+  .settingsCard {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .settingsCardTitle {
+    width: 100%;
+  }
+  .settingsForm {
+    width: 100%;
+  }
+  .themeRow {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
