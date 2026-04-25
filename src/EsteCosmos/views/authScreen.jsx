@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/firebase";
 import {
-  signInAnonymously,
+  //signInAnonymously,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
@@ -47,20 +47,20 @@ export function AuthScreen() {
     }
   };
 
-  const handleAnonymous = async () => {
-    setIsLoading(true);
-    try {
-      await signInAnonymously(auth);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Transmission Failed",
-        description: error.message,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const handleAnonymous = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     await signInAnonymously(auth);
+  //   } catch (error) {
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Transmission Failed",
+  //       description: error.message,
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <div className={styles.screen}>
@@ -69,11 +69,9 @@ export function AuthScreen() {
           <div className={styles.rocketWrap}>
             <Rocket className={styles.rocketIcon} />
           </div>
-          <h1 className={styles.title}>ROMANCE</h1>
-          <h2 className={styles.titleAccent}>DAWN</h2>
-          <p className={styles.subtitle}>
-            FLEET TRACKING &amp; LOGISTICS
-          </p>
+          <h1 className={styles.title}>ESTE</h1>
+          <h2 className={styles.titleAccent}>COSMOS</h2>
+          <p className={styles.subtitle}>FUEL TRACKING &amp; LOGISTICS</p>
         </div>
 
         <div className={styles.tabList}>
@@ -173,19 +171,13 @@ export function AuthScreen() {
           </form>
         )}
 
-        <div className={styles.divider}>
-          <span className={styles.dividerLine} />
-          <span className={styles.dividerLabel}>Sector Scan</span>
-          <span className={styles.dividerLine} />
-        </div>
-
-        <button
+        {/* <button
           className={styles.ghostBtn}
           onClick={handleAnonymous}
           disabled={isLoading}
         >
           Ghost Protocol
-        </button>
+        </button> */}
 
         <p className={styles.footer}>Floating through the emptiness of space</p>
       </div>
