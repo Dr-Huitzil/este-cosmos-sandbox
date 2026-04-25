@@ -65,7 +65,7 @@ export const ServiceLogTable = memo(function ServiceLogTable({ entries = [] }) {
                 </div>
               </td>
               <td className={styles.td}>
-                {format(parseLocalDate(entry.date), "mm dd, yyyy")}
+                {format(parseLocalDate(entry.date), "MMM dd, yyyy")}
               </td>
               <td className={`${styles.td} ${styles.tdMono}`}>
                 {entry.odometerReading.toLocaleString()}

@@ -151,9 +151,7 @@ export const AnalyticsView = memo(function AnalyticsView() {
             </h3>
             <div className={styles.bountyRows}>
               <div className={styles.bountyRow}>
-                <span className={styles.bountyLabel}>
-                  GROSS FUEL EXPENDITURE
-                </span>
+                <span className={styles.bountyLabel}>GROSS FUEL EXPENDITURE</span>
                 <span className={styles.bountyAmount}>
                   {formatCurrency(reimbursementStats.total)}
                 </span>

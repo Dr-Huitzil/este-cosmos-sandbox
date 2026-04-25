@@ -14,10 +14,10 @@ import {
   useFirestore,
   useCollection,
   useMemoFirebase,
-  addDocumentNonBlocking,
   useAuth,
   setDocumentNonBlocking,
   updateDocumentNonBlocking,
+  addDocumentNonBlocking,
 } from "@/firebase";
 import { collection, doc, serverTimestamp } from "firebase/firestore";
 import { signOut, updateProfile } from "firebase/auth";

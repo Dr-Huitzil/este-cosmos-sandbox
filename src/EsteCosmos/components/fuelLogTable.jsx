@@ -1,11 +1,7 @@
 import { memo, useMemo, useState } from "react";
 import { MapPin, Zap } from "lucide-react";
 import { format } from "date-fns";
-import {
-  formatCurrency,
-  calculateMPG,
-  parseLocalDate,
-} from "../../util/fuel-utils";
+import { formatCurrency, calculateMPG, parseLocalDate } from "../../util/fuel-utils";
 import styles from "./fuelLogTable.module.css";
 
 /**

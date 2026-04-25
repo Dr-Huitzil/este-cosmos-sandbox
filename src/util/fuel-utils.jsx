@@ -38,11 +38,11 @@ export function calculateMPG(currentEntry, allEntries) {
 }
 
 /**
- * Parses a date string into a local date object
- * new date('yyyy-mm-dd) defaults to utc midnight which shift back a day
- * in many timezones. this helper parses manually to preserve the local day
+ * Parses a date string (YYYY-MM-DD) into a local Date object.
+ * new Date('YYYY-MM-DD') defaults to UTC midnight, which shift back a day
+ * in many timezones. This helper parses manually to preserve the local day.
  * @param {string} dateStr
- * @return {Date}
+ * @returns {Date}
  */
 export function parseLocalDate(dateStr) {
   if (!dateStr) return new Date();
