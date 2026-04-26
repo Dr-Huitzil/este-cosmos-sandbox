@@ -48,9 +48,9 @@ export function FleetProvider({ children }) {
 
   // Fuel Entries
   const fuelQuery = useMemoFirebase(() => {
-    if (!firestore || !user || !selectedVehicleId || currentView === "settings") return null;
+    if (!firestore || !user || !selectedVehicleId) return null;
     return collection(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "fuelEntries");
-  }, [firestore, user?.uid, selectedVehicleId, currentView]);
+  }, [firestore, user?.uid, selectedVehicleId]);
   const { data: fuelEntriesData } = useCollection(fuelQuery);
   const fuelEntries = useMemo(() => fuelEntriesData || [], [fuelEntriesData]);
 
@@ -72,9 +72,9 @@ export function FleetProvider({ children }) {
 
   // Service Entries
   const serviceQuery = useMemoFirebase(() => {
-    if (!firestore || !user || !selectedVehicleId || currentView === "settings") return null;
+    if (!firestore || !user || !selectedVehicleId) return null;
     return collection(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "serviceEntries");
-  }, [firestore, user?.uid, selectedVehicleId, currentView]);
+  }, [firestore, user?.uid, selectedVehicleId]);
   const { data: serviceEntriesData } = useCollection(serviceQuery);
   const serviceEntries = useMemo(() => serviceEntriesData || [], [serviceEntriesData]);
 
@@ -91,9 +91,9 @@ export function FleetProvider({ children }) {
 
   // Tire Entries
   const tireQuery = useMemoFirebase(() => {
-    if (!firestore || !user || !selectedVehicleId || currentView !== "dashboard") return null;
+    if (!firestore || !user || !selectedVehicleId) return null;
     return collection(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "tirePressureEntries");
-  }, [firestore, user?.uid, selectedVehicleId, currentView]);
+  }, [firestore, user?.uid, selectedVehicleId]);
   const { data: tireEntriesData } = useCollection(tireQuery);
   const tireEntries = useMemo(() => tireEntriesData || [], [tireEntriesData]);
 
@@ -104,9 +104,9 @@ export function FleetProvider({ children }) {
 
   // Reclaim Entries
   const reclaimQuery = useMemoFirebase(() => {
-    if (!firestore || !user || !selectedVehicleId || currentView === "settings") return null;
+    if (!firestore || !user || !selectedVehicleId) return null;
     return collection(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "reclaimEntries");
-  }, [firestore, user?.uid, selectedVehicleId, currentView]);
+  }, [firestore, user?.uid, selectedVehicleId]);
   const { data: reclaimEntriesData } = useCollection(reclaimQuery);
   const reclaimEntries = useMemo(() => reclaimEntriesData || [], [reclaimEntriesData]);
 
