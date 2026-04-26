@@ -247,11 +247,11 @@ export default function FuelTrackerWindow() {
                 </button>
                 <button className={styles.fabMenuItem} onClick={fabOpenService}>
                   {" "}
-                  <Wrench size={16} /> LOG REFIT
+                  <Wrench size={16} /> LOG SERVICE
                 </button>
                 <button className={styles.fabMenuItem} onClick={fabOpenVehicle}>
                   {" "}
-                  <Rocket size={16} /> ENLIST SHIP
+                  <Rocket size={16} /> ENLIST VEHICLE
                 </button>
                 <button className={styles.fabMenuItem} onClick={fabOpenReclaim}>
                   {" "}

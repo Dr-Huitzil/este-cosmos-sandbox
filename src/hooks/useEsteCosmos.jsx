@@ -262,8 +262,8 @@ export function FuelTrackerProvider({ children }) {
       list.push({
         id: "oil",
         title:
-          oilHealth <= 0 ? "CRITICAL: CORE FAILURE" : "WARNING: LOW INTEGRITY",
-        description: `Ship reactor health at ${oilHealth}%. Immediate docking required.`,
+          oilHealth <= 0 ? "CRITICAL: ENGINE FAILURE" : "WARNING: LOW ENGINE INTEGRITY",
+        description: `Engine health at ${oilHealth}%. Immediate service required.`,
         variant: oilHealth <= 0 ? "destructive" : "warning",
       });
     }
@@ -280,7 +280,7 @@ export function FuelTrackerProvider({ children }) {
       if (lowTires.length > 0) {
         list.push({
           id: "tire-leak",
-          title: "HULL PRESSURE BREACH",
+          title: "TIRE LEAK DETECTED",
           description: `Low pressure detected in: ${lowTires.map((t) => t.name).join(", ")}.`,
           variant: "destructive",
         });
@@ -473,9 +473,6 @@ export function FuelTrackerProvider({ children }) {
         id: vehicleId,
         make,
         model,
-        sub_model: String(fd.get("sub_model") ?? "")
-          .trim()
-          .slice(0, 50),
         year,
         name: name || `${year} ${make} ${model}`,
       };

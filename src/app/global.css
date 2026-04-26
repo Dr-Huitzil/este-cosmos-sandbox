@@ -25,6 +25,7 @@
   /* dark text on secondary-colored backgrounds */
   --third: 19 100% 54.1%;
   /* Orange for warnings or alerts */
+  /* --fourth: 40FF15 lime green. last color in the harmony*/
   --muted: 187 20% 90%;
   /* muted surface — a very light teal wash for subdued areas */
   --muted-foreground: 250 10% 40%;
