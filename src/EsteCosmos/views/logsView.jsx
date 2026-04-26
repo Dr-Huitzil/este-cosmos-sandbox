@@ -18,20 +18,20 @@ export const LogsView = memo(function LogsView() {
   return (
     <div className={styles.viewPad}>
       <h2 className={styles.viewTitle}>
-        BLACKBOX<span className={styles.viewTitlePrimary}>LOGS</span>
+        MAINTENANCE<span className={styles.viewTitlePrimary}>LOGS</span>
       </h2>
       <div className={styles.logGrid}>
         <div className={`${styles.retroCard} ${styles.logCard}`}>
           <header className={styles.logCardHeader}>
             <Zap size={20} />
-            <span>ENERGY CONSUMPTION</span>
+            <span>FUEL CONSUMPTION</span>
           </header>
           <FuelLogTable entries={fuelEntries} />
         </div>
         <div className={`${styles.retroCard} ${styles.logCard}`}>
           <header className={styles.logCardHeader}>
             <Banknote size={20} />
-            <span>BERRY RECLAIM</span>
+            <span>REIMBURSEMENT LOGS</span>
           </header>
           <ReclaimLogTable entries={reclaimEntries} />
         </div>
@@ -41,7 +41,7 @@ export const LogsView = memo(function LogsView() {
           className={`${styles.logCardHeader} ${styles.logCardHeaderPrimary}`}
         >
           <Wrench size={20} />
-          <span>REPAIR PROTOCOL</span>
+          <span>REPAIR LOGS</span>
         </header>
         <ServiceLogTable entries={serviceEntries} />
       </div>

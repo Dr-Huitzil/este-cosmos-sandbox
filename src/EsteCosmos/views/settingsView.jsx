@@ -21,13 +21,13 @@ export const SettingsView = memo(function SettingsView() {
   return (
     <div className={styles.viewPad}>
       <h2 className={styles.viewTitle}>
-        FLEET<span className={styles.viewTitleSecondary}>CONFIG</span>
+        APP<span className={styles.viewTitleSecondary}>CONFIG</span>
       </h2>
 
       <div className={styles.settingsGrid}>
         {/* Pilot Identity */}
         <div className={`${styles.retroCard} ${styles.settingsCard}`}>
-          <h3 className={styles.settingsCardTitle}>PILOT IDENTITY</h3>
+          <h3 className={styles.settingsCardTitle}>USER IDENTITY</h3>
           <div className={styles.pilotRow}>
             <div className={styles.avatarWrap}>
               {isSafePhotoURL(user.photoURL) ? (
@@ -75,7 +75,7 @@ export const SettingsView = memo(function SettingsView() {
           <h3 className={styles.settingsCardTitle}>VISUAL FILTERS</h3>
           <div className={styles.themeRow}>
             <div>
-              <p className={styles.themeLabel}>STARCHART OVERLAY</p>
+              <p className={styles.themeLabel}>DARK MODE</p>
               <p className={styles.themeSubLabel}>Toggle Night Watch Mode</p>
             </div>
             <label className={styles.toggleLabel}>

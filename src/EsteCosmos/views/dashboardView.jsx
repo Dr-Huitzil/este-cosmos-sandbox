@@ -140,10 +140,10 @@ export const DashboardView = memo(function DashboardView() {
                 className={`${styles.tabBtn} ${styles.tabBtnActive} ${styles.carouselLabel}`}
               >
                 {activeTab === "fuel"
-                  ? "REACTOR"
+                  ? "FUEL"
                   : activeTab === "maintenance"
-                    ? "REPLACEMENTS"
-                    : "BODY"}
+                    ? "MAINTENANCE"
+                    : "TIRES"}
               </div>
               <button
                 className={styles.carouselBtn}
@@ -166,10 +166,10 @@ export const DashboardView = memo(function DashboardView() {
                   className={`${styles.tabBtn} ${activeTab === tab ? styles.tabBtnActive : ""}`}
                 >
                   {tab === "fuel"
-                    ? "REACTOR"
+                    ? "FUEL"
                     : tab === "maintenance"
-                      ? "REPLACEMENTS"
-                      : "BODY"}
+                      ? "MAINTENANCE"
+                      : "TIRES"}
                 </button>
               ))}
             </div>
