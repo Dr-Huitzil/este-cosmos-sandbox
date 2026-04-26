@@ -69,9 +69,6 @@ export const VehicleCard = memo(function VehicleCar({
               {vehicle.make} / {vehicle.model}
             </p>
           </div>
-          <div className={styles.rocketBadge}>
-            <Rocket size={20} className={styles.rocketIcon} />
-          </div>
         </div>
       </div>
 
@@ -81,9 +78,7 @@ export const VehicleCard = memo(function VehicleCar({
             <Gauge size={12} /> DISTANCE
           </p>
           <p className={styles.statValue}>
-            {latestEntry
-              ? `${latestEntry.odometer.toLocaleString()} LY`
-              : "---"}
+            {latestEntry ? `${latestEntry.odometer.toLocaleString()} m` : "---"}
           </p>
         </div>
         <div className={`${styles.statItem} ${styles.statRight}`}>
@@ -91,13 +86,9 @@ export const VehicleCard = memo(function VehicleCar({
             <Zap size={12} /> EFFICIENCY
           </p>
           <p className={`${styles.statValue} ${styles.statValuePrimary}`}>
-            {avgMileage} U/C
+            {avgMileage} mpg
           </p>
         </div>
-      </div>
-
-      <div className={styles.accessBridge}>
-        <p className={styles.accessBridgeText}>ACCESS BRIDGE</p>
       </div>
     </div>
   );

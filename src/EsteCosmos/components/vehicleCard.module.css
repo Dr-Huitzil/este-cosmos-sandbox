@@ -91,23 +91,12 @@
 
 /* Small uppercase label showing make and model */
 .vehicleSubtitle {
-  font-size: 0.625rem;       /* 10 px — intentionally tiny to not compete with the vehicle name */
+  font-size: 0.825rem;       /* 10 px — intentionally tiny to not compete with the vehicle name */
   font-weight: 900;          /* bold weight keeps it legible despite the small size */
   text-transform: uppercase; /* matches the all-caps design language of the rest of the card */
   letter-spacing: 0.15em;   /* wide tracking on small caps improves legibility */
+  margin: 0;
   color: hsl(var(--secondary)); /* uses the secondary theme color to visually de-emphasize vs. the name */
-}
-
-/* Square badge holding the rocket icon, bottom-right of the image */
-.rocketBadge {
-  background-color: hsl(var(--foreground)); /* solid foreground background ensures the icon pops regardless of the photo behind it */
-  padding: 0.5rem;   /* 8 px of space around the icon for breathing room and tap-target size */
-  border: 2px solid white; /* thin white border lifts the badge off the dark overlay */
-}
-
-/* The Lucide Rocket icon inside the badge */
-.rocketIcon {
-  color: hsl(var(--primary)); /* tints the icon with the brand accent color */
 }
 
 /* ─── Stats Row ─────────────────────────────────────────────────────────────── */
@@ -141,7 +130,7 @@
   display: flex;         /* rows the icon and the text side-by-side */
   align-items: center;   /* vertically centers the icon relative to the text cap-height */
   gap: 0.25rem;          /* 4 px between the icon and the label text */
-  font-size: 0.5rem;     /* 8 px — deliberately tiny so it reads as a caption, not body text */
+  font-size: 0.7rem;     /* 8 px — deliberately tiny so it reads as a caption, not body text */
   font-weight: 900;      /* keeps the tiny text legible by using maximum weight */
   text-transform: uppercase; /* all-caps label style */
   opacity: 0.6;          /* reduces visual weight so the label doesn't compete with the value */
@@ -159,31 +148,13 @@
   font-weight: 900;
   font-style: italic;
   letter-spacing: -0.05em;
+  margin: 0;
   color: hsl(var(--foreground));
 }
 
 /* Modifier for the Efficiency value — makes it bigger and accent-colored to draw the eye */
 .statValuePrimary {
-  font-size: 2.25rem;       /* Huge pink efficiency value from target image */
+  font-size: 2rem;       /* Huge pink efficiency value from target image */
   color: hsl(var(--primary));
   line-height: 1;
-}
-
-/* ─── Access Bridge Footer ──────────────────────────────────────────────────── */
-
-/* Full-width button-like footer strip at the very bottom of the card */
-.accessBridge {
-  background-color: hsl(var(--foreground)); /* inverted (dark) background creates a strong visual end-cap for the card */
-  padding: 0.5rem;           /* 8 px top/bottom padding gives the strip enough height to be tappable */
-  text-align: center;        /* centers the label text horizontally */
-  transition: background-color 0.2s; /* smoothly shifts to the primary color on card hover */
-}
-
-/* The text label inside the Access Bridge strip */
-.accessBridgeText {
-  font-size: 0.625rem;       /* 10 px — matches the vehicleSubtitle size for visual consistency */
-  font-weight: 900;          /* bold so it stays sharp at a small size */
-  text-transform: uppercase; /* all-caps to match the rest of the card's label language */
-  letter-spacing: 0.15em;   /* wide tracking for clarity on tiny uppercase text */
-  color: hsl(var(--background)); /* inverted text color (light on dark) so it reads against the dark strip */
 }
