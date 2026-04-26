@@ -36,7 +36,7 @@
 
 .imageWrapper {
   position: relative;
-  aspect-ratio: 16 / 9; /* Cinematic landscape ratio that scales with card width */
+  aspect-ratio: 8 / 4.5; /* Cinematic landscape ratio that scales with card width */
   width: 100%;
   border-bottom: 4px solid hsl(var(--foreground));
   overflow: hidden;

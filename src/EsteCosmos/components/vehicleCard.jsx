@@ -57,7 +57,7 @@ export const VehicleCard = memo(function VehicleCar({
     >
       <div className={styles.imageWrapper}>
         <img
-          src={`https://picsum.photos/seed/${vehicle.id}/600/400`}
+          src={"../../assets/images/stars.jpg"}
           alt={vehicle.name}
           className={styles.image}
         />
