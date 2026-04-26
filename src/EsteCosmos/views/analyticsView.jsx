@@ -57,7 +57,10 @@ export const AnalyticsView = memo(function AnalyticsView() {
           <div className={styles.chartArea}>
             {fuelEfficiencyData.length > 1 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <ReChartsLineChart data={fuelEfficiencyData}>
+                <ReChartsLineChart
+                  data={fuelEfficiencyData}
+                  margin={{ top: 0, right: 10, left: -40, bottom: 0 }}
+                >
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="#000000"

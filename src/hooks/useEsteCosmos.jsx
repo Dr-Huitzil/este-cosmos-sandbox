@@ -62,7 +62,7 @@ export function FuelTrackerProvider({ children }) {
   const [currentView, setCurrentView] = useState("dashboard");
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [activeTab, setActiveTab] = useState("fuel");
-  const [analyticsRange, setAnalyticsRange] = useState("90");
+  const [analyticsRange, setAnalyticsRange] = useState("14");
 
   // ── Modal open/close state ──────────────────────────────────────
   const [isNewVehicleOpen, setIsNewVehicleOpen] = useState(false);
