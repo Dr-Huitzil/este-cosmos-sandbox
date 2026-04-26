@@ -38,6 +38,16 @@ export function calculateMPG(currentEntry, allEntries) {
 }
 
 /**
+ * Helper function to calculate the raw difference in days between two date strings ("YYYY-MM-DD")
+ */
+export function calculateDaysPassed(currentDateStr, previousDateStr) {
+  const current = new Date(currentDateStr);
+  const previous = new Date(previousDateStr);
+  const diffTime = Math.abs(current - previous);
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+}
+
+/**
  * Parses a date string (YYYY-MM-DD) into a local Date object.
  * new Date('YYYY-MM-DD') defaults to UTC midnight, which shift back a day
  * in many timezones. This helper parses manually to preserve the local day.
