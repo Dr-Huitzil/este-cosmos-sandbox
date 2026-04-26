@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useAuth, useFirestore, useUser, useCollection, useMemoFirebase, setDocumentNonBlocking, addDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
 import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import { calculateMPG } from "../util/fuel-utils";
+import { calculateMPG, calculateDaysPassed } from "../util/fuel-utils";
+import { runEdgeImpulseClassifier } from "../util/ai-model";
 import { useUI } from "./UIContext";
 
 const FleetContext = createContext(null);
@@ -145,7 +146,7 @@ export function FleetProvider({ children }) {
   );
 
   const handleAddFuelLog = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
       if (!user || !firestore || !selectedVehicleId) return;
       const fd = new FormData(e.currentTarget);
@@ -172,12 +173,65 @@ export function FleetProvider({ children }) {
       if (isNaN(fuelPrice) && !isNaN(totalPrice) && qty > 0) fuelPrice = Number((totalPrice / qty).toFixed(3));
       else if (isNaN(totalPrice) && !isNaN(fuelPrice) && qty > 0) totalPrice = Number((fuelPrice * qty).toFixed(2));
 
+      // Calculate the standard mileage mapping
       const mileage = calculateMPG({ odometer: odo, fuelQuantity: qty, isFull }, fuelEntriesRef.current);
+      
+      // AI Middleman Step
+      let previousOdometer = odo;
+      let previousDay = day;
+      let hasPreviousLog = false;
+      const allEntries = fuelEntriesRef.current;
+      
+      if (allEntries && allEntries.length > 0) {
+        // Since allEntries is already sorted newest first, index 0 is the most recent
+        const prevDoc = allEntries[0];
+        previousOdometer = Number(prevDoc.odometer);
+        previousDay = prevDoc.day;
+        hasPreviousLog = true;
+      }
+
+      let mpg = 0;
+      let miles_per_day = 0;
+
+      if (hasPreviousLog) {
+        const milesDriven = odo - previousOdometer;
+        const daysPassed = calculateDaysPassed(day, previousDay);
+        
+        // Safety check in case of multiple fuel-ups on the same day (daysPassed = 0)
+        const safeDays = Math.max(daysPassed, 1);
+
+        // Prevent division by zero and negative mileage edge cases
+        if (qty > 0 && milesDriven >= 0) {
+          mpg = Number((milesDriven / qty).toFixed(2));
+          miles_per_day = Number((milesDriven / safeDays).toFixed(2));
+        }
+      }
+
+      // Run AI Model
+      const features = [mpg, qty, miles_per_day];
+      let anomalyScore = 0;
+
+      try {
+        const aiResult = await runEdgeImpulseClassifier(features);
+        anomalyScore = aiResult?.anomaly || 0;
+        
+        // Update UI state based on anomaly score
+        if (anomalyScore < 0.6) {
+          toast({ title: "Engine Optimal", description: `Anomaly Score: ${anomalyScore.toFixed(3)}` });
+        } else {
+          toast({ variant: "destructive", title: "Efficiency Degradation", description: `Anomaly Score: ${anomalyScore.toFixed(3)}` });
+        }
+      } catch (aiError) {
+        console.error("Non-fatal error: AI Model failed to run:", aiError);
+        // Continue with a default anomaly score of 0
+      }
+
       const colRef = collection(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "fuelEntries");
       addDocumentNonBlocking(colRef, {
         vehicleId: selectedVehicleId,
         day, odometer: odo, fuelQuantity: qty, fuelPrice: fuelPrice || 0,
-        totalPrice: totalPrice || 0, gasStation: station, isFull, mileage, createdAt: serverTimestamp()
+        totalPrice: totalPrice || 0, gasStation: station, isFull, mileage, 
+        anomalyScore, createdAt: serverTimestamp()
       });
       handleCloseFuelLog();
       e.currentTarget.reset();

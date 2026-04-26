@@ -70,7 +70,8 @@ export const AnalyticsView = memo(function AnalyticsView() {
                     dataKey="date"
                     tick={{ fontWeight: "bold", fontSize: 10 }}
                   />
-                  <YAxis tick={{ fontWeight: "bold", fontSize: 10 }} />
+                  <YAxis yAxisId="left" tick={{ fontWeight: "bold", fontSize: 10 }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fontWeight: "bold", fontSize: 10, fill: "#ef4444" }} />
                   <ReChartsTooltip
                     contentStyle={{
                       backgroundColor: "#fff",
@@ -83,10 +84,30 @@ export const AnalyticsView = memo(function AnalyticsView() {
                       color: "hsl(var(--primary))",
                     }}
                   />
+                  <Legend 
+                    verticalAlign="top" 
+                    height={36}
+                    wrapperStyle={{
+                      fontWeight: 900,
+                      fontSize: "10px",
+                      textTransform: "uppercase",
+                    }}
+                  />
                   <Line
+                    yAxisId="left"
                     type="stepAfter" // could have monotone or natural for a smoother curve, but the straight lines fit the pixel art aesthetic better
                     dataKey="mpg"
+                    name="EFFICIENCY (MPG)"
                     stroke="hsl(var(--primary))"
+                    strokeWidth={4}
+                    dot={{ r: 5, fill: "#000" }}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="anomalyScore"
+                    name="ANOMALY SCORE"
+                    stroke="#ef4444"
                     strokeWidth={4}
                     dot={{ r: 5, fill: "#000" }}
                   />

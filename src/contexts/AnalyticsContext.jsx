@@ -96,6 +96,7 @@ export function AnalyticsProvider({ children }) {
         .map((e) => ({
           date: shortDateFormatter.format(parseLocalDate(e.day)),
           mpg: e.mileage,
+          anomalyScore: e.anomalyScore ? Number(e.anomalyScore.toFixed(3)) : 0,
         })),
     [filteredFuel, shortDateFormatter]
   );

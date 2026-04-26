@@ -1,5 +1,5 @@
 import { memo, useMemo, useState } from "react";
-import { MapPin, Zap } from "lucide-react";
+import { MapPin, Zap, AlertTriangle, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import {
   formatCurrency,
@@ -95,13 +95,23 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
                   {formatCurrency(entry.totalPrice)}
                 </td>
                 <td className={`${styles.td} ${styles.tdRight}`}>
-                  {dynamicMPG > 0 ? (
-                    <span className={styles.effBadge}>{dynamicMPG} mpg</span>
-                  ) : (
-                    <span className={styles.partialLabel}>
-                      {entry.isFull ? "FULL TANK" : "PARTIAL"}
-                    </span>
-                  )}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
+                    {entry.anomalyScore !== undefined && (
+                      <span 
+                        title={`Anomaly Score: ${entry.anomalyScore.toFixed(3)}`}
+                        style={{ display: "flex", alignItems: "center", gap: "4px", color: entry.anomalyScore >= 0.6 ? "#ef4444" : "#10b981" }}
+                      >
+                        {entry.anomalyScore >= 0.6 ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
+                      </span>
+                    )}
+                    {dynamicMPG > 0 ? (
+                      <span className={styles.effBadge}>{dynamicMPG} mpg</span>
+                    ) : (
+                      <span className={styles.partialLabel}>
+                        {entry.isFull ? "FULL TANK" : "PARTIAL"}
+                      </span>
+                    )}
+                  </div>
                 </td>
               </tr>
             );
