@@ -76,9 +76,6 @@ export const DashboardView = memo(function DashboardView() {
         <h1 className={styles.viewTitle}>
           OPERATIONS<span className={styles.viewTitleAccent}>HUB</span>
         </h1>
-        <p className={styles.viewSubtitle}>
-          Monitoring active sector: GRAND LINE
-        </p>
       </header>
 
       {alerts.length > 0 && (

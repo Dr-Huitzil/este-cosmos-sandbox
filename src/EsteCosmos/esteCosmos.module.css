@@ -338,6 +338,7 @@
   line-height: 1.1; /* Increased slightly for better wrap readability */
   font-style: italic;
   color: hsl(var(--foreground));
+  margin: 0;
   word-wrap: break-word; /* Ensure wrapping */
 }
 
@@ -362,21 +363,6 @@
 .viewTitleSecondary {
   color: hsl(var(--secondary));
   padding: 0 0.5rem;
-}
-
-.viewSubtitle {
-  font-size: 0.625rem; /* Reduced from 0.75rem for mobile */
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em; /* Tightened from 0.4em for mobile */
-  color: hsl(var(--muted-foreground));
-}
-
-@media (min-width: 768px) {
-  .viewSubtitle {
-    font-size: 0.75rem;
-    letter-spacing: 0.4em;
-  }
 }
 
 /* ─── Shared Card (used by all views + modals) ────────────────────────────── */

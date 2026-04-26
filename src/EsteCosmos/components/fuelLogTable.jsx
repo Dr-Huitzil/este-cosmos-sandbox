@@ -1,7 +1,11 @@
 import { memo, useMemo, useState } from "react";
 import { MapPin, Zap } from "lucide-react";
 import { format } from "date-fns";
-import { formatCurrency, calculateMPG, parseLocalDate } from "../../util/fuel-utils";
+import {
+  formatCurrency,
+  calculateMPG,
+  parseLocalDate,
+} from "../../util/fuel-utils";
 import styles from "./fuelLogTable.module.css";
 
 /**
@@ -59,7 +63,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
       <table className={styles.table}>
         <thead>
           <tr className={styles.headerRow}>
-            <th className={styles.th}>FUEL &amp; STATION</th>
+            <th className={styles.th}>FUEL STATION</th>
             <th className={styles.th}>ODO</th>
             <th className={styles.th}>VOL</th>
             <th className={styles.th}>CR</th>
@@ -92,7 +96,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
                 </td>
                 <td className={`${styles.td} ${styles.tdRight}`}>
                   {dynamicMPG > 0 ? (
-                    <span className={styles.effBadge}>{dynamicMPG} U/C</span>
+                    <span className={styles.effBadge}>{dynamicMPG} mpg</span>
                   ) : (
                     <span className={styles.partialLabel}>
                       {entry.isFull ? "FULL TANK" : "PARTIAL"}
