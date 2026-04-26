@@ -27,6 +27,7 @@ export const ServiceLogModal = memo(function ServiceLogModal() {
               <input
                 name="date"
                 type="date"
+                defaultValue={new Date().toLocaleDateString('en-CA')}
                 required
                 className={styles.input}
               />

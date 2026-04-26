@@ -22,13 +22,14 @@ export const ReclaimModal = memo(function ReclaimModal() {
               <input
                 name="date"
                 type="date"
+                defaultValue={new Date().toLocaleDateString('en-CA')}
                 required
                 className={styles.input}
               />
             </div>
           </div>
           <div className={styles.fieldGroup}>
-            <label className={styles.label}>RECLAIM AMOUNT (CR)</label>
+            <label className={styles.label}>RECLAIM AMOUNT ($)</label>
             <input
               name="amount"
               type="number"

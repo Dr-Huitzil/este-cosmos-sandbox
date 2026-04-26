@@ -15,12 +15,18 @@ export const FuelLogModal = memo(function FuelLogModal() {
         className={`${styles.retroCard} ${styles.modalContent}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className={styles.modalTitle}>FLUID SYNTHESIS</h2>
+        <h2 className={styles.modalTitle}>FUEL SYNTHESIS</h2>
         <form onSubmit={handleAddFuelLog} className={styles.modalForm}>
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>DATE</label>
-              <input name="day" type="date" required className={styles.input} />
+              <input
+                name="day"
+                type="date"
+                defaultValue={new Date().toLocaleDateString('en-CA')}
+                required
+                className={styles.input}
+              />
             </div>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>ODOMETER</label>
@@ -52,7 +58,7 @@ export const FuelLogModal = memo(function FuelLogModal() {
               />
             </div>
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>CREDITS ('$')</label>
+              <label className={styles.label}>TOTALCOST ('$')</label>
               <input
                 name="totalPrice"
                 type="number"
