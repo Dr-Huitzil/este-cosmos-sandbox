@@ -31,7 +31,7 @@
   width: 2rem;      /* 32 px square */
   height: 2rem;
   flex-shrink: 0;   /* prevents flex from squishing the icon when the title text is long */
-  color: hsl(var(--foreground));
+  color: hsl(59, 100%, 75%); /* bright yellow icon color for maximum contrast and visibility */
 }
 
 /* Bold vehicle / alert title */
@@ -42,14 +42,14 @@
   letter-spacing: -0.05em;   /* tight tracking for the display-font aesthetic */
   font-style: italic;
   color: hsl(var(--foreground));
-  margin: 0;
+  margin: 5px 0 15px 0;
 }
 
 /* Supporting description text below the title */
 .alertDesc {
   font-size: 0.875rem;       /* 14 px — readable body text */
   font-weight: 700;
-  margin: 1rem 0 0 0;     /* 4 px between title and description */
+  margin: 0;     
   text-transform: uppercase;
   color: hsl(var(--foreground));
 }
