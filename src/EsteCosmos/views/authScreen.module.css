@@ -1,7 +1,7 @@
 /* ─── Auth View (Neo-Brutalist / Romance Dawn Theme) ────────────────────────── */
 
 .screen {
-  min-height: 100vh;
+  min-height: 90vh;
   min-width: 320px;
   width: 100vw;
   display: flex;
