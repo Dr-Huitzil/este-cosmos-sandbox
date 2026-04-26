@@ -1,6 +1,7 @@
 import { memo, useMemo } from "react";
 import { Gauge, Zap, Rocket } from "lucide-react";
 import styles from "./vehicleCard.module.css";
+import starsImg from "../../assets/images/stars.jpg";
 
 /**
  * Displays a single vehicle card with latest odometer and avergage efficiency
@@ -57,7 +58,7 @@ export const VehicleCard = memo(function VehicleCar({
     >
       <div className={styles.imageWrapper}>
         <img
-          src={"../../assets/images/stars.jpg"}
+          src={starsImg}
           alt={vehicle.name}
           className={styles.image}
         />

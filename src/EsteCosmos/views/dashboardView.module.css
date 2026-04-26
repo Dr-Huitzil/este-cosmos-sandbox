@@ -102,7 +102,7 @@
 /* Fluid wide layout on desktop — ensures cards are at least 420px wide */
 @media (min-width: 1024px) {
   .fleetGrid {
-    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   }
 }
 
