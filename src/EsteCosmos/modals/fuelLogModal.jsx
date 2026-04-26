@@ -6,8 +6,21 @@ import { useFuelTracker } from "../../hooks/useEsteCosmos";
  * Modal for logging a fleet fuel telemetry entry.
  */
 export const FuelLogModal = memo(function FuelLogModal() {
-  const { handleCloseFuelLog, handleAddFuelLog, isFull, handleIsFull } =
-    useFuelTracker();
+  const {
+    handleCloseFuelLog,
+    handleAddFuelLog,
+    isFull,
+    handleIsFull,
+    sortedFuelEntries,
+  } = useFuelTracker();
+
+  // "Memory" feature: find unique previous gas stations and the most recent one
+  const previousStations = [
+    ...new Set(
+      sortedFuelEntries.map((e) => e.gasStation).filter((s) => s && s.trim()),
+    ),
+  ];
+  const lastStation = sortedFuelEntries[0]?.gasStation || "";
 
   return (
     <div className={styles.modalOverlay} onClick={handleCloseFuelLog}>
@@ -23,7 +36,7 @@ export const FuelLogModal = memo(function FuelLogModal() {
               <input
                 name="day"
                 type="date"
-                defaultValue={new Date().toLocaleDateString('en-CA')}
+                defaultValue={new Date().toLocaleDateString("en-CA")}
                 required
                 className={styles.input}
               />
@@ -38,13 +51,21 @@ export const FuelLogModal = memo(function FuelLogModal() {
               />
             </div>
           </div>
+
           <div className={styles.fieldGroup}>
             <label className={styles.label}>GAS STATION</label>
             <input
               name="gasStation"
-              placeholder="OXXO"
+              placeholder="VALERO / SHELL / BP"
               className={styles.input}
+              defaultValue={lastStation}
+              list="previous-stations"
             />
+            <datalist id="previous-stations">
+              {previousStations.map((s) => (
+                <option key={s} value={s} />
+              ))}
+            </datalist>
           </div>
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup}>

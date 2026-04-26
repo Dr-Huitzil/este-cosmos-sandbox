@@ -859,6 +859,7 @@ export function FuelTrackerProvider({ children }) {
     fuelEfficiencyData,
     maintenanceSpendData,
     reimbursementStats,
+    sortedFuelEntries,
 
     // Nav
     navToDashboard,
