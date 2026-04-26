@@ -30,6 +30,7 @@ export const AnalyticsView = memo(function AnalyticsView() {
     fuelEfficiencyData,
     maintenanceSpendData,
     reimbursementStats,
+    isAiAuthorized,
   } = useAnalytics();
 
   return (
@@ -102,15 +103,17 @@ export const AnalyticsView = memo(function AnalyticsView() {
                     strokeWidth={4}
                     dot={{ r: 5, fill: "#000" }}
                   />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="anomalyScore"
-                    name="ANOMALY SCORE"
-                    stroke="#ef4444"
-                    strokeWidth={4}
-                    dot={{ r: 5, fill: "#000" }}
-                  />
+                  {isAiAuthorized && (
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="anomalyScore"
+                      name="ANOMALY SCORE"
+                      stroke="#ef4444"
+                      strokeWidth={4}
+                      dot={{ r: 5, fill: "#000" }}
+                    />
+                  )}
                 </ReChartsLineChart>
               </ResponsiveContainer>
             ) : (

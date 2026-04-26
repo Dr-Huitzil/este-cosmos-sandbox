@@ -6,6 +6,7 @@ import {
   calculateMPG,
   parseLocalDate,
 } from "../../util/fuel-utils";
+import { useFleet } from "../../contexts/FleetContext";
 import styles from "./fuelLogTable.module.css";
 
 /**
@@ -14,6 +15,7 @@ import styles from "./fuelLogTable.module.css";
  * @param {{ entries: Array }} props
  */
 export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
+  const { isAiAuthorized } = useFleet();
   const [pageSize, setPageSize] = useState("5");
 
   const sortedEntries = useMemo(
@@ -96,7 +98,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
                 </td>
                 <td className={`${styles.td} ${styles.tdRight}`}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
-                    {entry.anomalyScore !== undefined && (
+                    {isAiAuthorized && entry.anomalyScore !== undefined && entry.anomalyScore !== null && (
                       <span 
                         title={`Anomaly Score: ${entry.anomalyScore.toFixed(3)}`}
                         style={{ display: "flex", alignItems: "center", gap: "4px", color: entry.anomalyScore >= 0.6 ? "#ef4444" : "#10b981" }}

@@ -18,7 +18,8 @@ export function AnalyticsProvider({ children }) {
     reclaimEntries,
     sortedFuelEntries,
     sortedServiceEntries,
-    sortedTireEntries
+    sortedTireEntries,
+    isAiAuthorized
   } = useFleet();
 
   const [analyticsRange, setAnalyticsRange] = useState("14");
@@ -96,9 +97,9 @@ export function AnalyticsProvider({ children }) {
         .map((e) => ({
           date: shortDateFormatter.format(parseLocalDate(e.day)),
           mpg: e.mileage,
-          anomalyScore: e.anomalyScore ? Number(e.anomalyScore.toFixed(3)) : 0,
+          anomalyScore: isAiAuthorized && e.anomalyScore ? Number(e.anomalyScore.toFixed(3)) : 0,
         })),
-    [filteredFuel, shortDateFormatter]
+    [filteredFuel, shortDateFormatter, isAiAuthorized]
   );
 
   const maintenanceSpendData = useMemo(() => {

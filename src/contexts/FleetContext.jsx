@@ -145,6 +145,13 @@ export function FleetProvider({ children }) {
     [user, firestore, toast, handleCloseNewVehicle]
   );
 
+  const isAiAuthorized = useMemo(() => {
+    // Lock the AI feature to a specific UID (or UIDs)
+    // You can set this in your .env.local as VITE_AI_AUTHORIZED_UID
+    const authorizedUid = import.meta.env.VITE_AI_AUTHORIZED_UID;
+    return user && user.uid === authorizedUid;
+  }, [user]);
+
   const handleAddFuelLog = useCallback(
     async (e) => {
       e.preventDefault();
@@ -207,23 +214,22 @@ export function FleetProvider({ children }) {
         }
       }
 
-      // Run AI Model
-      const features = [mpg, qty, miles_per_day];
+      // Run AI Model (ONLY if authorized)
       let anomalyScore = 0;
-
-      try {
-        const aiResult = await runEdgeImpulseClassifier(features);
-        anomalyScore = aiResult?.anomaly || 0;
-        
-        // Update UI state based on anomaly score
-        if (anomalyScore < 0.6) {
-          toast({ title: "Engine Optimal", description: `Anomaly Score: ${anomalyScore.toFixed(3)}` });
-        } else {
-          toast({ variant: "destructive", title: "Efficiency Degradation", description: `Anomaly Score: ${anomalyScore.toFixed(3)}` });
+      if (isAiAuthorized) {
+        const features = [mpg, qty, miles_per_day];
+        try {
+          const aiResult = await runEdgeImpulseClassifier(features);
+          anomalyScore = aiResult?.anomaly || 0;
+          
+          if (anomalyScore < 0.6) {
+            toast({ title: "Engine Optimal", description: `Anomaly Score: ${anomalyScore.toFixed(3)}` });
+          } else {
+            toast({ variant: "destructive", title: "Efficiency Degradation", description: `Anomaly Score: ${anomalyScore.toFixed(3)}` });
+          }
+        } catch (aiError) {
+          console.error("Non-fatal error: AI Model failed to run:", aiError);
         }
-      } catch (aiError) {
-        console.error("Non-fatal error: AI Model failed to run:", aiError);
-        // Continue with a default anomaly score of 0
       }
 
       const colRef = collection(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "fuelEntries");
@@ -231,7 +237,8 @@ export function FleetProvider({ children }) {
         vehicleId: selectedVehicleId,
         day, odometer: odo, fuelQuantity: qty, fuelPrice: fuelPrice || 0,
         totalPrice: totalPrice || 0, gasStation: station, isFull, mileage, 
-        anomalyScore, createdAt: serverTimestamp()
+        anomalyScore: isAiAuthorized ? anomalyScore : null, 
+        createdAt: serverTimestamp()
       });
       handleCloseFuelLog();
       e.currentTarget.reset();
@@ -353,12 +360,12 @@ export function FleetProvider({ children }) {
   const contextValue = React.useMemo(() => ({
     selectedVehicleId, vehicles, fuelEntries, serviceEntries, tireEntries, reclaimEntries,
     selectedVehicle, sortedFuelEntries, sortedServiceEntries, sortedTireEntries,
-    isFull, isReimbursable, handleSelectVehicle, handleIsFull, handleIsReimbursable,
+    isFull, isReimbursable, isAiAuthorized, handleSelectVehicle, handleIsFull, handleIsReimbursable,
     handleAddVehicle, handleAddFuelLog, handleAddServiceLog, handleAddTireLog, handleAddReclaim, handleMigrateMPG
   }), [
     selectedVehicleId, vehicles, fuelEntries, serviceEntries, tireEntries, reclaimEntries,
     selectedVehicle, sortedFuelEntries, sortedServiceEntries, sortedTireEntries,
-    isFull, isReimbursable, handleSelectVehicle, handleIsFull, handleIsReimbursable,
+    isFull, isReimbursable, isAiAuthorized, handleSelectVehicle, handleIsFull, handleIsReimbursable,
     handleAddVehicle, handleAddFuelLog, handleAddServiceLog, handleAddTireLog, handleAddReclaim, handleMigrateMPG
   ]);
 
