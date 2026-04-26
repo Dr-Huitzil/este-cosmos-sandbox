@@ -1,12 +1,14 @@
 import { memo } from "react";
 import styles from "../esteCosmos.module.css";
-import { useFuelTracker } from "../../hooks/useEsteCosmos";
+import { useUI } from "../../contexts/UIContext";
+import { useFleet } from "../../contexts/FleetContext";
 
 /**
  * Modal for logging tire pressure readings across all four pods.
  */
 export const TireLogModal = memo(function TireLogModal() {
-  const { handleCloseTireLog, handleAddTireLog } = useFuelTracker();
+  const { handleCloseTireLog } = useUI();
+  const { handleAddTireLog } = useFleet();
 
   return (
     <div className={styles.modalOverlay} onClick={handleCloseTireLog}>

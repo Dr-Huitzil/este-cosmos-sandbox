@@ -107,3 +107,21 @@ export function calculateHealth(
   const milesSince = currentOdo - lastService.odometerReading;
   return Math.max(0, Math.round(100 - (milesSince / interval) * 100));
 }
+
+/**
+ * Helper — validate that a user photo URL comes from a trusted Google domain.
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isSafePhotoURL(url) {
+  if (!url) return false;
+  try {
+    const { protocol, hostname } = new URL(url);
+    return (
+      protocol === "https:" &&
+      /\.(google|googleusercontent|googleapis|githubusercontent)\.com$/.test(hostname)
+    );
+  } catch {
+    return false;
+  }
+}

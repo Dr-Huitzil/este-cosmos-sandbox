@@ -22,27 +22,35 @@ import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./dashboardView.module.css";
 const styles = { ...sharedStyles, ...ownStyles };
 
-import { useFuelTracker } from "../../hooks/useEsteCosmos";
+import { useUI } from "../../contexts/UIContext";
+import { useFleet } from "../../contexts/FleetContext";
+import { useAnalytics } from "../../contexts/AnalyticsContext";
 
 /**
  * Dashboard view — fleet overview, diagnostics sidebar, and tabbed log detail.
  */
 export const DashboardView = memo(function DashboardView() {
   const {
-    alerts,
+    activeTab,
+    handleSetActiveTab,
+    handleOpenNewVehicle,
+  } = useUI();
+
+  const {
     vehicles,
     fuelEntries,
     selectedVehicleId,
     selectedVehicle,
     serviceEntries,
     tireEntries,
-    activeTab,
+    handleSelectVehicle,
+  } = useFleet();
+
+  const {
+    alerts,
     oilHealth,
     thrusterHealth,
-    handleSetActiveTab,
-    handleOpenNewVehicle,
-    handleSelectVehicle,
-  } = useFuelTracker();
+  } = useAnalytics();
 
   // Stable per-vehicle entry slices — prevents inline filter creating new arrays on every render
   const vehicleFuelMap = useMemo(() => {

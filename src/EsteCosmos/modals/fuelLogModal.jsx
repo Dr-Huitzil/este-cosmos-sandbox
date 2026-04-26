@@ -1,18 +1,22 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import styles from "../esteCosmos.module.css";
-import { useFuelTracker } from "../../hooks/useEsteCosmos";
+import { useUI } from "../../contexts/UIContext";
+import { useFleet } from "../../contexts/FleetContext";
 
 /**
  * Modal for logging a fleet fuel telemetry entry.
  */
 export const FuelLogModal = memo(function FuelLogModal() {
-  const {
-    handleCloseFuelLog,
-    handleAddFuelLog,
-    isFull,
-    handleIsFull,
-    sortedFuelEntries,
-  } = useFuelTracker();
+  const { handleCloseFuelLog } = useUI();
+  const { handleAddFuelLog, isFull, handleIsFull, sortedFuelEntries } = useFleet();
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') handleCloseFuelLog();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleCloseFuelLog]);
 
   // "Memory" feature: find unique previous gas stations and the most recent one
   const previousStations = [

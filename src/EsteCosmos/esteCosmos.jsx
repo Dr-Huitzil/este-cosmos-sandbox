@@ -22,7 +22,9 @@ import { FuelLogModal } from "./modals/fuelLogModal";
 import { ServiceLogModal } from "./modals/serviceLogModal";
 import { TireLogModal } from "./modals/tireLogModal";
 import { ReclaimModal } from "./modals/reclaimModal";
-import { useFuelTracker, isSafePhotoURL } from "../hooks/useEsteCosmos";
+import { isSafePhotoURL } from "../util/fuel-utils";
+import { useUI } from "../contexts/UIContext";
+import { useUser } from "@/firebase";
 import { Toaster } from "@/ui/toaster";
 import styles from "./esteCosmos.module.css";
 
@@ -33,8 +35,6 @@ import styles from "./esteCosmos.module.css";
  */
 export default function FuelTrackerWindow() {
   const {
-    user,
-    isUserLoading,
     rootRef,
     currentView,
     isDarkMode,
@@ -55,7 +55,8 @@ export default function FuelTrackerWindow() {
     fabOpenReclaim,
     fabOpenVehicle,
     toggleTheme,
-  } = useFuelTracker();
+  } = useUI();
+  const { user, isUserLoading } = useUser();
 
   // ── Loading / auth guards ────────────────────────────────────────
   if (isUserLoading) {

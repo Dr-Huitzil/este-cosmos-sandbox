@@ -18,7 +18,7 @@ import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./analyticsView.module.css";
 const styles = { ...sharedStyles, ...ownStyles };
 
-import { useFuelTracker } from "../../hooks/useEsteCosmos";
+import { useAnalytics } from "../../contexts/AnalyticsContext";
 
 /**
  * Analytics view — efficiency line chart, maintenance spend pie chart, bounty reclaim stats.
@@ -30,7 +30,7 @@ export const AnalyticsView = memo(function AnalyticsView() {
     fuelEfficiencyData,
     maintenanceSpendData,
     reimbursementStats,
-  } = useFuelTracker();
+  } = useAnalytics();
 
   return (
     <div className={styles.viewPad}>

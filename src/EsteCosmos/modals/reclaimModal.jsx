@@ -1,12 +1,14 @@
 import { memo } from "react";
 import styles from "../esteCosmos.module.css";
-import { useFuelTracker } from "../../hooks/useEsteCosmos";
+import { useUI } from "../../contexts/UIContext";
+import { useFleet } from "../../contexts/FleetContext";
 
 /**
  * Modal for logging a reimbursement / berry reclaim.
  */
 export const ReclaimModal = memo(function ReclaimModal() {
-  const { handleCloseReclaim, handleAddReclaim } = useFuelTracker();
+  const { handleCloseReclaim } = useUI();
+  const { handleAddReclaim } = useFleet();
 
   return (
     <div className={styles.modalOverlay} onClick={handleCloseReclaim}>

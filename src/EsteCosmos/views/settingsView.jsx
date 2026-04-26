@@ -1,5 +1,8 @@
 import { memo } from "react";
-import { useFuelTracker, isSafePhotoURL } from "../../hooks/useEsteCosmos";
+import { useUI } from "../../contexts/UIContext";
+import { useFleet } from "../../contexts/FleetContext";
+import { useUser } from "@/firebase";
+import { isSafePhotoURL } from "../../util/fuel-utils";
 import sharedStyles from "../esteCosmos.module.css";
 import ownStyles from "./settingsView.module.css";
 const styles = { ...sharedStyles, ...ownStyles };
@@ -8,15 +11,15 @@ const styles = { ...sharedStyles, ...ownStyles };
  * Settings view — pilot identity, theme toggle, sign out.
  */
 export const SettingsView = memo(function SettingsView() {
+  const { user } = useUser();
   const {
-    user,
     isDarkMode,
     toggleTheme,
     handleSignOut,
     handleUpdateProfile,
     isUpdating,
-    handleMigrateMPG,
-  } = useFuelTracker();
+  } = useUI();
+  const { handleMigrateMPG } = useFleet();
 
   return (
     <div className={styles.viewPad}>

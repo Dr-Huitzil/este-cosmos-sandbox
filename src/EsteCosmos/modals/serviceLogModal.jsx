@@ -1,17 +1,14 @@
 import { memo } from "react";
 import styles from "../esteCosmos.module.css";
-import { useFuelTracker } from "../../hooks/useEsteCosmos";
+import { useUI } from "../../contexts/UIContext";
+import { useFleet } from "../../contexts/FleetContext";
 
 /**
  * Modal for logging a service / maintenance record.
  */
 export const ServiceLogModal = memo(function ServiceLogModal() {
-  const {
-    handleCloseServiceLog,
-    handleAddServiceLog,
-    isReimbursable,
-    handleIsReimbursable,
-  } = useFuelTracker();
+  const { handleCloseServiceLog } = useUI();
+  const { handleAddServiceLog, isReimbursable, handleIsReimbursable } = useFleet();
 
   return (
     <div className={styles.modalOverlay} onClick={handleCloseServiceLog}>

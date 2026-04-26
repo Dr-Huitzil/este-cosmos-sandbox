@@ -1,12 +1,16 @@
 import { memo, useState, useEffect } from "react";
 import styles from "../esteCosmos.module.css";
-import { useFuelTracker } from "../../hooks/useEsteCosmos";
+import { useUI } from "../../contexts/UIContext";
+import { useFleet } from "../../contexts/FleetContext";
+import { useToast } from "@/hooks/use-toast";
 
 /**
  * Modal to add a new vehicle with EPA API integration for Year -> Make -> Model
  */
 export const VehicleModal = memo(function VehicleModal() {
-  const { handleCloseNewVehicle, handleAddVehicle } = useFuelTracker();
+  const { handleCloseNewVehicle } = useUI();
+  const { handleAddVehicle } = useFleet();
+  const { toast } = useToast();
 
   const [availableYears, setAvailableYears] = useState([]);
   const [availableMakes, setAvailableMakes] = useState([]);
@@ -43,6 +47,11 @@ export const VehicleModal = memo(function VehicleModal() {
         setAvailableYears(items);
       } catch (error) {
         console.error("Error fetching years:", error);
+        toast({
+          variant: "destructive",
+          title: "API UNAVAILABLE",
+          description: "Failed to reach vehicle database. Try again later."
+        });
       } finally {
         setLoading((prev) => ({ ...prev, years: false }));
       }
@@ -75,6 +84,11 @@ export const VehicleModal = memo(function VehicleModal() {
         setAvailableMakes(items);
       } catch (error) {
         console.error("Error fetching makes:", error);
+        toast({
+          variant: "destructive",
+          title: "API UNAVAILABLE",
+          description: "Failed to reach vehicle database. Try again later."
+        });
       } finally {
         setLoading((prev) => ({ ...prev, makes: false }));
       }
@@ -107,6 +121,11 @@ export const VehicleModal = memo(function VehicleModal() {
         setAvailableModels(items);
       } catch (error) {
         console.error("Error fetching models:", error);
+        toast({
+          variant: "destructive",
+          title: "API UNAVAILABLE",
+          description: "Failed to reach vehicle database. Try again later."
+        });
       } finally {
         setLoading((prev) => ({ ...prev, models: false }));
       }

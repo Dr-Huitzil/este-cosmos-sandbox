@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { initializeFirebase, FirebaseProvider } from "@/firebase";
 import { ToastProvider } from "@/hooks/use-toast";
 import { Toaster } from "@/ui/toaster";
-import { FuelTrackerProvider } from "../hooks/useEsteCosmos";
+import { ProviderStack } from "../contexts/ProviderStack";
 import EsteCosmosWindow from "../EsteCosmos/esteCosmos";
 
 function App() {
@@ -12,9 +12,9 @@ function App() {
   return (
     <ToastProvider>
       <FirebaseProvider {...sdk}>
-        <FuelTrackerProvider>
+        <ProviderStack>
           <EsteCosmosWindow />
-        </FuelTrackerProvider>
+        </ProviderStack>
         <Toaster />
       </FirebaseProvider>
     </ToastProvider>
