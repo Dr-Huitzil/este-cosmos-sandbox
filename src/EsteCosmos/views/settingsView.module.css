@@ -30,7 +30,7 @@
   font-style: italic;
   border-bottom: 4px solid hsl(var(--foreground)); /* divides the title from its form content */
   padding-bottom: 0.5rem;
-  margin-bottom: 1.5rem;         /* 24 px gap between the title underline and the first field */
+  margin: 0;
   color: hsl(var(--foreground));
 }
 
@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
   gap: 2rem;
-  margin-bottom: 2rem;
+  margin: 1rem 0;
 }
 
 @media (max-width: 640px) {
@@ -88,6 +88,7 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.05em;
+  margin: 0;
   color: hsl(var(--foreground));
 }
 
@@ -96,6 +97,7 @@
   font-size: 0.75rem;  /* 12 px */
   font-weight: 700;
   text-transform: uppercase;
+  margin: 0;
   color: hsl(var(--muted-foreground)); /* muted so it doesn't compete with the name */
 }
 
