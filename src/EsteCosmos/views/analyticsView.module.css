@@ -27,7 +27,7 @@
 
 /* Padding wrapper for the recharts line chart */
 .chartCard {
-  padding: 2rem; /* 32 px of inner space around the chart */
+  padding: 1rem; /* 32 px of inner space around the chart */
 }
 
 /* Bold display title above the chart with a separator underline */
@@ -44,7 +44,7 @@
 
 /* Fixed-height container that recharts fills completely */
 .chartArea {
-  height: 25rem; /* 400 px — tall enough for clear data visualization */
+  height: 20rem; /* 400 px — tall enough for clear data visualization */
 }
 
 /* Shown in place of the chart when there are no data points to plot */

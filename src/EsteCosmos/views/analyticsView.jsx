@@ -81,11 +81,11 @@ export const AnalyticsView = memo(function AnalyticsView() {
                     }}
                   />
                   <Line
-                    type="stepAfter"
+                    type="stepAfter" // could have monotone or natural for a smoother curve, but the straight lines fit the pixel art aesthetic better
                     dataKey="mpg"
                     stroke="hsl(var(--primary))"
-                    strokeWidth={6}
-                    dot={{ r: 8, fill: "#000" }}
+                    strokeWidth={4}
+                    dot={{ r: 5, fill: "#000" }}
                   />
                 </ReChartsLineChart>
               </ResponsiveContainer>
@@ -151,7 +151,9 @@ export const AnalyticsView = memo(function AnalyticsView() {
             </h3>
             <div className={styles.bountyRows}>
               <div className={styles.bountyRow}>
-                <span className={styles.bountyLabel}>GROSS FUEL EXPENDITURE</span>
+                <span className={styles.bountyLabel}>
+                  GROSS FUEL EXPENDITURE
+                </span>
                 <span className={styles.bountyAmount}>
                   {formatCurrency(reimbursementStats.total)}
                 </span>
