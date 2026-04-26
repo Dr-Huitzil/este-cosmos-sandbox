@@ -7,7 +7,7 @@
   color: hsl(var(--foreground));
   /* Scanline texture */
   background-image:
-    linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.04) 50%),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.04) 50%),
     url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 100% 4px, 20px 20px;
   overflow: hidden;
@@ -79,7 +79,7 @@
   padding: 1rem;
   background-color: hsl(var(--primary));
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
   flex-shrink: 0;
 }
 
@@ -139,7 +139,7 @@
   height: 3rem;
   border-radius: 0;
   border: 2px solid hsl(var(--foreground));
-  box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
   object-fit: cover;
 }
 
@@ -148,7 +148,7 @@
   height: 3rem;
   background-color: hsl(var(--muted));
   border: 2px solid hsl(var(--foreground));
-  box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -216,7 +216,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 1rem;
   border-bottom: 8px solid hsl(var(--foreground));
   background-color: hsl(var(--background) / 0.85);
   backdrop-filter: blur(12px);
@@ -253,11 +253,13 @@
 
 
 .sunIcon {
-  color: #ffcc00; /* Bright yellow for the light-mode switch */
+  color: #ffcc00;
+  /* Bright yellow for the light-mode switch */
 }
 
 .moonIcon {
-  color: #a78bfa; /* Soft violet for the dark-mode switch */
+  color: #a78bfa;
+  /* Soft violet for the dark-mode switch */
 }
 
 .desktopQuickActions {
@@ -299,7 +301,8 @@
 .viewContainer {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 8rem; /* bottom nav clearance on mobile */
+  padding-bottom: 8rem;
+  /* bottom nav clearance on mobile */
 }
 
 @media (min-width: 1024px) {
@@ -314,13 +317,15 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Reduced from 3rem for tighter spacing on mobile */
+  gap: 1.5rem;
+  /* Reduced from 3rem for tighter spacing on mobile */
 }
 
 @media (min-width: 768px) {
   .viewPad {
     padding: 3rem;
-    gap: 3rem; /* Restore wide gap on tablet/desktop */
+    gap: 3rem;
+    /* Restore wide gap on tablet/desktop */
   }
 }
 
@@ -331,15 +336,18 @@
 }
 
 .viewTitle {
-  font-size: 2.25rem; /* Reduced from 3.75rem to prevent mobile truncation */
+  font-size: 2.25rem;
+  /* Reduced from 3.75rem to prevent mobile truncation */
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.05em;
-  line-height: 1.1; /* Increased slightly for better wrap readability */
+  line-height: 1.1;
+  /* Increased slightly for better wrap readability */
   font-style: italic;
   color: hsl(var(--foreground));
   margin: 0;
-  word-wrap: break-word; /* Ensure wrapping */
+  word-wrap: break-word;
+  /* Ensure wrapping */
 }
 
 @media (min-width: 768px) {
@@ -370,7 +378,7 @@
 .retroCard {
   background-color: hsl(var(--card));
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
 }
 
 /* ─── Bottom Mobile Nav ───────────────────────────────────────────────────── */
@@ -416,7 +424,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   transition: transform 0.15s;
 }
 
@@ -431,7 +439,7 @@
   transform: translateX(-50%);
   background-color: hsl(var(--card));
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 8px 8px 0px rgba(0,0,0,1);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
   min-width: 13rem;
   padding: 0.5rem;
   display: flex;
@@ -542,7 +550,7 @@
   padding: 0 0.75rem;
   background-color: hsl(var(--muted));
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
   color: hsl(var(--foreground));
   font-size: 0.875rem;
   font-weight: 700;
@@ -562,7 +570,7 @@
   padding: 0 0.75rem;
   background-color: hsl(var(--muted));
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
   color: hsl(var(--foreground));
   font-size: 0.875rem;
   font-weight: 700;
@@ -577,7 +585,7 @@
   padding: 0.75rem;
   background-color: hsl(var(--muted));
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
   color: hsl(var(--foreground));
   font-size: 0.875rem;
   font-family: inherit;
@@ -610,7 +618,7 @@
   justify-content: center;
   gap: 0.5rem;
   border: 4px solid hsl(var(--foreground));
-  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
   font-weight: 900;
   font-size: 0.875rem;
   text-transform: uppercase;
@@ -626,7 +634,7 @@
 .retroBtn:hover {
   background-color: hsl(var(--muted));
   border-color: hsl(var(--primary));
-  box-shadow: 6px 6px 0px rgba(0,0,0,1);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
   transform: translate(-2px, -2px);
 }
 
@@ -685,11 +693,23 @@
 /* ─── Animations ──────────────────────────────────────────────────────────── */
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
