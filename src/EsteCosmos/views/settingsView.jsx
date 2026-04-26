@@ -19,7 +19,8 @@ export const SettingsView = memo(function SettingsView() {
     handleUpdateProfile,
     isUpdating,
   } = useUI();
-  const { handleMigrateMPG } = useFleet();
+  const { handleMigrateMPG, fuelEntries, isAiAuthorized } = useFleet();
+  const entryCount = fuelEntries.length;
 
   return (
     <div className={styles.viewPad}>
@@ -94,6 +95,30 @@ export const SettingsView = memo(function SettingsView() {
             </label>
           </div>
         </div>
+
+        {/* Neural Uplink (AI Upsell) */}
+        {!isAiAuthorized && entryCount >= 100 && (
+          <div className={`${styles.retroCard} ${styles.settingsCard} ${styles.aiUpsellCard}`}>
+            <h3 className={styles.settingsCardTitle}>NEURAL UPLINK AVAILABLE</h3>
+            <p className={styles.themeSubLabel} style={{ marginBottom: "1rem" }}>
+              Your vessel has collected sufficient telemetry ({entryCount} logs) for AI Anomaly Detection. 
+              Request a neural link to enable real-time efficiency diagnostics.
+            </p>
+            <button className={`${styles.retroBtn} ${styles.uplinkBtn}`}>
+              REQUEST NEURAL LINK
+            </button>
+          </div>
+        )}
+
+        {isAiAuthorized && (
+          <div className={`${styles.retroCard} ${styles.settingsCard} ${styles.aiActiveCard}`}>
+             <h3 className={styles.settingsCardTitle}>NEURAL LINK ACTIVE</h3>
+             <p className={styles.themeSubLabel}>
+               Edge Impulse Anomaly Detection is operational. 
+               Diagnostic telemetry is being analyzed in real-time.
+             </p>
+          </div>
+        )}
 
         {/* Database Calibration */}
         <div
