@@ -327,7 +327,7 @@ export function FleetProvider({ children }) {
         description: String(fd.get("description") ?? "").trim().slice(0, 500),
         createdAt: serverTimestamp()
       });
-      promise.then(res => console.log("ADD DOC SUCCESS:", res.id)).catch(err => console.error("ADD DOC ERROR:", err));
+      promise.then(res => { if (res?.id) console.log("ADD DOC SUCCESS:", res.id); }).catch(err => console.error("ADD DOC ERROR:", err));
       handleCloseReclaim();
       e.currentTarget.reset();
       toast({ title: "LOGGED", description: "Berry deposit confirmed." });
