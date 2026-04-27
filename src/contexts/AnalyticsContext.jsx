@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, useCallback } from "react";
 import { useFleet } from "./FleetContext";
-import { calculateHealth } from "../util/fuel-utils";
+import { calculateHealth, calculateMPG } from "../util/fuel-utils";
 
 const AnalyticsContext = createContext(null);
 
@@ -90,16 +90,26 @@ export function AnalyticsProvider({ children }) {
   }, [serviceEntries, analyticsRange]);
 
   const fuelEfficiencyData = useMemo(
-    () =>
-      [...filteredFuel]
-        .sort((a, b) => parseLocalDate(a.day).getTime() - parseLocalDate(b.day).getTime())
-        .filter((e) => e.mileage > 0)
-        .map((e) => ({
+    () => {
+      // We need all fuel entries (not just filtered) for accurate MPG calculation
+      // since calculateMPG looks backwards through history for the previous full fill-up
+      const sorted = [...filteredFuel].sort(
+        (a, b) => parseLocalDate(a.day).getTime() - parseLocalDate(b.day).getTime()
+      );
+      return sorted
+        .map((e) => {
+          // Prefer stored mileage; fall back to dynamic calculation if missing/zero
+          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, fuelEntries);
+          return { entry: e, mpg };
+        })
+        .filter(({ mpg }) => mpg > 0)
+        .map(({ entry: e, mpg }) => ({
           date: shortDateFormatter.format(parseLocalDate(e.day)),
-          mpg: e.mileage,
+          mpg,
           anomalyScore: isAiAuthorized && e.anomalyScore ? Number(e.anomalyScore.toFixed(3)) : 0,
-        })),
-    [filteredFuel, shortDateFormatter, isAiAuthorized]
+        }));
+    },
+    [filteredFuel, fuelEntries, shortDateFormatter, isAiAuthorized]
   );
 
   const maintenanceSpendData = useMemo(() => {
@@ -126,10 +136,10 @@ export function AnalyticsProvider({ children }) {
 
   const contextValue = React.useMemo(() => ({
     analyticsRange, handleChangeRange, oilHealth, thrusterHealth, alerts,
-    fuelEfficiencyData, maintenanceSpendData, reimbursementStats
+    fuelEfficiencyData, maintenanceSpendData, reimbursementStats, isAiAuthorized
   }), [
     analyticsRange, handleChangeRange, oilHealth, thrusterHealth, alerts,
-    fuelEfficiencyData, maintenanceSpendData, reimbursementStats
+    fuelEfficiencyData, maintenanceSpendData, reimbursementStats, isAiAuthorized
   ]);
 
   return <AnalyticsContext.Provider value={contextValue}>{children}</AnalyticsContext.Provider>;
