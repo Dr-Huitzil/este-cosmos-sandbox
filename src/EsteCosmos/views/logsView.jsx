@@ -8,12 +8,16 @@ import ownStyles from "./logsView.module.css";
 const styles = { ...ownStyles, ...sharedStyles };
 
 import { useFleet } from "../../contexts/FleetContext";
+import { useAuth } from "@/firebase";
 
 /**
  * Logs view - full fuel and service history tables side by side
  */
 export const LogsView = memo(function LogsView() {
   const { fuelEntries, serviceEntries, reclaimEntries } = useFleet();
+  const auth = useAuth();
+  console.log("Reclaim Entries in LogsView:", reclaimEntries);
+  window.__debug_firebase = { user: auth?.user, reclaimEntries };
 
   return (
     <div className={styles.viewPad}>
