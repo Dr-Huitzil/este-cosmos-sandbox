@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useAuth, useFirestore, useUser, useCollection, useMemoFirebase, setDocumentNonBlocking, addDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
 import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import { calculateMPG, calculateDaysPassed } from "../util/fuel-utils";
+import { calculateMPG, calculateDaysPassed, parseLocalDate } from "../util/fuel-utils";
 import { runEdgeImpulseClassifier } from "../util/ai-model";
 import { useUI } from "./UIContext";
 
@@ -202,9 +202,14 @@ export function FleetProvider({ children }) {
 
       if (hasPreviousLog) {
         const milesDriven = odo - previousOdometer;
-        const daysPassed = calculateDaysPassed(day, previousDay);
         
-        // Safety check in case of multiple fuel-ups on the same day (daysPassed = 0)
+        // SECURED DATE MATH: Use parseLocalDate for robust calendar day calculation
+        const dateCurrent = parseLocalDate(day);
+        const datePrevious = parseLocalDate(previousDay);
+        const diffTime = Math.abs(dateCurrent - datePrevious);
+        const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Safety check for same-day fill-ups (daysPassed = 0)
         const safeDays = Math.max(daysPassed, 1);
 
         // Prevent division by zero and negative mileage edge cases
@@ -217,7 +222,17 @@ export function FleetProvider({ children }) {
       // Run AI Model (ONLY if authorized)
       let anomalyScore = 0;
       if (isAiAuthorized) {
-        const features = [mpg, qty, miles_per_day];
+        // DEBUGGING LOGS: Inspect values before classifier run
+        console.log("--- AI MODEL INPUT DEBUG ---");
+        console.log("Calculated MPG:", mpg);
+        console.log("Fuel Quantity (qty):", qty);
+        console.log("Miles Per Day:", miles_per_day);
+
+        // ARRAY ORDER FIXED: WASM model expects alphabetical [fuelQuantity, miles_per_day, mpg]
+        const features = [qty, miles_per_day, mpg];
+        console.log("Final Feature Array:", features);
+        console.log("----------------------------");
+
         try {
           const aiResult = await runEdgeImpulseClassifier(features);
           anomalyScore = aiResult?.anomaly || 0;
