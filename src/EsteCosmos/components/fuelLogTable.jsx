@@ -99,11 +99,11 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
                 <td className={`${styles.td} ${styles.tdRight}`}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
                     {isAiAuthorized && entry.anomalyScore !== undefined && entry.anomalyScore !== null && (
-                      <span 
+                      <span
                         title={`Anomaly Score: ${entry.anomalyScore.toFixed(3)}`}
-                        style={{ display: "flex", alignItems: "center", gap: "4px", color: entry.anomalyScore >= 0.6 ? "#ef4444" : "#10b981" }}
+                        style={{ display: "flex", alignItems: "center", gap: "4px", color: entry.anomalyScore >= 5.0 ? "#ef4444" : "#10b981" }}
                       >
-                        {entry.anomalyScore >= 0.6 ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
+                        {entry.anomalyScore >= 5.0 ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
                       </span>
                     )}
                     {dynamicMPG > 0 ? (
