@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/firebase";
+import { errorEmitter } from "@/firebase/error-emitter";
 import { signOut, updateProfile } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 
@@ -35,6 +36,20 @@ export function UIProvider({ children }) {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
+
+  // Global Firestore error listener
+  useEffect(() => {
+    const handlePermissionError = (err) => {
+      console.error("[Firestore] Permission / write error:", err);
+      toast({
+        variant: "destructive",
+        title: "FIRESTORE ERROR",
+        description: err?.message || "A database operation failed. Check your connection or permissions.",
+      });
+    };
+    errorEmitter.on("permission-error", handlePermissionError);
+    return () => errorEmitter.off("permission-error", handlePermissionError);
+  }, [toast]);
 
   const toggleTheme = useCallback(() => {
     setIsDarkMode((prev) => {
