@@ -86,3 +86,14 @@ export class FirestorePermissionError extends Error {
     this.request = requestObject;
   }
 }
+
+/**
+ * A custom error class designed to be emitted by the error emitter
+ * when authentication-related operations fail.
+ */
+export class AuthSystemError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'AuthSystemError';
+  }
+}
