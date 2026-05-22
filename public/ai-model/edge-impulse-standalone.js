@@ -2498,15 +2498,11 @@ var ASM_CONSTS = {
       ptr = upcastPointer(handle.$$.ptr, handleClass, this.registeredClass);
   
       if (this.isSmartPointer) {
-        // TODO: this is not strictly true
-        // We could support BY_EMVAL conversions from raw pointers to smart pointers
-        // because the smart pointer can hold a reference to the handle
-        if (undefined === handle.$$.smartPtr) {
-          throwBindingError('Passing raw pointer to smart pointer is illegal');
-        }
-  
         switch (this.sharingPolicy) {
           case 0: // NONE
+            if (undefined === handle.$$.smartPtr) {
+              throwBindingError('Passing raw pointer to smart pointer is illegal');
+            }
             // no upcasting
             if (handle.$$.smartPtrType === this) {
               ptr = handle.$$.smartPtr;
@@ -2516,6 +2512,9 @@ var ASM_CONSTS = {
             break;
   
           case 1: // INTRUSIVE
+            if (undefined === handle.$$.smartPtr) {
+              throwBindingError('Passing raw pointer to smart pointer is illegal');
+            }
             ptr = handle.$$.smartPtr;
             break;
   
