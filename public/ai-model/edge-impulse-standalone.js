@@ -2015,6 +2015,22 @@ var ASM_CONSTS = {
         callbacks.forEach((cb) => cb());
       }
     }
+  function boolReadValueFromPointer(name, shift) {
+      switch (shift) {
+          case 0: return function(pointer) {
+              return this['fromWireType'](HEAP8[pointer]);
+          };
+          case 1: return function(pointer) {
+              return this['fromWireType'](HEAP16[pointer >> 1]);
+          };
+          case 2: return function(pointer) {
+              return this['fromWireType'](HEAP32[pointer >> 2]);
+          };
+          default:
+              throw new TypeError("Unknown boolean type size: " + name);
+      }
+    }
+
   function __embind_register_bool(rawType, name, size, trueValue, falseValue) {
       var shift = getShiftFromSize(size);
   
@@ -2030,20 +2046,7 @@ var ASM_CONSTS = {
               return o ? trueValue : falseValue;
           },
           'argPackAdvance': 8,
-          'readValueFromPointer': function(pointer) {
-              // TODO: if heap is fixed (like in asm.js) this could be executed outside
-              var heap;
-              if (size === 1) {
-                  heap = HEAP8;
-              } else if (size === 2) {
-                  heap = HEAP16;
-              } else if (size === 4) {
-                  heap = HEAP32;
-              } else {
-                  throw new TypeError("Unknown boolean type size: " + name);
-              }
-              return this['fromWireType'](heap[pointer >> shift]);
-          },
+          'readValueFromPointer': boolReadValueFromPointer(name, shift),
           destructorFunction: null, // This type does not need a destructor
       });
     }
@@ -6805,6 +6808,7 @@ unexportedRuntimeFunction('getShiftFromSize', false);
 unexportedRuntimeFunction('integerReadValueFromPointer', false);
 unexportedRuntimeFunction('enumReadValueFromPointer', false);
 unexportedRuntimeFunction('floatReadValueFromPointer', false);
+unexportedRuntimeFunction('boolReadValueFromPointer', false);
 unexportedRuntimeFunction('simpleReadValueFromPointer', false);
 unexportedRuntimeFunction('runDestructors', false);
 unexportedRuntimeFunction('new_', false);
