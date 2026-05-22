@@ -3568,7 +3568,7 @@ var ASM_CONSTS = {
               return undefined;
           },
           'toWireType': function(destructors, o) {
-              // TODO: assert if anything else is given?
+              assert(o === undefined, 'void type cannot have a value');
               return undefined;
           },
       });
