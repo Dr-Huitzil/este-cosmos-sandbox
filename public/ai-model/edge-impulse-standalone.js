@@ -2942,37 +2942,22 @@ var ASM_CONSTS = {
   //       return FUNCTION_TABLE[fn];
   //    }
   
-      // Determine if we need to use a dynamic stack to store the destructors for the function parameters.
-      // TODO: Remove this completely once all function invokers are being dynamically generated.
-      var needsDestructorStack = false;
-  
-      for (var i = 1; i < argTypes.length; ++i) { // Skip return value at index 0 - it's not deleted here.
-        if (argTypes[i] !== null && argTypes[i].destructorFunction === undefined) { // The type does not define a destructor function - must use dynamic stack
-          needsDestructorStack = true;
-          break;
-        }
-      }
-  
       var returns = (argTypes[0].name !== "void");
-  
+
       var argsList = "";
       var argsListWired = "";
       for (var i = 0; i < argCount - 2; ++i) {
         argsList += (i!==0?", ":"")+"arg"+i;
         argsListWired += (i!==0?", ":"")+"arg"+i+"Wired";
       }
-  
+
       var invokerFnBody =
           "return function "+makeLegalFunctionName(humanName)+"("+argsList+") {\n" +
           "if (arguments.length !== "+(argCount - 2)+") {\n" +
               "throwBindingError('function "+humanName+" called with ' + arguments.length + ' arguments, expected "+(argCount - 2)+" args!');\n" +
           "}\n";
-  
-      if (needsDestructorStack) {
-        invokerFnBody += "var destructors = [];\n";
-      }
-  
-      var dtorStack = needsDestructorStack ? "destructors" : "null";
+
+      var dtorStack = "null";
       var args1 = ["throwBindingError", "invoker", "fn", "runDestructors", "retType", "classParam"];
       var args2 = [throwBindingError, cppInvokerFunc, cppTargetFunc, runDestructors, argTypes[0], argTypes[1]];
   
@@ -2993,19 +2978,15 @@ var ASM_CONSTS = {
       invokerFnBody +=
           (returns?"var rv = ":"") + "invoker(fn"+(argsListWired.length>0?", ":"")+argsListWired+");\n";
   
-      if (needsDestructorStack) {
-        invokerFnBody += "runDestructors(destructors);\n";
-      } else {
-        for (var i = isClassMethodFunc?1:2; i < argTypes.length; ++i) { // Skip return value at index 0 - it's not deleted here. Also skip class type if not a method.
-          var paramName = (i === 1 ? "thisWired" : ("arg"+(i - 2)+"Wired"));
-          if (argTypes[i].destructorFunction !== null) {
-            invokerFnBody += paramName+"_dtor("+paramName+"); // "+argTypes[i].name+"\n";
-            args1.push(paramName+"_dtor");
-            args2.push(argTypes[i].destructorFunction);
-          }
+      for (var i = isClassMethodFunc?1:2; i < argTypes.length; ++i) { // Skip return value at index 0 - it's not deleted here. Also skip class type if not a method.
+        var paramName = (i === 1 ? "thisWired" : ("arg"+(i - 2)+"Wired"));
+        if (argTypes[i].destructorFunction !== null) {
+          invokerFnBody += paramName+"_dtor("+paramName+"); // "+argTypes[i].name+"\n";
+          args1.push(paramName+"_dtor");
+          args2.push(argTypes[i].destructorFunction);
         }
       }
-  
+
       if (returns) {
         invokerFnBody += "var ret = retType.fromWireType(rv);\n" +
                          "return ret;\n";
