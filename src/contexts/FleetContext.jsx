@@ -222,16 +222,8 @@ export function FleetProvider({ children }) {
       // Run AI Model (ONLY if authorized)
       let anomalyScore = 0;
       if (isAiAuthorized) {
-        // DEBUGGING LOGS: Inspect values before classifier run
-        console.log("--- AI MODEL INPUT DEBUG ---");
-        console.log("Calculated MPG:", mpg);
-        console.log("Fuel Quantity (qty):", qty);
-        console.log("Miles Per Day:", miles_per_day);
-
         // ARRAY ORDER FIXED: WASM model expects alphabetical [fuelQuantity, miles_per_day, mpg]
         const features = [qty, miles_per_day, mpg];
-        console.log("Final Feature Array:", features);
-        console.log("----------------------------");
 
         try {
           const aiResult = await runEdgeImpulseClassifier(features);
