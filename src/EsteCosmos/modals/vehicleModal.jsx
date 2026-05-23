@@ -31,6 +31,19 @@ export const VehicleModal = memo(function VehicleModal() {
     const fetchYears = async () => {
       setLoading((prev) => ({ ...prev, years: true }));
       try {
+        const cachedYears = localStorage.getItem("epa_vehicle_years");
+        if (cachedYears) {
+          try {
+            const parsedYears = JSON.parse(cachedYears);
+            if (Array.isArray(parsedYears) && parsedYears.length > 0) {
+              setAvailableYears(parsedYears);
+              return;
+            }
+          } catch (e) {
+            console.error("Error parsing cached years", e);
+          }
+        }
+
         const res = await fetch(
           "https://www.fueleconomy.gov/ws/rest/vehicle/menu/year",
           {
@@ -45,6 +58,7 @@ export const VehicleModal = memo(function VehicleModal() {
             ? [data.menuItem]
             : [];
         setAvailableYears(items);
+        localStorage.setItem("epa_vehicle_years", JSON.stringify(items));
       } catch (error) {
         console.error("Error fetching years:", error);
         toast({
@@ -57,7 +71,7 @@ export const VehicleModal = memo(function VehicleModal() {
       }
     };
     fetchYears();
-  }, []);
+  }, [toast]);
 
   // Fetch Makes when Year changes
   useEffect(() => {
@@ -94,7 +108,7 @@ export const VehicleModal = memo(function VehicleModal() {
       }
     };
     fetchMakes();
-  }, [year]);
+  }, [year, toast]);
 
   // Fetch Models when Make changes
   useEffect(() => {
@@ -131,7 +145,7 @@ export const VehicleModal = memo(function VehicleModal() {
       }
     };
     fetchModels();
-  }, [make, year]);
+  }, [make, year, toast]);
 
   return (
     <div className={styles.modalOverlay} onClick={handleCloseNewVehicle}>
