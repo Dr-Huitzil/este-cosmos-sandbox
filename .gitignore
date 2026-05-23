@@ -26,3 +26,4 @@ dist-ssr
 
 # Firebase local config (contains project ID — keep off repo)
 .firebaserc
+coverage
