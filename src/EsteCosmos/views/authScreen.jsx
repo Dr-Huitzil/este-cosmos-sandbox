@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { useAuth } from "@/firebase";
 import {
-  //signInAnonymously,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { Rocket, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import styles from "../views/authScreen.module.css";
 
 /**
- * Auth screen with login / signup tabs and anonymous sign-in
+ * Auth screen with login / signup tabs
  */
 export function AuthScreen() {
   const auth = useAuth();
@@ -72,28 +71,10 @@ export function AuthScreen() {
     }
   };
 
-  // const handleAnonymous = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     await signInAnonymously(auth);
-  //   } catch (error) {
-  //     toast({
-  //       variant: "destructive",
-  //       title: "Transmission Failed",
-  //       description: error.message,
-  //     });
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   return (
     <div className={styles.screen}>
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          {/* <div className={styles.rocketWrap}>
-            <Rocket className={styles.rocketIcon} />
-          </div> */}
           <h1 className={styles.title}>ESTE</h1>
           <h2 className={styles.titleAccent}>COSMOS</h2>
           <p className={styles.subtitle}>FUEL TRACKING &amp; LOGISTICS</p>
@@ -231,14 +212,6 @@ export function AuthScreen() {
             </button>
           </form>
         )}
-
-        {/* <button
-          className={styles.ghostBtn}
-          onClick={handleAnonymous}
-          disabled={isLoading}
-        >
-          Ghost Protocol
-        </button> */}
 
         <p className={styles.footer}>Floating through the emptiness of space</p>
       </div>
