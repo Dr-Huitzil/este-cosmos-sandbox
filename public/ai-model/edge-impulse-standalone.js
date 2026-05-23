@@ -2939,10 +2939,15 @@ var ASM_CONSTS = {
       var isClassMethodFunc = (argTypes[1] !== null && classType !== null);
   
       // Free functions with signature "void function()" do not need an invoker that marshalls between wire types.
-  // TODO: This omits argument count check - enable only at -O3 or similar.
-  //    if (ENABLE_UNSAFE_OPTS && argCount == 2 && argTypes[0].name == "void" && !isClassMethodFunc) {
-  //       return FUNCTION_TABLE[fn];
-  //    }
+      if (argCount == 2 && argTypes[0].name == "void" && !isClassMethodFunc) {
+        var func = getWasmTableEntry(cppTargetFunc);
+        return function() {
+          if (arguments.length !== 0) {
+            throwBindingError("function " + humanName + " called with " + arguments.length + " arguments, expected 0 args!");
+          }
+          return func.apply(this, arguments);
+        };
+      }
   
       // Determine if we need to use a dynamic stack to store the destructors for the function parameters.
       // TODO: Remove this completely once all function invokers are being dynamically generated.
