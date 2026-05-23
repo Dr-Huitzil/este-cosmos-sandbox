@@ -349,8 +349,25 @@ export function FleetProvider({ children }) {
       const allEntries = [...fuelEntries].sort((a, b) => (a.odometer || 0) - (b.odometer || 0));
       const batch = writeBatch(firestore);
       let writes = 0;
+      let prevFullEntry = null;
+      let accumulatedPartialFuel = 0;
+
       for (const entry of allEntries) {
-        const newMPG = calculateMPG(entry, allEntries);
+        let newMPG = 0;
+        if (entry.isFull) {
+          if (prevFullEntry && entry.odometer > prevFullEntry.odometer) {
+            const distance = entry.odometer - prevFullEntry.odometer;
+            const totalFuel = entry.fuelQuantity + accumulatedPartialFuel;
+            newMPG = Number((distance / totalFuel).toFixed(2));
+          }
+          prevFullEntry = entry;
+          accumulatedPartialFuel = 0;
+        } else {
+          if (prevFullEntry) {
+            accumulatedPartialFuel += entry.fuelQuantity;
+          }
+        }
+
         if (entry.mileage !== newMPG) {
           const docRef = doc(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "fuelEntries", entry.id);
           batch.update(docRef, { mileage: newMPG });
