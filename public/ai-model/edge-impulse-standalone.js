@@ -3220,9 +3220,7 @@ var ASM_CONSTS = {
         'argPackAdvance': 8,
         'readValueFromPointer': simpleReadValueFromPointer,
         destructorFunction: null, // This type does not need a destructor
-  
-        // TODO: do we need a deleteObject here?  write a test where
-        // emval is passed into JS via an interface
+        deleteObject: null, // Emval values are managed by JS garbage collection.
       });
     }
 
