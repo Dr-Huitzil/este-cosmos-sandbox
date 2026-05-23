@@ -30,7 +30,7 @@ export const VehicleCard = memo(function VehicleCar({
     );
 
     const firstFull = sorted.find((e) => e.isFull);
-    const lastFull = [...sorted].reverse().find((e) => e.isFull);
+    const lastFull = sorted.findLast((e) => e.isFull);
 
     if (!firstFull || !lastFull || firstFull.id === lastFull.id) return "0";
 
