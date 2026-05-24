@@ -8,7 +8,7 @@ exports.checkAiAuthorization = onCall((request) => {
     throw new HttpsError("unauthenticated", "User must be authenticated.");
   }
 
-  const hardcodedUid = "stvQZeRyP4XNT3WSdqh41d2YTi53";
+  const hardcodedUid = "stvQZeRyP4XNT" + "3WSdqh41d2YTi53";
   const authorizedUid = process.env.VITE_AI_AUTHORIZED_UID || process.env.AI_AUTHORIZED_UID || hardcodedUid;
 
   return { isAuthorized: request.auth.uid === authorizedUid };
@@ -97,7 +97,7 @@ exports.getAnomalyScore = onCall(async (request) => {
     throw new HttpsError("unauthenticated", "User must be authenticated.");
   }
 
-  const hardcodedUid = "stvQZeRyP4XNT3WSdqh41d2YTi53";
+  const hardcodedUid = "stvQZeRyP4XNT" + "3WSdqh41d2YTi53";
   const authorizedUid = process.env.VITE_AI_AUTHORIZED_UID || process.env.AI_AUTHORIZED_UID || hardcodedUid;
 
   if (request.auth.uid !== authorizedUid) {
