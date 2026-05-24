@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useMemo, useCallback } from "react";
+import React, { createContext, useContext, useState, useMemo, useCallback, useEffect } from "react";
 import { useAuth, useFirestore, useUser } from "@/firebase";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { useToast } from "@/hooks/use-toast";
 import { useUI } from "./UIContext";
 
@@ -28,9 +29,27 @@ export function FleetProvider({ children }) {
   const [isFull, setIsFull] = useState(true);
   const [isReimbursable, setIsReimbursable] = useState(false);
 
-  const isAiAuthorized = useMemo(() => {
-    const authorizedUid = import.meta.env.VITE_AI_AUTHORIZED_UID;
-    return user && user.uid === authorizedUid;
+  const [isAiAuthorized, setIsAiAuthorized] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (user) {
+      const functions = getFunctions();
+      const checkAiAuthorization = httpsCallable(functions, "checkAiAuthorization");
+      checkAiAuthorization()
+        .then((result) => {
+          if (isMounted && result.data && result.data.isAuthorized) {
+            setIsAiAuthorized(true);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to check AI authorization:", error);
+          if (isMounted) setIsAiAuthorized(false);
+        });
+    } else {
+      setIsAiAuthorized(false);
+    }
+    return () => { isMounted = false; };
   }, [user]);
 
   const handleIsFull = useCallback((e) => setIsFull(e.target.checked), []);
