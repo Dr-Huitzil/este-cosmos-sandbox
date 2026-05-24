@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef, useCallback } from "react";
 import { useCollection, useMemoFirebase, addDocumentNonBlocking } from "@/firebase";
 import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { calculateMPG, parseLocalDate } from "../../util/fuel-utils";
-import { runEdgeImpulseClassifier } from "../../util/ai-model";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isAiAuthorized, handleCloseFuelLog }) {
   const fuelQuery = useMemoFirebase(() => {
@@ -111,8 +111,10 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
         console.log("----------------------------");
 
         try {
-          const aiResult = await runEdgeImpulseClassifier(features);
-          anomalyScore = aiResult?.anomaly || 0;
+          const functions = getFunctions();
+          const getAnomalyScore = httpsCallable(functions, "getAnomalyScore");
+          const aiResult = await getAnomalyScore({ features });
+          anomalyScore = aiResult?.data?.anomalyScore || 0;
 
           if (anomalyScore < 0.6) {
             toast({ title: "Engine Optimal", description: `Anomaly Score: ${anomalyScore.toFixed(3)}` });
