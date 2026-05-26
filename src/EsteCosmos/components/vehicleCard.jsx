@@ -16,27 +16,24 @@ export const VehicleCard = memo(function VehicleCar({
 }) {
   const latestEntry = useMemo(() => {
     if (entries.length === 0) return null;
-    return [...entries].sort(
-      (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-    )[0];
+    return entries[0]; // Assumes entries is sorted newest first
   }, [entries]);
 
   const avgMileage = useMemo(() => {
     if (entries.length < 2) return "0";
 
-    // Sort oldest first for chronological processing
-    const sorted = [...entries].sort(
-      (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime(),
-    );
-
-    const firstFull = sorted.find((e) => e.isFull);
-    const lastFull = sorted.findLast((e) => e.isFull);
+    // Assumes entries is sorted newest first (descending)
+    // findLast gets the earliest full entry, find gets the latest full entry
+    const firstFull = entries.findLast((e) => e.isFull);
+    const lastFull = entries.find((e) => e.isFull);
 
     if (!firstFull || !lastFull || firstFull.id === lastFull.id) return "0";
 
     let totalFuel = 0;
     let started = false;
-    for (const e of sorted) {
+    // Iterate backwards to process chronologically
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const e = entries[i];
       if (e.id === firstFull.id) {
         started = true;
         continue;
