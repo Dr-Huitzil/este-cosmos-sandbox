@@ -55,8 +55,16 @@ export const DashboardView = memo(function DashboardView() {
   // Stable per-vehicle entry slices — prevents inline filter creating new arrays on every render
   const vehicleFuelMap = useMemo(() => {
     const map = {};
+    // ⚡ Bolt: Single pass through fuel entries O(V + F) instead of O(V * F)
+    // Initialize empty arrays for all known vehicles
     vehicles.forEach((v) => {
-      map[v.id] = fuelEntries.filter((e) => e.vehicleId === v.id);
+      map[v.id] = [];
+    });
+    // Group fuel entries by vehicleId
+    fuelEntries.forEach((e) => {
+      if (map[e.vehicleId]) {
+        map[e.vehicleId].push(e);
+      }
     });
     return map;
   }, [vehicles, fuelEntries]);
