@@ -1,0 +1,3 @@
+## 2024-05-15 - Remove redundant O(n log n) sorts in calculateMPG
+**Learning:** `calculateMPG` was sorting the entire `allEntries` array internally on every invocation, causing `O(n^2 log n)` complexity when called in loops (like rendering tables or computing analytics data).
+**Action:** The codebase pattern provides pre-sorted arrays (like `sortedFuelEntries` via `FleetContext`). Refactored `calculateMPG` to expect a pre-sorted array (`newest-first`), effectively reducing complexity to `O(n^2)` or `O(n log n)` depending on the caller. When making such optimizations, carefully ensure the exact sorting requirements match the caller's context to avoid regression in data mapping.
