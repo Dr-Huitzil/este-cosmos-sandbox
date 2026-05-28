@@ -4,21 +4,19 @@
  * since the last 'full' fill-up
  *
  * @param {{ odometer: number, fuelQuantity: number, isFull: boolean}} currentEntry
- * @param {Array<{ odometer: number, fuelQuantity: number, isFull: boolean, day: string}>} allEntries
- * @returns {numbers}
+ * @param {Array<{ odometer: number, fuelQuantity: number, isFull: boolean, day: string}>} allEntries - Must be pre-sorted newest-first
+ * @returns {number}
  */
 
 export function calculateMPG(currentEntry, allEntries) {
   if (!currentEntry.isFull) return 0;
 
-  const sorted = [...allEntries].sort(
-    (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-  );
-
+  // Bolt optimization: Expect allEntries to be pre-sorted newest-first.
+  // This removes O(n log n) sorting on every call, optimizing tight loops.
   let totalFuel = currentEntry.fuelQuantity;
   let prevFullEntry = null;
 
-  for (const entry of sorted) {
+  for (const entry of allEntries) {
     if (entry.odometer >= currentEntry.odometer) continue;
 
     if (entry.isFull) {
