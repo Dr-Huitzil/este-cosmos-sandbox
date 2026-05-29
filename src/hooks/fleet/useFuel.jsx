@@ -24,10 +24,10 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
     [fuelEntries]
   );
 
-  const fuelEntriesRef = useRef(fuelEntries);
+  const fuelEntriesRef = useRef(sortedFuelEntries);
   useEffect(() => {
-    fuelEntriesRef.current = fuelEntries;
-  }, [fuelEntries]);
+    fuelEntriesRef.current = sortedFuelEntries;
+  }, [sortedFuelEntries]);
 
   const handleAddFuelLog = useCallback(
     async (e) => {
@@ -145,11 +145,14 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
     if (!user || !firestore || !selectedVehicleId) return;
     toast({ title: "CALIBRATION STARTED", description: "Recalculating telemetry vectors..." });
     try {
+      // Keep old sorting (ascending / oldest-first) for chronological iteration
       const allEntries = [...fuelEntries].sort((a, b) => (a.odometer || 0) - (b.odometer || 0));
+
       const batch = writeBatch(firestore);
       let writes = 0;
       for (const entry of allEntries) {
-        const newMPG = calculateMPG(entry, allEntries);
+        // Use the pre-sorted descending array for calculateMPG
+        const newMPG = calculateMPG(entry, fuelEntriesRef.current);
         if (entry.mileage !== newMPG) {
           const docRef = doc(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "fuelEntries", entry.id);
           batch.update(docRef, { mileage: newMPG });
