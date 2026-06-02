@@ -1,0 +1,3 @@
+## 2024-03-24 - Avoid Internal Array Sorting in Mapped Utility Functions
+**Learning:** Utility functions (like `calculateMPG`) that process collections must avoid using internal `.sort()` operations. When called within loops or component render maps (like a data table), this causes O(N^2 log N) performance degradation. In this architecture, pre-sorted arrays are generally provided by the `FleetContext` hooks (e.g., `sortedFuelEntries`) globally.
+**Action:** Always accept pre-sorted arrays as arguments for collection-processing utility functions, explicitly documenting the expected sort order, and utilize the globally sorted context data to prevent redundant, expensive sorts on every render cycle.
