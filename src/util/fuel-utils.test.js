@@ -1,6 +1,58 @@
 import { describe, it, expect } from 'vitest';
 import { calculateDaysPassed, isSafePhotoURL } from './fuel-utils.jsx';
 
+import { calculateMPG } from './fuel-utils.jsx';
+
+describe('calculateMPG', () => {
+  it('returns 0 if the current entry is not a full fill-up', () => {
+    const currentEntry = { odometer: 1000, fuelQuantity: 10, isFull: false };
+    const sortedEntries = [currentEntry];
+    expect(calculateMPG(currentEntry, sortedEntries)).toBe(0);
+  });
+
+  it('calculates MPG correctly for sequential full fill-ups', () => {
+    // Note: sortedEntries must be sorted newest first (highest odometer first)
+    const entry1 = { odometer: 1000, fuelQuantity: 10, isFull: true };
+    const entry2 = { odometer: 1300, fuelQuantity: 15, isFull: true };
+    const sortedEntries = [entry2, entry1];
+
+    // Distance = 1300 - 1000 = 300
+    // Total fuel = 15
+    // MPG = 300 / 15 = 20
+    expect(calculateMPG(entry2, sortedEntries)).toBe(20);
+  });
+
+  it('calculates MPG correctly by including partial fill-ups up to the previous full fill-up', () => {
+    const entry1 = { odometer: 1000, fuelQuantity: 10, isFull: true };
+    const entry2 = { odometer: 1100, fuelQuantity: 5, isFull: false }; // partial
+    const entry3 = { odometer: 1200, fuelQuantity: 5, isFull: false }; // partial
+    const entry4 = { odometer: 1400, fuelQuantity: 10, isFull: true };
+    const sortedEntries = [entry4, entry3, entry2, entry1];
+
+    // Distance = 1400 - 1000 = 400
+    // Total fuel = 10 (entry4) + 5 (entry3) + 5 (entry2) = 20
+    // MPG = 400 / 20 = 20
+    expect(calculateMPG(entry4, sortedEntries)).toBe(20);
+  });
+
+  it('returns 0 if there is no previous full fill-up', () => {
+    const entry1 = { odometer: 1000, fuelQuantity: 10, isFull: false };
+    const entry2 = { odometer: 1100, fuelQuantity: 5, isFull: false };
+    const entry3 = { odometer: 1400, fuelQuantity: 10, isFull: true };
+    const sortedEntries = [entry3, entry2, entry1];
+
+    expect(calculateMPG(entry3, sortedEntries)).toBe(0);
+  });
+
+  it('returns 0 if the distance is 0 or negative', () => {
+    const entry1 = { odometer: 1000, fuelQuantity: 10, isFull: true };
+    const entry2 = { odometer: 1000, fuelQuantity: 15, isFull: true };
+    const sortedEntries = [entry2, entry1];
+
+    expect(calculateMPG(entry2, sortedEntries)).toBe(0);
+  });
+});
+
 describe('calculateDaysPassed', () => {
   it('calculates 0 days for the same date', () => {
     expect(calculateDaysPassed('2024-01-01', '2024-01-01')).toBe(0);
