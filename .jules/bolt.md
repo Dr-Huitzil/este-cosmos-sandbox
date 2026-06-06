@@ -1,0 +1,3 @@
+## 2024-06-06 - Utility Functions in Render Loops
+**Learning:** Found a severe `O(N^2 log N)` performance bottleneck where a collection utility function (`calculateMPG`) was performing a `.sort()` operation internally while being called repeatedly inside a map/render loop of a React component (`fuelLogTable`).
+**Action:** Utility functions that process collections MUST avoid internal `.sort()` operations. Instead, they should expect and rely on pre-sorted arrays. Pre-sorting should happen once (e.g. via `useMemo` in a parent component or context provider like `FleetContext`) and the sorted array should be passed down to the utility functions.
