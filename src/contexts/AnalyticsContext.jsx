@@ -93,13 +93,16 @@ export function AnalyticsProvider({ children }) {
     () => {
       // We need all fuel entries (not just filtered) for accurate MPG calculation
       // since calculateMPG looks backwards through history for the previous full fill-up
+
+      // ⚡ Bolt: sortedFuelEntries is pre-sorted newest-first, we use it directly for calculateMPG
+      // The local 'sorted' array is sorted oldest-first for chart rendering
       const sorted = [...filteredFuel].sort(
         (a, b) => parseLocalDate(a.day).getTime() - parseLocalDate(b.day).getTime()
       );
       return sorted
         .map((e) => {
           // Prefer stored mileage; fall back to dynamic calculation if missing/zero
-          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, fuelEntries);
+          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, sortedFuelEntries);
           return { entry: e, mpg };
         })
         .filter(({ mpg }) => mpg > 0)
@@ -109,7 +112,7 @@ export function AnalyticsProvider({ children }) {
           anomalyScore: isAiAuthorized && e.anomalyScore ? Number(e.anomalyScore.toFixed(3)) : 0,
         }));
     },
-    [filteredFuel, fuelEntries, shortDateFormatter, isAiAuthorized]
+    [filteredFuel, sortedFuelEntries, shortDateFormatter, isAiAuthorized]
   );
 
   const maintenanceSpendData = useMemo(() => {
