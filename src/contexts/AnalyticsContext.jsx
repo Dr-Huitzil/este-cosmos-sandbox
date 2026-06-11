@@ -94,12 +94,12 @@ export function AnalyticsProvider({ children }) {
       // We need all fuel entries (not just filtered) for accurate MPG calculation
       // since calculateMPG looks backwards through history for the previous full fill-up
       const sorted = [...filteredFuel].sort(
-        (a, b) => parseLocalDate(a.day).getTime() - parseLocalDate(b.day).getTime()
+        (a, b) => parseLocalDate(b.day).getTime() - parseLocalDate(a.day).getTime()
       );
       return sorted
         .map((e) => {
           // Prefer stored mileage; fall back to dynamic calculation if missing/zero
-          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, fuelEntries);
+          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, sortedFuelEntries);
           return { entry: e, mpg };
         })
         .filter(({ mpg }) => mpg > 0)
