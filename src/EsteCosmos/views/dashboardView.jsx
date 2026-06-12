@@ -38,11 +38,11 @@ export const DashboardView = memo(function DashboardView() {
 
   const {
     vehicles,
-    fuelEntries,
+    sortedFuelEntries,
     selectedVehicleId,
     selectedVehicle,
-    serviceEntries,
-    tireEntries,
+    sortedServiceEntries,
+    sortedTireEntries,
     handleSelectVehicle,
   } = useFleet();
 
@@ -56,27 +56,27 @@ export const DashboardView = memo(function DashboardView() {
   const vehicleFuelMap = useMemo(() => {
     const map = {};
     vehicles.forEach((v) => {
-      map[v.id] = fuelEntries.filter((e) => e.vehicleId === v.id);
+      map[v.id] = sortedFuelEntries.filter((e) => e.vehicleId === v.id);
     });
     return map;
-  }, [vehicles, fuelEntries]);
+  }, [vehicles, sortedFuelEntries]);
 
   const activeTabFuelEntries = useMemo(
-    () => fuelEntries.filter((e) => e.vehicleId === selectedVehicleId),
-    [fuelEntries, selectedVehicleId],
+    () => sortedFuelEntries.filter((e) => e.vehicleId === selectedVehicleId),
+    [sortedFuelEntries, selectedVehicleId],
   );
 
   const activeTabServiceEntries = useMemo(
-    () => serviceEntries.filter((s) => s.vehicleId === selectedVehicleId),
-    [serviceEntries, selectedVehicleId],
+    () => sortedServiceEntries.filter((s) => s.vehicleId === selectedVehicleId),
+    [sortedServiceEntries, selectedVehicleId],
   );
 
   const activeTabTireEntries = useMemo(
-    () => tireEntries.filter((t) => t.vehicleId === selectedVehicleId),
-    [tireEntries, selectedVehicleId],
+    () => sortedTireEntries.filter((t) => t.vehicleId === selectedVehicleId),
+    [sortedTireEntries, selectedVehicleId],
   );
 
-  const latestTire = tireEntries.length > 0 ? tireEntries[0] : null;
+  const latestTire = sortedTireEntries.length > 0 ? sortedTireEntries[0] : null;
 
   return (
     <div className={styles.viewPad}>

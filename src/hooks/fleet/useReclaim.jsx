@@ -11,6 +11,16 @@ export function useReclaim({ user, firestore, toast, selectedVehicleId, handleCl
   const { data: reclaimEntriesData } = useCollection(reclaimQuery);
   const reclaimEntries = useMemo(() => reclaimEntriesData || [], [reclaimEntriesData]);
 
+  const sortedReclaimEntries = useMemo(
+    () =>
+      [...reclaimEntries].sort((a, b) => {
+        const d1 = new Date(b.day).getTime();
+        const d2 = new Date(a.day).getTime();
+        return d1 - d2;
+      }),
+    [reclaimEntries]
+  );
+
   const handleAddReclaim = useCallback(
     (e) => {
       e.preventDefault();
@@ -44,6 +54,7 @@ export function useReclaim({ user, firestore, toast, selectedVehicleId, handleCl
 
   return {
     reclaimEntries,
+    sortedReclaimEntries,
     handleAddReclaim
   };
 }
