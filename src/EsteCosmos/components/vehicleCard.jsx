@@ -16,27 +16,25 @@ export const VehicleCard = memo(function VehicleCar({
 }) {
   const latestEntry = useMemo(() => {
     if (entries.length === 0) return null;
-    return [...entries].sort(
-      (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-    )[0];
+    return entries[0];
   }, [entries]);
 
   const avgMileage = useMemo(() => {
     if (entries.length < 2) return "0";
 
-    // Sort oldest first for chronological processing
-    const sorted = [...entries].sort(
-      (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime(),
-    );
-
-    const firstFull = sorted.find((e) => e.isFull);
-    const lastFull = sorted.findLast((e) => e.isFull);
+    // entries is pre-sorted newest-first
+    // We want the most recent full fill-up and the oldest full fill-up
+    const lastFull = entries.find((e) => e.isFull);
+    const firstFull = entries.findLast((e) => e.isFull);
 
     if (!firstFull || !lastFull || firstFull.id === lastFull.id) return "0";
 
     let totalFuel = 0;
     let started = false;
-    for (const e of sorted) {
+
+    // We iterate from oldest to newest (end of array to beginning) to sum the fuel
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const e = entries[i];
       if (e.id === firstFull.id) {
         started = true;
         continue;
