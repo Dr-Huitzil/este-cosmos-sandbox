@@ -84,17 +84,18 @@ export function FleetProvider({ children }) {
 
   const {
     reclaimEntries,
+    sortedReclaimEntries,
     handleAddReclaim
   } = useReclaim({ user, firestore, toast, selectedVehicleId, handleCloseReclaim });
 
   const contextValue = React.useMemo(() => ({
     selectedVehicleId, vehicles, fuelEntries, serviceEntries, tireEntries, reclaimEntries,
-    selectedVehicle, sortedFuelEntries, sortedServiceEntries, sortedTireEntries,
+    selectedVehicle, sortedFuelEntries, sortedServiceEntries, sortedTireEntries, sortedReclaimEntries,
     isFull, isReimbursable, isAiAuthorized, handleSelectVehicle, handleIsFull, handleIsReimbursable,
     handleAddVehicle, handleAddFuelLog, handleAddServiceLog, handleAddTireLog, handleAddReclaim, handleMigrateMPG
   }), [
     selectedVehicleId, vehicles, fuelEntries, serviceEntries, tireEntries, reclaimEntries,
-    selectedVehicle, sortedFuelEntries, sortedServiceEntries, sortedTireEntries,
+    selectedVehicle, sortedFuelEntries, sortedServiceEntries, sortedTireEntries, sortedReclaimEntries,
     isFull, isReimbursable, isAiAuthorized, handleSelectVehicle, handleIsFull, handleIsReimbursable,
     handleAddVehicle, handleAddFuelLog, handleAddServiceLog, handleAddTireLog, handleAddReclaim, handleMigrateMPG
   ]);
