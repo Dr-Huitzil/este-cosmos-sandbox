@@ -13,20 +13,13 @@ import styles from "./fuelLogTable.module.css";
 export const ReclaimLogTable = memo(function ReclaimLogTable({ entries = [] }) {
   const [pageSize, setPageSize] = useState("5");
 
-  const sortedEntries = useMemo(
-    () =>
-      [...entries].sort((a, b) => {
-        const d1 = new Date(b.day).getTime();
-        const d2 = new Date(a.day).getTime();
-        return d1 - d2;
-      }),
-    [entries],
-  );
+  // ⚡ Bolt Performance Optimization:
+  // Removed redundant O(N log N) sorting. `entries` prop is assumed to be pre-sorted.
 
   const displayedEntries = useMemo(() => {
-    if (pageSize === "all") return sortedEntries;
-    return sortedEntries.slice(0, parseInt(pageSize, 10));
-  }, [sortedEntries, pageSize]);
+    if (pageSize === "all") return entries;
+    return entries.slice(0, parseInt(pageSize, 10));
+  }, [entries, pageSize]);
 
   if (entries.length === 0) {
     return (

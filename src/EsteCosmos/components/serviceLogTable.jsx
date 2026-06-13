@@ -10,16 +10,8 @@ import styles from "./serviceLogTable.module.css";
  * @param {{ entries: Array }} props
  */
 export const ServiceLogTable = memo(function ServiceLogTable({ entries = [] }) {
-  const sortedEntries = useMemo(
-    () =>
-      [...entries].sort((a, b) => {
-        const d1 = new Date(b.date).getTime();
-        const d2 = new Date(a.date).getTime();
-        if (d1 !== d2) return d1 - d2;
-        return (b.odometerReading || 0) - (a.odometerReading || 0);
-      }),
-    [entries],
-  );
+  // ⚡ Bolt Performance Optimization:
+  // Removed redundant O(N log N) sorting. `entries` prop is assumed to be pre-sorted.
 
   if (entries.length === 0) {
     return (
@@ -45,7 +37,7 @@ export const ServiceLogTable = memo(function ServiceLogTable({ entries = [] }) {
           </tr>
         </thead>
         <tbody>
-          {sortedEntries.map((entry) => (
+          {entries.map((entry) => (
             <tr key={entry.id} className={styles.row}>
               <td className={styles.td}>
                 <div className={styles.cellStack}>
