@@ -1,0 +1,3 @@
+## 2024-05-18 - Eliminating O(N^2 log N) degradation in table renders
+**Learning:** Table components (e.g., FuelLogTable, ServiceLogTable) and utility functions (e.g., calculateMPG) that process collections during React rendering loops must not internally `.sort()` data. This codebase architecture supplies pre-sorted arrays via contexts like `FleetContext` (e.g., `sortedFuelEntries`). Failing to utilize these pre-sorted arrays leads to O(N^2 log N) performance degradation, as a sort occurs for every entry rendered.
+**Action:** Always accept pre-sorted arrays as props in child components or arguments in utility functions, rather than sorting internally. Propagate globally sorted lists from context down the component tree.
