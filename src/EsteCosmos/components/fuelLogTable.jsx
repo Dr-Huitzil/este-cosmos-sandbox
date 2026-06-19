@@ -29,6 +29,19 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
     [entries],
   );
 
+  // ⚡ BOLT OPTIMIZATION: Ensure calculateMPG always receives an array strictly sorted by date descending,
+  // regardless of table sorting state (though currently sortedEntries is date descending, this guards against future changes).
+  const memoizedDateSortedEntries = useMemo(
+    () =>
+      [...entries].sort((a, b) => {
+        const d1 = new Date(b.day).getTime();
+        const d2 = new Date(a.day).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometer || 0) - (a.odometer || 0);
+      }),
+    [entries],
+  );
+
   const displayedEntries = useMemo(() => {
     if (pageSize === "all") return sortedEntries;
     return sortedEntries.slice(0, parseInt(pageSize, 10));
@@ -74,7 +87,9 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
         </thead>
         <tbody>
           {displayedEntries.map((entry) => {
-            const dynamicMPG = calculateMPG(entry, entries);
+            // ⚡ BOLT OPTIMIZATION: Pass memoizedDateSortedEntries instead of entries to
+            // calculateMPG to avoid O(N^2 log N) degradation and ensure strict chronological order.
+            const dynamicMPG = calculateMPG(entry, memoizedDateSortedEntries);
             return (
               <tr key={entry.id} className={styles.row}>
                 <td className={styles.td}>
