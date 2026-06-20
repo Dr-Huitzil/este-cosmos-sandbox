@@ -1,5 +1,35 @@
 import { describe, it, expect } from 'vitest';
-import { calculateDaysPassed, isSafePhotoURL } from './fuel-utils.jsx';
+import { calculateDaysPassed, isSafePhotoURL, calculateMPG } from './fuel-utils.jsx';
+
+describe('calculateMPG', () => {
+  it('returns 0 if currentEntry is not full', () => {
+    const entry = { odometer: 1000, fuelQuantity: 10, isFull: false };
+    expect(calculateMPG(entry, [])).toBe(0);
+  });
+
+  it('calculates MPG correctly based on pre-sorted array', () => {
+    const currentEntry = { odometer: 2000, fuelQuantity: 15, isFull: true };
+    const allEntries = [
+      { odometer: 2000, fuelQuantity: 15, isFull: true, day: '2024-02-01' },
+      { odometer: 1500, fuelQuantity: 10, isFull: false, day: '2024-01-15' },
+      { odometer: 1000, fuelQuantity: 12, isFull: true, day: '2024-01-01' },
+      { odometer: 500, fuelQuantity: 10, isFull: true, day: '2023-12-15' },
+    ];
+    // Distance since last full = 2000 - 1000 = 1000
+    // Total fuel = 15 (current) + 10 (partial) = 25
+    // MPG = 1000 / 25 = 40
+    expect(calculateMPG(currentEntry, allEntries)).toBe(40);
+  });
+
+  it('returns 0 if no previous full entry is found', () => {
+    const currentEntry = { odometer: 2000, fuelQuantity: 15, isFull: true };
+    const allEntries = [
+      { odometer: 2000, fuelQuantity: 15, isFull: true, day: '2024-02-01' },
+      { odometer: 1500, fuelQuantity: 10, isFull: false, day: '2024-01-15' },
+    ];
+    expect(calculateMPG(currentEntry, allEntries)).toBe(0);
+  });
+});
 
 describe('calculateDaysPassed', () => {
   it('calculates 0 days for the same date', () => {

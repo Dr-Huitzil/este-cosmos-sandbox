@@ -1,0 +1,3 @@
+## 2024-06-20 - Removed O(N^2 log N) Sort from calculateMPG Render Cycle
+**Learning:** `calculateMPG` was performing a full array sort internally. Because it was called inside the `.map()` render loop of `FuelLogTable` and `AnalyticsContext`, it caused O(N^2 log N) redundant sorting operations, severely degrading performance for large telemetry logs.
+**Action:** Removed internal sorting from `calculateMPG` and explicitly passed memoized pre-sorted arrays (`sortedEntries`, `sortedFuelEntries`) from the callers. When utilities process collections, always pass pre-sorted arrays instead of relying on the utility to sort them on every invocation, especially when called in loops.
