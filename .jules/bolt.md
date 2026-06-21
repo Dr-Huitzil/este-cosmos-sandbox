@@ -1,0 +1,3 @@
+## 2026-06-21 - O(N^2 log N) Anti-Pattern in Render Loops
+**Learning:** Utility functions (like `calculateMPG`) that perform internal array sorting can cause severe (N^2 \log N)$ performance degradation when called inside component render loops (e.g., mapping over rows in a table component like `FuelLogTable`). Since `FleetContext` already provides pre-sorted data via hooks like `useFuel`, redundant sorting is unnecessary.
+**Action:** Remove internal sorting from utilities used in render loops. Update component maps to pass pre-sorted arrays directly from their hooks/contexts, enforcing a pattern where data sorting occurs exactly once (via memoization) near the top of the context tree.
