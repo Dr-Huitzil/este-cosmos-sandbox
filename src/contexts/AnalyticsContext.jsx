@@ -99,7 +99,7 @@ export function AnalyticsProvider({ children }) {
       return sorted
         .map((e) => {
           // Prefer stored mileage; fall back to dynamic calculation if missing/zero
-          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, fuelEntries);
+          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, sortedFuelEntries);
           return { entry: e, mpg };
         })
         .filter(({ mpg }) => mpg > 0)

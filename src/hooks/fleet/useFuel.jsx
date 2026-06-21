@@ -24,10 +24,10 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
     [fuelEntries]
   );
 
-  const fuelEntriesRef = useRef(fuelEntries);
+  const sortedFuelEntriesRef = useRef(sortedFuelEntries);
   useEffect(() => {
-    fuelEntriesRef.current = fuelEntries;
-  }, [fuelEntries]);
+    sortedFuelEntriesRef.current = sortedFuelEntries;
+  }, [sortedFuelEntries]);
 
   const handleAddFuelLog = useCallback(
     async (e) => {
@@ -58,13 +58,13 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
       else if (isNaN(totalPrice) && !isNaN(fuelPrice) && qty > 0) totalPrice = Number((fuelPrice * qty).toFixed(2));
 
       // Calculate the standard mileage mapping
-      const mileage = calculateMPG({ odometer: odo, fuelQuantity: qty, isFull }, fuelEntriesRef.current);
+      const mileage = calculateMPG({ odometer: odo, fuelQuantity: qty, isFull }, sortedFuelEntriesRef.current);
 
       // AI Middleman Step
       let previousOdometer = odo;
       let previousDay = day;
       let hasPreviousLog = false;
-      const allEntries = fuelEntriesRef.current;
+      const allEntries = sortedFuelEntriesRef.current;
 
       if (allEntries && allEntries.length > 0) {
         // Since allEntries is already sorted newest first, index 0 is the most recent
@@ -145,11 +145,11 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
     if (!user || !firestore || !selectedVehicleId) return;
     toast({ title: "CALIBRATION STARTED", description: "Recalculating telemetry vectors..." });
     try {
-      const allEntries = [...fuelEntries].sort((a, b) => (a.odometer || 0) - (b.odometer || 0));
+      const oldestFirstEntries = [...fuelEntries].sort((a, b) => (a.odometer || 0) - (b.odometer || 0));
       const batch = writeBatch(firestore);
       let writes = 0;
-      for (const entry of allEntries) {
-        const newMPG = calculateMPG(entry, allEntries);
+      for (const entry of oldestFirstEntries) {
+        const newMPG = calculateMPG(entry, sortedFuelEntriesRef.current);
         if (entry.mileage !== newMPG) {
           const docRef = doc(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "fuelEntries", entry.id);
           batch.update(docRef, { mileage: newMPG });
