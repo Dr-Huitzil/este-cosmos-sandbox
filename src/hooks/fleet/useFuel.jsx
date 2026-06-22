@@ -29,6 +29,11 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
     fuelEntriesRef.current = fuelEntries;
   }, [fuelEntries]);
 
+  const sortedFuelEntriesRef = useRef(sortedFuelEntries);
+  useEffect(() => {
+    sortedFuelEntriesRef.current = sortedFuelEntries;
+  }, [sortedFuelEntries]);
+
   const handleAddFuelLog = useCallback(
     async (e) => {
       e.preventDefault();
@@ -58,7 +63,7 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
       else if (isNaN(totalPrice) && !isNaN(fuelPrice) && qty > 0) totalPrice = Number((fuelPrice * qty).toFixed(2));
 
       // Calculate the standard mileage mapping
-      const mileage = calculateMPG({ odometer: odo, fuelQuantity: qty, isFull }, fuelEntriesRef.current);
+      const mileage = calculateMPG({ odometer: odo, fuelQuantity: qty, isFull }, sortedFuelEntriesRef.current);
 
       // AI Middleman Step
       let previousOdometer = odo;
@@ -148,8 +153,14 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
       const allEntries = [...fuelEntries].sort((a, b) => (a.odometer || 0) - (b.odometer || 0));
       const batch = writeBatch(firestore);
       let writes = 0;
+
+      // We must pass a date-sorted array to calculateMPG
+      const dateSortedEntries = [...fuelEntries].sort(
+        (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime()
+      );
+
       for (const entry of allEntries) {
-        const newMPG = calculateMPG(entry, allEntries);
+        const newMPG = calculateMPG(entry, dateSortedEntries);
         if (entry.mileage !== newMPG) {
           const docRef = doc(firestore, "userProfiles", user.uid, "vehicles", selectedVehicleId, "fuelEntries", entry.id);
           batch.update(docRef, { mileage: newMPG });

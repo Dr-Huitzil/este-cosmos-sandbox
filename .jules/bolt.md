@@ -1,0 +1,3 @@
+## 2024-06-22 - O(N^2 log N) Render Cycle Bottleneck
+**Learning:** Utility functions that process collections (like `calculateMPG`) and are called inside render loops can cause severe performance degradation (O(N^2 log N)) if they contain internal `.sort()` operations. React components can quickly hit a wall when table rows grow.
+**Action:** Remove internal sorting from iterative utility functions. Instead, leverage the architecture's existing pre-sorted state (e.g., `sortedFuelEntries` provided by context or component memoization) and pass it directly to the utility function. Always ensure arrays passed to these optimized utilities match the expected sort order.

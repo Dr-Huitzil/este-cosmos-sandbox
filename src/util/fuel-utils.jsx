@@ -11,14 +11,13 @@
 export function calculateMPG(currentEntry, allEntries) {
   if (!currentEntry.isFull) return 0;
 
-  const sorted = [...allEntries].sort(
-    (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-  );
+  // BOLT OPTIMIZATION: Removed internal .sort() to prevent O(N^2 log N) degradation in render loops.
+  // The caller is now responsible for passing an array that is pre-sorted newest-first by date.
 
   let totalFuel = currentEntry.fuelQuantity;
   let prevFullEntry = null;
 
-  for (const entry of sorted) {
+  for (const entry of allEntries) {
     if (entry.odometer >= currentEntry.odometer) continue;
 
     if (entry.isFull) {

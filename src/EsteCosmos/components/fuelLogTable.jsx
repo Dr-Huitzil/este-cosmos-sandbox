@@ -34,6 +34,17 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
     return sortedEntries.slice(0, parseInt(pageSize, 10));
   }, [sortedEntries, pageSize]);
 
+  // BOLT OPTIMIZATION: Created a dedicated memoized array sorted purely by date newest-first.
+  // This is passed to calculateMPG to satisfy its pre-sorted requirement without
+  // O(N^2 log N) degradation inside the render loop.
+  const memoizedDateSortedEntries = useMemo(
+    () =>
+      [...entries].sort(
+        (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime()
+      ),
+    [entries]
+  );
+
   if (entries.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -74,7 +85,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
         </thead>
         <tbody>
           {displayedEntries.map((entry) => {
-            const dynamicMPG = calculateMPG(entry, entries);
+            const dynamicMPG = calculateMPG(entry, memoizedDateSortedEntries);
             return (
               <tr key={entry.id} className={styles.row}>
                 <td className={styles.td}>
