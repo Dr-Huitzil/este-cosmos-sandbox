@@ -18,7 +18,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
   const { isAiAuthorized } = useFleet();
   const [pageSize, setPageSize] = useState("5");
 
-  const sortedEntries = useMemo(
+  const memoizedDateSortedEntries = useMemo(
     () =>
       [...entries].sort((a, b) => {
         const d1 = new Date(b.day).getTime();
@@ -30,9 +30,9 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
   );
 
   const displayedEntries = useMemo(() => {
-    if (pageSize === "all") return sortedEntries;
-    return sortedEntries.slice(0, parseInt(pageSize, 10));
-  }, [sortedEntries, pageSize]);
+    if (pageSize === "all") return memoizedDateSortedEntries;
+    return memoizedDateSortedEntries.slice(0, parseInt(pageSize, 10));
+  }, [memoizedDateSortedEntries, pageSize]);
 
   if (entries.length === 0) {
     return (
@@ -74,7 +74,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
         </thead>
         <tbody>
           {displayedEntries.map((entry) => {
-            const dynamicMPG = calculateMPG(entry, entries);
+            const dynamicMPG = calculateMPG(entry, memoizedDateSortedEntries);
             return (
               <tr key={entry.id} className={styles.row}>
                 <td className={styles.td}>
