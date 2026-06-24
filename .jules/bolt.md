@@ -1,0 +1,3 @@
+## 2024-06-24 - Array Sorting in Render Loops
+**Learning:** Utility functions (like `calculateMPG`) that process collections and contain internal `.sort()` operations become massive performance bottlenecks O(N^2 log N) when called from within the render loop (e.g., mapping over rows in a table component like `FuelLogTable`).
+**Action:** When creating utility functions that process collections, avoid internal sorting. Instead, require the caller to pass a pre-sorted array (using `useMemo` at the component level or leveraging a global Context like `FleetContext`) to ensure sorting only happens once per state change.
