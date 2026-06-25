@@ -1,0 +1,3 @@
+## 2024-05-18 - Removing O(N log N) Sorts Inside Map Render Loops
+**Learning:** In utility functions (like `calculateMPG`) that process collections inside components rendering loops (such as tables mapping over rows), relying on an internal `.sort()` causes an O(N^2 log N) performance degradation, unnecessarily computing sorts on each map iteration.
+**Action:** Lift the array sorting up outside of the loop. Utility functions that depend on an ordered list should accept pre-sorted arrays. Pass the globally maintained, pre-sorted arrays (e.g. from context `useFleet()`) rather than the raw arrays.

@@ -99,7 +99,8 @@ export function AnalyticsProvider({ children }) {
       return sorted
         .map((e) => {
           // Prefer stored mileage; fall back to dynamic calculation if missing/zero
-          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, fuelEntries);
+          // sortedFuelEntries is pre-sorted newest-first, preventing O(n log n) recalculations
+          const mpg = e.mileage > 0 ? e.mileage : calculateMPG(e, sortedFuelEntries);
           return { entry: e, mpg };
         })
         .filter(({ mpg }) => mpg > 0)
@@ -109,7 +110,7 @@ export function AnalyticsProvider({ children }) {
           anomalyScore: isAiAuthorized && e.anomalyScore ? Number(e.anomalyScore.toFixed(3)) : 0,
         }));
     },
-    [filteredFuel, fuelEntries, shortDateFormatter, isAiAuthorized]
+    [filteredFuel, sortedFuelEntries, shortDateFormatter, isAiAuthorized]
   );
 
   const maintenanceSpendData = useMemo(() => {
