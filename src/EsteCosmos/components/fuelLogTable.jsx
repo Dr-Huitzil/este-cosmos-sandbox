@@ -74,7 +74,8 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
         </thead>
         <tbody>
           {displayedEntries.map((entry) => {
-            const dynamicMPG = calculateMPG(entry, entries);
+            // pass sortedEntries rather than unsorted entries to calculateMPG
+            const dynamicMPG = calculateMPG(entry, sortedEntries);
             return (
               <tr key={entry.id} className={styles.row}>
                 <td className={styles.td}>
