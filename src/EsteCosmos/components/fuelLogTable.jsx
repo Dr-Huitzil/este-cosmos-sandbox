@@ -29,6 +29,15 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
     [entries],
   );
 
+  // Dedicated date-sorted array for calculateMPG to prevent redundant N log N sorting
+  const memoizedDateSortedEntries = useMemo(
+    () =>
+      [...entries].sort((a, b) => {
+        return new Date(b.day).getTime() - new Date(a.day).getTime();
+      }),
+    [entries],
+  );
+
   const displayedEntries = useMemo(() => {
     if (pageSize === "all") return sortedEntries;
     return sortedEntries.slice(0, parseInt(pageSize, 10));
@@ -74,7 +83,7 @@ export const FuelLogTable = memo(function FuelLogTable({ entries = [] }) {
         </thead>
         <tbody>
           {displayedEntries.map((entry) => {
-            const dynamicMPG = calculateMPG(entry, entries);
+            const dynamicMPG = calculateMPG(entry, memoizedDateSortedEntries);
             return (
               <tr key={entry.id} className={styles.row}>
                 <td className={styles.td}>

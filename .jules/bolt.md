@@ -1,0 +1,4 @@
+## 2024-05-19 - Removed O(N^2 log N) Bottleneck in Utility Functions
+
+**Learning:** Utility functions that process collections (like `calculateMPG`) and are called inside rendering loops (like `.map()` in tables or chart hooks) can severely degrade performance if they perform an internal `.sort()` on the array. In React render cycles, this triggers an $O(N \log N)$ sort for every single row/item, resulting in an $O(N^2 \log N)$ bottleneck. The architecture leverages `FleetContext` and local `useMemo` hooks to provide pre-sorted data.
+**Action:** When creating or optimizing utility functions that require sorted data, remove internal sorting operations. Instead, make the function accept a pre-sorted array as an argument and clearly document this requirement. Ensure that the caller provides the pre-sorted array (either from context or memoized locally) to prevent redundant sorts during render loops.
