@@ -1,24 +1,23 @@
 /**
  * Calculates MPG for a given fuel entry considering partial fill-ups
  * MPG is only calculated on 'Full' fill-ups, representing efficiency
- * since the last 'full' fill-up
+ * since the last 'full' fill-up.
+ *
+ * IMPORTANT: `allEntries` MUST be pre-sorted descending (newest-first) by date/odometer
+ * to prevent O(N^2) or O(N^2 log N) performance degradation when called inside a loop.
  *
  * @param {{ odometer: number, fuelQuantity: number, isFull: boolean}} currentEntry
- * @param {Array<{ odometer: number, fuelQuantity: number, isFull: boolean, day: string}>} allEntries
- * @returns {numbers}
+ * @param {Array<{ odometer: number, fuelQuantity: number, isFull: boolean, day: string}>} allEntries - MUST BE PRE-SORTED DESCENDING
+ * @returns {number}
  */
 
 export function calculateMPG(currentEntry, allEntries) {
   if (!currentEntry.isFull) return 0;
 
-  const sorted = [...allEntries].sort(
-    (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-  );
-
   let totalFuel = currentEntry.fuelQuantity;
   let prevFullEntry = null;
 
-  for (const entry of sorted) {
+  for (const entry of allEntries) {
     if (entry.odometer >= currentEntry.odometer) continue;
 
     if (entry.isFull) {

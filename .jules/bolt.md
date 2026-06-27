@@ -1,0 +1,3 @@
+## 2025-02-14 - Optimize CalculateMPG Utility Function Sort
+**Learning:** Utility functions processing arrays, like `calculateMPG`, shouldn't rely on `.sort()` internally when they are called within loops (e.g., `map`). This causes a hidden O(N^2 log N) performance hit as the array gets re-sorted repeatedly per item. The sorting responsibilities should be shifted to the component or context, ensuring `calculateMPG` only receives pre-sorted arrays, shifting the time complexity entirely away from N^2 scaling factors for calculation logic.
+**Action:** Always verify if a utility array-processing function is invoked in a mapping loop. Ensure pre-sorted data via React context/memo is passed down directly to avoid expensive per-call re-sorts.
