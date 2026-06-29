@@ -1,0 +1,3 @@
+## 2023-11-20 - Internal Array Sorting in React Render Cycles
+**Learning:** Utilities that internally call `.sort()` on arrays and are mapped over during React component render loops (e.g., table cells calling utility math functions) cause severe O(N^2 log N) performance degradation. In este-cosmos, components receive `sortedEntries` as pre-sorted data from context.
+**Action:** When creating pure utility functions that process collections, NEVER place an internal `.sort()` operation within the utility itself. Ensure the utility explicitly expects a pre-sorted array as an argument and enforce this via comments/docs, relying on caller-level memoization.
