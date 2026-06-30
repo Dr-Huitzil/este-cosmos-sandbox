@@ -39,6 +39,7 @@ export const DashboardView = memo(function DashboardView() {
   const {
     vehicles,
     fuelEntries,
+    sortedFuelEntries,
     selectedVehicleId,
     selectedVehicle,
     serviceEntries,
@@ -62,8 +63,8 @@ export const DashboardView = memo(function DashboardView() {
   }, [vehicles, fuelEntries]);
 
   const activeTabFuelEntries = useMemo(
-    () => fuelEntries.filter((e) => e.vehicleId === selectedVehicleId),
-    [fuelEntries, selectedVehicleId],
+    () => sortedFuelEntries.filter((e) => e.vehicleId === selectedVehicleId),
+    [sortedFuelEntries, selectedVehicleId],
   );
 
   const activeTabServiceEntries = useMemo(

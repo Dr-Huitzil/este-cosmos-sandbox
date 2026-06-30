@@ -8,17 +8,19 @@
  * @returns {numbers}
  */
 
+/**
+ * ⚡ Bolt Performance Optimization
+ * IMPORTANT: allEntries MUST be pre-sorted newest-first before calling.
+ * Pre-sorting once at the call site (e.g. via useMemo) avoids redundant
+ * O(N log N) sorts on every render/calculation here, which degrades performance O(N^2 log N).
+ */
 export function calculateMPG(currentEntry, allEntries) {
   if (!currentEntry.isFull) return 0;
-
-  const sorted = [...allEntries].sort(
-    (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-  );
 
   let totalFuel = currentEntry.fuelQuantity;
   let prevFullEntry = null;
 
-  for (const entry of sorted) {
+  for (const entry of allEntries) {
     if (entry.odometer >= currentEntry.odometer) continue;
 
     if (entry.isFull) {
