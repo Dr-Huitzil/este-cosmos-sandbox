@@ -1,0 +1,3 @@
+## 2024-03-12 - Prevent O(N^2 log N) degradation in calculateMPG
+**Learning:** In table components processing collections (like `FuelLogTable` applying `calculateMPG` dynamically over rows), utility functions must never perform internal sorting. A loop of N items calling a function that performs an O(N log N) sort results in O(N^2 log N) performance degradation.
+**Action:** When creating calculation utilities (e.g., `calculateMPG`, `calculateHealth`), strictly design them to accept pre-sorted arrays (newest-first). Rely on the context layers (`FleetContext` via `useFleet`) to memoize and provide this sorted source of truth, passing it through views down to the components.
