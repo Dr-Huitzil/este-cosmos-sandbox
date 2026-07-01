@@ -1,0 +1,3 @@
+## 2024-05-18 - Removing O(N^2 log N) bottleneck in utility functions
+**Learning:** Calling `.sort()` within utility functions (like `calculateMPG`) that are evaluated inside render loops (like `.map()` in `FuelLogTable`) causes severe performance degradation, growing at O(N^2 log N). This is especially problematic as data grows over time.
+**Action:** When a utility function requires chronologically ordered data, it should expect a pre-sorted array as an argument. The application architecture leverages context hooks (like `FleetContext`) to provide memoized pre-sorted arrays globally to components. Components and hooks should pass these context-provided sorted arrays into utility functions rather than the raw unsorted collections.
