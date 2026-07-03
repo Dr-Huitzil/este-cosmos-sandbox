@@ -1,0 +1,3 @@
+## 2024-05-18 - Eliminate O(N^2 log N) Bottleneck in calculateMPG
+**Learning:** Calling `.sort()` inside a utility function (`calculateMPG`) that is executed repeatedly within a render loop (`.map` in a table component) causes an insidious `O(N^2 log N)` performance degradation as the dataset grows. The architecture already pre-sorts collections (like `sortedFuelEntries` via `FleetContext`), making the internal sort entirely redundant.
+**Action:** When a utility function requires chronologically sorted data, it should strictly accept pre-sorted arrays via parameters rather than sorting internally. Rely on the application's existing sorted state (via Context or hooks) and simply document the sorting requirement in the utility's JSDoc.
