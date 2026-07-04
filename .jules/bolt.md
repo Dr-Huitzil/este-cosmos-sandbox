@@ -1,0 +1,3 @@
+## 2026-07-04 - Avoid Hidden Sorts in Iterative Calculations
+**Learning:** Utilities that perform iterative computations (like `calculateMPG` over a history of fill-ups) are highly susceptible to silent performance degradation (O(N^2 log N)) when called from inside map/render loops if they include internal sorting. Even if the array passed in is already sorted at the component level, an internal sort on each call replicates work exponentially relative to the data size.
+**Action:** When a utility operates on arrays inside a render loop, refactor it to accept pre-sorted data. Update related hooks/call sites to pass stable, sorted arrays via references (`useRef`) to maintain architectural intent without duplicating work.

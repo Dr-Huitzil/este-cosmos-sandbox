@@ -25,9 +25,11 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
   );
 
   const fuelEntriesRef = useRef(fuelEntries);
+  const sortedFuelEntriesRef = useRef(sortedFuelEntries);
   useEffect(() => {
     fuelEntriesRef.current = fuelEntries;
-  }, [fuelEntries]);
+    sortedFuelEntriesRef.current = sortedFuelEntries;
+  }, [fuelEntries, sortedFuelEntries]);
 
   const handleAddFuelLog = useCallback(
     async (e) => {
@@ -58,13 +60,13 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
       else if (isNaN(totalPrice) && !isNaN(fuelPrice) && qty > 0) totalPrice = Number((fuelPrice * qty).toFixed(2));
 
       // Calculate the standard mileage mapping
-      const mileage = calculateMPG({ odometer: odo, fuelQuantity: qty, isFull }, fuelEntriesRef.current);
+      const mileage = calculateMPG({ odometer: odo, fuelQuantity: qty, isFull }, sortedFuelEntriesRef.current);
 
       // AI Middleman Step
       let previousOdometer = odo;
       let previousDay = day;
       let hasPreviousLog = false;
-      const allEntries = fuelEntriesRef.current;
+      const allEntries = sortedFuelEntriesRef.current;
 
       if (allEntries && allEntries.length > 0) {
         // Since allEntries is already sorted newest first, index 0 is the most recent
@@ -145,7 +147,12 @@ export function useFuel({ user, firestore, toast, selectedVehicleId, isFull, isA
     if (!user || !firestore || !selectedVehicleId) return;
     toast({ title: "CALIBRATION STARTED", description: "Recalculating telemetry vectors..." });
     try {
-      const allEntries = [...fuelEntries].sort((a, b) => (a.odometer || 0) - (b.odometer || 0));
+      const allEntries = [...fuelEntries].sort((a, b) => {
+        const d1 = new Date(b.day).getTime();
+        const d2 = new Date(a.day).getTime();
+        if (d1 !== d2) return d1 - d2;
+        return (b.odometer || 0) - (a.odometer || 0);
+      });
       const batch = writeBatch(firestore);
       let writes = 0;
       for (const entry of allEntries) {
