@@ -3,22 +3,22 @@
  * MPG is only calculated on 'Full' fill-ups, representing efficiency
  * since the last 'full' fill-up
  *
+ * IMPORTANT: allEntries must be pre-sorted newest first before calling.
+ * Pre-sorting once at the call site avoids redundant O(N log N) sorts
+ * during render cycles.
+ *
  * @param {{ odometer: number, fuelQuantity: number, isFull: boolean}} currentEntry
- * @param {Array<{ odometer: number, fuelQuantity: number, isFull: boolean, day: string}>} allEntries
- * @returns {numbers}
+ * @param {Array<{ odometer: number, fuelQuantity: number, isFull: boolean, day: string}>} allEntries - sorted newest-first by day
+ * @returns {number}
  */
-
 export function calculateMPG(currentEntry, allEntries) {
   if (!currentEntry.isFull) return 0;
 
-  const sorted = [...allEntries].sort(
-    (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-  );
-
+  // Assumes allEntries is pre-sorted newest-first
   let totalFuel = currentEntry.fuelQuantity;
   let prevFullEntry = null;
 
-  for (const entry of sorted) {
+  for (const entry of allEntries) {
     if (entry.odometer >= currentEntry.odometer) continue;
 
     if (entry.isFull) {

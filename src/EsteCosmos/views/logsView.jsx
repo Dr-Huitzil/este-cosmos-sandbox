@@ -13,7 +13,7 @@ import { useFleet } from "../../contexts/FleetContext";
  * Logs view - full fuel and service history tables side by side
  */
 export const LogsView = memo(function LogsView() {
-  const { fuelEntries, serviceEntries, reclaimEntries } = useFleet();
+  const { sortedFuelEntries: fuelEntries, serviceEntries, reclaimEntries } = useFleet();
 
   return (
     <div className={styles.viewPad}>

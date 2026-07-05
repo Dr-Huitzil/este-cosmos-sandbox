@@ -38,7 +38,7 @@ export const DashboardView = memo(function DashboardView() {
 
   const {
     vehicles,
-    fuelEntries,
+    sortedFuelEntries: fuelEntries,
     selectedVehicleId,
     selectedVehicle,
     serviceEntries,
