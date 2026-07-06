@@ -11,14 +11,13 @@
 export function calculateMPG(currentEntry, allEntries) {
   if (!currentEntry.isFull) return 0;
 
-  const sorted = [...allEntries].sort(
-    (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
-  );
-
+  // ⚡ Bolt Performance Optimization:
+  // Removed internal O(N log N) sorting. This function is often called in render loops (e.g. mapping over table rows),
+  // which caused O(N^2 log N) performance degradation. The architecture already provides `allEntries` as pre-sorted (newest-first).
   let totalFuel = currentEntry.fuelQuantity;
   let prevFullEntry = null;
 
-  for (const entry of sorted) {
+  for (const entry of allEntries) {
     if (entry.odometer >= currentEntry.odometer) continue;
 
     if (entry.isFull) {
