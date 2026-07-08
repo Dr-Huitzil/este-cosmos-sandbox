@@ -3,15 +3,20 @@
  * MPG is only calculated on 'Full' fill-ups, representing efficiency
  * since the last 'full' fill-up
  *
+ * IMPORTANT: `allEntries` is sorted internally unless `isPreSorted` is true.
+ * By relying on pre-sorted arrays and setting `isPreSorted=true`, we avoid O(N^2 log N) performance
+ * degradation when this utility is called within render loops (e.g., in `FuelLogTable` and `AnalyticsContext`).
+ *
  * @param {{ odometer: number, fuelQuantity: number, isFull: boolean}} currentEntry
  * @param {Array<{ odometer: number, fuelQuantity: number, isFull: boolean, day: string}>} allEntries
+ * @param {boolean} isPreSorted
  * @returns {numbers}
  */
 
-export function calculateMPG(currentEntry, allEntries) {
+export function calculateMPG(currentEntry, allEntries, isPreSorted = false) {
   if (!currentEntry.isFull) return 0;
 
-  const sorted = [...allEntries].sort(
+  const sorted = isPreSorted ? allEntries : [...allEntries].sort(
     (a, b) => new Date(b.day).getTime() - new Date(a.day).getTime(),
   );
 
